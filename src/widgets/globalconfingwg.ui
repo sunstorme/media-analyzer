@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com> -->
-<!-- SPDX-License-Identifier: MIT -->
 <ui version="4.0">
  <class>GlobalConfingWG</class>
  <widget class="QWidget" name="GlobalConfingWG">
@@ -44,9 +42,12 @@
    <item>
     <widget class="QGroupBox" name="config_display_group">
      <property name="title">
-      <string/>
+      <string>Detail</string>
      </property>
      <layout class="QVBoxLayout" name="genreral_tab_layout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
