@@ -61,6 +61,7 @@ public:
 signals:
     void exportMediaInfoFiledsSelectionChanged(const QStringList &selectedOptions);
     void exportBasicInfoFiledsSelectionChanged(const QStringList &selectedOptions);
+
 private slots:
     void onMediaInfoSelectAllClicked(bool checked);
     void onMediaInfoSelectNoneClicked();

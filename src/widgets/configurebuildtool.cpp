@@ -369,7 +369,7 @@ void ConfigureBuildTool::loadConfigureOptions()
 
 void ConfigureBuildTool::on_local_projects_combx_currentIndexChanged(int index)
 {
-    if (index > 0) {
+    if (index >= 0) {
         loadConfigureOptions();
     }
 }

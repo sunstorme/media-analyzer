@@ -42,8 +42,11 @@ ExportWG::ExportWG(QWidget *parent)
     m_basicInfoFloatLayout->addWidget(m_selectNoneBasicInfoRBtn);
 
     // Connect signals
-    connect(m_selectAllMediaInfoRBtn, &QCheckBox::toggled, this, &ExportWG::onMediaInfoSelectAllClicked);
+    connect(m_selectAllMediaInfoRBtn, &QCheckBox::clicked, this, &ExportWG::onMediaInfoSelectAllClicked);
     connect(m_selectNoneMediaInfoRBtn, &QCheckBox::clicked, this, &ExportWG::onMediaInfoSelectNoneClicked);
+
+    connect(m_selectAllBasicInfoRBtn, &QCheckBox::clicked, this, &ExportWG::onBasicInfoSelectAllClicked);
+    connect(m_selectNoneBasicInfoRBtn, &QCheckBox::clicked, this, &ExportWG::onBasicInfoSelectNoneClicked);
 
     // Setup context menu for export button
     ui->export_btn->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -95,6 +98,7 @@ void ExportWG::setMediaInfoExportFiledsOptions(const QStringList &options)
     }
 
     // Update the layout
+    m_selectAllMediaInfoRBtn->setChecked(true);
     m_mediaInfoFloatLayout->update();
 }
 
@@ -150,6 +154,7 @@ void ExportWG::setBasicInfoExportFiledsOptions(const QStringList &options)
     }
 
     // Update the layout
+    m_selectAllBasicInfoRBtn->setChecked(true);
     m_basicInfoFloatLayout->update();
 }
 
@@ -270,7 +275,7 @@ void ExportWG::onBasicInfoSelectAllClicked(bool checked)
     const bool blocked = blockSignals(true);
 
     for (auto *checkBox : m_exportBasicInfoFiledsCBoxes) {
-        checkBox->setChecked(false);
+        checkBox->setChecked(checked);
     }
 
     blockSignals(blocked);
