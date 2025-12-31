@@ -56,7 +56,14 @@
     </widget>
    </item>
    <item>
-    <widget class="ZTextEditor" name="search_output_ple"/>
+    <widget class="ZTextEditor" name="search_output_ple">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

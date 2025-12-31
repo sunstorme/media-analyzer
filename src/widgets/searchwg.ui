@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com> -->
-<!-- SPDX-License-Identifier: MIT -->
 <ui version="4.0">
  <class>SearchWG</class>
  <widget class="QWidget" name="SearchWG">
@@ -8,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>685</width>
-    <height>387</height>
+    <width>829</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,7 +51,7 @@
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -78,10 +76,10 @@
       <item>
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeType">
-         <enum>QSizePolicy::Preferred</enum>
+         <enum>QSizePolicy::Policy::Preferred</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -144,7 +142,7 @@
       <item>
        <spacer name="horizontalSpacer_3">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -166,7 +164,7 @@
       <item row="1" column="1">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>

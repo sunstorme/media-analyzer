@@ -194,7 +194,6 @@ TableFormatWG::~TableFormatWG()
 {
     delete m_headerManager;
     delete m_detailSearchDialog;
-    delete m_copyProgressDialog;
     delete ui;
 }
 

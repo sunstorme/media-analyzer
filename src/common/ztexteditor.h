@@ -9,8 +9,11 @@
 #include <QMenu>
 #include <QAction>
 #include <QContextMenuEvent>
+#include <QShortcut>
 
 class ZLineNumberArea;
+class ZTextHighlighter;
+class SearchWG;
 
 class ZTextEditor : public QPlainTextEdit
 {
@@ -27,17 +30,11 @@ public:
     void addContextAction(QAction *action);
     void addContextSeparator();
     
-    // Find action by object name
-    QAction *findContextAction(const QString &objectName);
-
-    QAction *findContextActionByText(const QString &actionText);
-    
-    // Get all context menu actions
-    QList<QAction *> getContextActions();
-
-protected:
-    void resizeEvent(QResizeEvent *event) override;
-    void contextMenuEvent(QContextMenuEvent *event) override;
+    // Search functionality
+    void enableSearch(bool enable = true);
+    bool isSearchEnabled() const;
+    SearchWG *searchWidget() const;
+    ZTextHighlighter *highlighter() const;
 
 private slots:
     void updateLineNumberAreaWidth();
@@ -52,40 +49,62 @@ private slots:
     void paste();
     void selectAll();
     void deleteSelected();
+    
+    // Search slot functions
+    void onSearchReady();
+    void onSearchClear();
+    void onSearchNext();
+    void onSearchBefore();
+    void onHighlightCountChanged(int count);
+    void onCurrentHighlightChanged(int index);
+    void onSearchTextNotFound(const QString &searchText);
+    void toggleSearchWidget();
 
 private:
-    ZLineNumberArea *lineNumberArea;
+    ZLineNumberArea *m_lineNumberArea = nullptr;
     
     // Context menu related
-    QMenu *m_contextMenu;
-    QAction *m_undoAction;
-    QAction *m_redoAction;
-    QAction *m_cutAction;
-    QAction *m_copyAction;
-    QAction *m_pasteAction;
-    QAction *m_selectAllAction;
-    QAction *m_deleteAction;
+    QMenu *m_contextMenu = nullptr;
+    QAction *m_undoAction = nullptr;
+    QAction *m_redoAction = nullptr;
+    QAction *m_cutAction = nullptr;
+    QAction *m_copyAction = nullptr;
+    QAction *m_pasteAction = nullptr;
+    QAction *m_selectAllAction = nullptr;
+    QAction *m_deleteAction = nullptr;
+    QAction *m_searchAction = nullptr;
+    
+    // Search related
+    ZTextHighlighter *m_highlighter = nullptr;
+    SearchWG *m_searchWG = nullptr;
+    QShortcut *m_searchShortcut = nullptr;
+    bool m_searchEnabled = true;
     
     void setupContextMenu();
     void updateContextMenuActions();
+    void setupSearch();
+
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 };
 
 class ZLineNumberArea : public QWidget
 {
 public:
-    ZLineNumberArea(ZTextEditor *editor) : QWidget(editor), zEditor(editor) {}
+    ZLineNumberArea(ZTextEditor *editor) : QWidget(editor), m_editor(editor) {}
 
     QSize sizeHint() const override {
-        return QSize(zEditor->lineNumberAreaWidth(), 0);
+        return QSize(m_editor->lineNumberAreaWidth(), 0);
     }
 
 protected:
     void paintEvent(QPaintEvent *event) override {
-        zEditor->lineNumberAreaPaintEvent(event);
+        m_editor->lineNumberAreaPaintEvent(event);
     }
 
 private:
-    ZTextEditor *zEditor;
+    ZTextEditor *m_editor;
 };
 
 #endif // ZTEXTEDITOR_H

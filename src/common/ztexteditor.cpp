@@ -3,6 +3,8 @@
 
 #include "ztexteditor.h"
 #include "common.h"
+#include "ztexthighlighter.h"
+#include "widgets/searchwg.h"
 #include <QPainter>
 #include <QTextBlock>
 #include <QResizeEvent>
@@ -10,6 +12,10 @@
 #include <QClipboard>
 #include <QApplication>
 #include <QKeyEvent>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPalette>
+#include <QColor>
 
 // GitHub-style color definitions
 const QColor LINE_NUMBER_BG = QColor(247, 247, 247);       // Line number area background
@@ -21,16 +27,8 @@ const int LINE_NUMBER_RIGHT_MARGIN = 8;                     // Line number right
 
 ZTextEditor::ZTextEditor(QWidget *parent)
     : QPlainTextEdit(parent)
-    , m_contextMenu(nullptr)
-    , m_undoAction(nullptr)
-    , m_redoAction(nullptr)
-    , m_cutAction(nullptr)
-    , m_copyAction(nullptr)
-    , m_pasteAction(nullptr)
-    , m_selectAllAction(nullptr)
-    , m_deleteAction(nullptr)
 {
-    lineNumberArea = new ZLineNumberArea(this);
+    m_lineNumberArea = new ZLineNumberArea(this);
 
     // Connect signals and slots
     connect(this, &ZTextEditor::blockCountChanged,
@@ -49,6 +47,9 @@ ZTextEditor::ZTextEditor(QWidget *parent)
     // Setup context menu
     setContextMenuPolicy(Qt::DefaultContextMenu);
     setupContextMenu();
+    
+    // Setup search functionality (disabled by default)
+    setupSearch();
 }
 
 int ZTextEditor::lineNumberAreaWidth()
@@ -65,15 +66,16 @@ int ZTextEditor::lineNumberAreaWidth()
 
 void ZTextEditor::updateLineNumberAreaWidth()
 {
-    setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
+    int bottomMargin = (m_searchWG && m_searchWG->isVisible()) ? m_searchWG->height() : 0;
+    setViewportMargins(lineNumberAreaWidth(), 0, 0, bottomMargin);
 }
 
 void ZTextEditor::updateLineNumberArea(const QRect &rect, int dy)
 {
     if (dy)
-        lineNumberArea->scroll(0, dy);
+        m_lineNumberArea->scroll(0, dy);
     else
-        lineNumberArea->update(0, rect.y(), lineNumberArea->width(), rect.height());
+        m_lineNumberArea->update(0, rect.y(), m_lineNumberArea->width(), rect.height());
 
     if (rect.contains(viewport()->rect()))
         updateLineNumberAreaWidth();
@@ -83,7 +85,13 @@ void ZTextEditor::resizeEvent(QResizeEvent *event)
 {
     QPlainTextEdit::resizeEvent(event);
     QRect cr = contentsRect();
-    lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+    m_lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+    
+    // Position search widget at the bottom
+    if (m_searchWG && m_searchWG->isVisible()) {
+        int searchHeight = m_searchWG->height();
+        m_searchWG->setGeometry(0, height() - searchHeight, width(), searchHeight);
+    }
 }
 
 void ZTextEditor::highlightCurrentLine()
@@ -103,7 +111,7 @@ void ZTextEditor::highlightCurrentLine()
 
 void ZTextEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
-    QPainter painter(lineNumberArea);
+    QPainter painter(m_lineNumberArea);
     // Line number area background color (GitHub-style light gray)
     painter.fillRect(event->rect(), LINE_NUMBER_BG);
 
@@ -132,7 +140,7 @@ void ZTextEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
                 painter.setFont(font());
             }
             // Draw line numbers, accounting for right margin
-            painter.drawText(0, top, lineNumberArea->width() - LINE_NUMBER_RIGHT_MARGIN,
+            painter.drawText(0, top, m_lineNumberArea->width() - LINE_NUMBER_RIGHT_MARGIN,
                              blockHeight, Qt::AlignRight | Qt::AlignTop, number);
         }
 
@@ -198,6 +206,14 @@ void ZTextEditor::setupContextMenu()
     m_selectAllAction->setShortcut(QKeySequence::SelectAll);
     connect(m_selectAllAction, &QAction::triggered, this, &ZTextEditor::selectAll);
     m_contextMenu->addAction(m_selectAllAction);
+    
+    m_contextMenu->addSeparator();
+    
+    // Search
+    m_searchAction = new QAction(tr("Search"), this);
+    m_searchAction->setShortcut(QKeySequence("Ctrl+F"));
+    connect(m_searchAction, &QAction::triggered, this, &ZTextEditor::toggleSearchWidget);
+    m_contextMenu->addAction(m_searchAction);
 }
 
 void ZTextEditor::updateContextMenuActions()
@@ -240,36 +256,6 @@ void ZTextEditor::addContextSeparator()
     }
 }
 
-QAction *ZTextEditor::findContextAction(const QString &objectName)
-{
-    if (!m_contextMenu) {
-        return nullptr;
-    }
-    
-    // Use Common utility function
-    return Common::findActionByObjectName(m_contextMenu, objectName);
-}
-
-QAction *ZTextEditor::findContextActionByText(const QString &actionText)
-{
-    if (!m_contextMenu) {
-        return nullptr;
-    }
-    
-    // Use Common utility function
-    return Common::findActionByText(m_contextMenu, actionText);
-}
-
-QList<QAction *> ZTextEditor::getContextActions()
-{
-    if (!m_contextMenu) {
-        return QList<QAction *>();
-    }
-    
-    // Use Common utility function
-    return Common::getAllActions(m_contextMenu);
-}
-
 void ZTextEditor::undo()
 {
     QPlainTextEdit::undo();
@@ -305,4 +291,152 @@ void ZTextEditor::deleteSelected()
     if (textCursor().hasSelection() && !isReadOnly()) {
         textCursor().removeSelectedText();
     }
+}
+
+// Search functionality implementation
+void ZTextEditor::setupSearch()
+{
+    // Create highlighter
+    m_highlighter = new ZTextHighlighter(this);
+    
+    // Create search widget as a child widget
+    m_searchWG = new SearchWG(this);
+    m_searchWG->setWindowTitle(tr("Search"));
+    
+    // Set background color for search widget to avoid transparency
+    m_searchWG->setAutoFillBackground(true);
+    QPalette palette = m_searchWG->palette();
+    palette.setColor(QPalette::Window, QColor(240, 240, 240));
+    m_searchWG->setPalette(palette);
+    
+    // Configure to show only the required group boxes
+    auto requiredBoxes = SearchWG::MatchControl | SearchWG::Operation;
+    m_searchWG->setVisibleGroupBoxes(requiredBoxes);
+    
+    // Initially hide the search widget
+    m_searchWG->hide();
+    
+    // Create Ctrl+F shortcut to toggle search widget
+    m_searchShortcut = new QShortcut(QKeySequence("Ctrl+F"), this);
+    connect(m_searchShortcut, &QShortcut::activated, this, &ZTextEditor::toggleSearchWidget);
+    
+    // Connect search widget signals
+    connect(m_searchWG, &SearchWG::searchReady, this, &ZTextEditor::onSearchReady);
+    connect(m_searchWG, &SearchWG::searchClear, this, &ZTextEditor::onSearchClear);
+    connect(m_searchWG, &SearchWG::searchNext, this, &ZTextEditor::onSearchNext);
+    connect(m_searchWG, &SearchWG::searchBefore, this, &ZTextEditor::onSearchBefore);
+    
+    // Connect highlighter signals
+    connect(m_highlighter, &ZTextHighlighter::highlightCountChanged, this, &ZTextEditor::onHighlightCountChanged);
+    connect(m_highlighter, &ZTextHighlighter::currentHighlightChanged, this, &ZTextEditor::onCurrentHighlightChanged);
+    connect(m_highlighter, &ZTextHighlighter::searchTextNotFound, this, &ZTextEditor::onSearchTextNotFound);
+}
+
+void ZTextEditor::enableSearch(bool enable)
+{
+    m_searchEnabled = enable;
+    if (m_searchWG) {
+        if (!enable) {
+            m_searchWG->hide();
+        }
+    }
+    if (m_searchAction) {
+        m_searchAction->setEnabled(enable);
+    }
+    updateLineNumberAreaWidth();
+}
+
+bool ZTextEditor::isSearchEnabled() const
+{
+    return m_searchEnabled;
+}
+
+SearchWG *ZTextEditor::searchWidget() const
+{
+    return m_searchWG;
+}
+
+ZTextHighlighter *ZTextEditor::highlighter() const
+{
+    return m_highlighter;
+}
+
+void ZTextEditor::toggleSearchWidget()
+{
+    if (!m_searchEnabled || !m_searchWG) {
+        return;
+    }
+    
+    if (m_searchWG->isVisible()) {
+        m_searchWG->hide();
+        updateLineNumberAreaWidth();
+    } else {
+        // Position the search widget at the bottom
+        int searchHeight = m_searchWG->sizeHint().height();
+        m_searchWG->setGeometry(0, height() - searchHeight, width(), searchHeight);
+        m_searchWG->show();
+        updateLineNumberAreaWidth();
+        
+        // Focus on the search line edit
+        QLineEdit *searchLineEdit = m_searchWG->getSearchLE();
+        if (searchLineEdit) {
+            searchLineEdit->setFocus();
+            searchLineEdit->selectAll();
+        }
+    }
+}
+
+void ZTextEditor::onSearchReady()
+{
+    QString searchText = m_searchWG->getSearchText().trimmed();
+    if (searchText.isEmpty()) {
+        m_searchWG->setSearchStatus(tr("Search text is empty"));
+        return;
+    }
+    
+    // Check if there's content to search
+    if (toPlainText().isEmpty()) {
+        m_searchWG->setSearchStatus(tr("No content to search"));
+        return;
+    }
+    
+    m_highlighter->setCaseSensitive(m_searchWG->isCaseSensitive());
+    m_highlighter->setWholeWord(m_searchWG->isMatchWholewords());
+    m_highlighter->setUseRegex(m_searchWG->isUseRegularExpression());
+    
+    m_highlighter->highlight(searchText);
+}
+
+void ZTextEditor::onSearchClear()
+{
+    m_highlighter->clearHighlight();
+    m_searchWG->setSearchText("");
+    m_searchWG->setSearchStatus("");
+}
+
+void ZTextEditor::onSearchNext()
+{
+    m_highlighter->gotoNextHighlight();
+}
+
+void ZTextEditor::onSearchBefore()
+{
+    m_highlighter->gotoPreviousHighlight();
+}
+
+void ZTextEditor::onHighlightCountChanged(int count)
+{
+    m_searchWG->setSearchStatus(QString("Found %1 results").arg(count));
+}
+
+void ZTextEditor::onCurrentHighlightChanged(int index)
+{
+    if (index >= 0) {
+        m_searchWG->setSearchStatus(QString("Result %1 of %2").arg(index + 1).arg(m_highlighter->highlightCount()));
+    }
+}
+
+void ZTextEditor::onSearchTextNotFound(const QString &searchText)
+{
+    m_searchWG->setSearchStatus(QString("Text '%1' not found").arg(searchText));
 }
