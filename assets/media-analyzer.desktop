@@ -1,11 +1,11 @@
 [Desktop Entry]
 Type=Application
-Name=Media Debuger
+Name=Media Analyzer
 GenericName=Media Analysis Tool
 Comment=Debug and analyze media files
-Exec=media-debuger
-Icon=media-debuger-logo
+Exec=media-analyzer
+Icon=media-analyzer-logo
 Terminal=false
 Categories=AudioVideo;Audio;Video;Player;
 MimeType=video/*;audio/*;
-StartupWMClass=media-debuger
+StartupWMClass=media-analyzer

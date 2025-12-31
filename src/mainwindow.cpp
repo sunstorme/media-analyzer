@@ -571,8 +571,8 @@ void MainWindow::slotMenuHelpTriggered(QAction *action)
         QString versionText = packageVersion.isEmpty() ? tr("Unknown") : packageVersion;
         
         QMessageBox::about(this,
-                           tr("About MediaDebuger"),
-                           tr("MediaDebuger\n"
+                           tr("About MediaAnalyzer"),
+                           tr("MediaAnalyzer\n"
                               "Version: %1\n"
                               "A powerful media file analysis tool that provides:\n"
                               "- Detailed media information display\n"

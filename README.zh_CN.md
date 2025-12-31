@@ -1,13 +1,13 @@
-# MediaDebuger
+# MediaAnalyzer
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/SunStorm2018/media-debuger)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://gitee.com/sunstom/media-analyzer)
 [![Qt Version](https://img.shields.io/badge/Qt-5.15%2B%20%7C%206.x-green.svg)](https://www.qt.io)
-[![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)](https://github.com/SunStorm2018/media-debuger)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/SunStorm2018/media-debuger)
+[![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)](https://gitee.com/sunstom/media-analyzer)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://gitee.com/sunstom/media-analyzer)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
 
-MediaDebuger 是一个基于 Qt 的多媒体文件分析调试工具，使用 FFprobe 通过图形界面提供媒体文件的详细信息。
+MediaAnalyzer 是一个基于 Qt 的多媒体文件分析调试工具，使用 FFprobe 通过图形界面提供媒体文件的详细信息。
 
 ## 功能特性
 
@@ -97,7 +97,7 @@ make -j$(nproc)
 ## 项目结构
 
 ```
-media-debuger/
+media-analyzer/
 ├── src/                    # 源代码
 │   ├── common/            # 核心组件
 │   ├── widgets/           # UI组件

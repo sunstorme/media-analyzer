@@ -341,10 +341,10 @@ QString Common::getCurrentPackageVersion()
     // Try to determine which package is currently running
     QString appPath = QCoreApplication::applicationFilePath();
 
-    // Check if we're running media-debuger or media-debuger6
-    if (appPath.contains("media-debuger6")) {
-        return getPackageVersion("media-debuger6");
+    // Check if we're running media-analyzer or media-analyzer6
+    if (appPath.contains("media-analyzer6")) {
+        return getPackageVersion("media-analyzer6");
     } else {
-        return getPackageVersion("media-debuger");
+        return getPackageVersion("media-analyzer");
     }
 }

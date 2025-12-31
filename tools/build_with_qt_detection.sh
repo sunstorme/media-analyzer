@@ -66,7 +66,7 @@ if [ "$QT5_AVAILABLE" = true ]; then
     echo "=== Building Qt5 version ==="
     mkdir -p build-qt5
     cd build-qt5
-    QT_SELECT=5 qmake PREFIX=/usr ../media-debuger.pro
+    QT_SELECT=5 qmake PREFIX=/usr ../media-analyzer.pro
     make -j$(nproc)
     cd "$PROJECT_ROOT"
     echo "Qt5 版本构建完成"
@@ -80,7 +80,7 @@ if [ "$QT6_AVAILABLE" = true ]; then
     echo "=== Building Qt6 version ==="
     mkdir -p build-qt6
     cd build-qt6
-    qmake6 PREFIX=/usr ../media-debuger.pro
+    qmake6 PREFIX=/usr ../media-analyzer.pro
     make -j$(nproc)
     cd "$PROJECT_ROOT"
     echo "Qt6 版本构建完成"
@@ -93,21 +93,21 @@ echo "=== Build completed ==="
 
 # 显示构建结果
 if [ "$QT5_AVAILABLE" = true ]; then
-    echo "Qt5 版本可执行文件: build-qt5/media-debuger"
-    echo "Qt5 executable: build-qt5/media-debuger"
+    echo "Qt5 版本可执行文件: build-qt5/media-analyzer"
+    echo "Qt5 executable: build-qt5/media-analyzer"
 fi
 
 if [ "$QT6_AVAILABLE" = true ]; then
-    echo "Qt6 版本可执行文件: build-qt6/media-debuger6"
-    echo "Qt6 executable: build-qt6/media-debuger6"
+    echo "Qt6 版本可执行文件: build-qt6/media-analyzer6"
+    echo "Qt6 executable: build-qt6/media-analyzer6"
 fi
 
 echo ""
 echo "运行程序:"
 echo "To run the application:"
 if [ "$QT5_AVAILABLE" = true ]; then
-    echo "  Qt5: ./build-qt5/media-debuger"
+    echo "  Qt5: ./build-qt5/media-analyzer"
 fi
 if [ "$QT6_AVAILABLE" = true ]; then
-    echo "  Qt6: ./build-qt6/media-debuger6"
+    echo "  Qt6: ./build-qt6/media-analyzer6"
 fi

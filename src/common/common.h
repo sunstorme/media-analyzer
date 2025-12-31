@@ -23,7 +23,7 @@
 #define CURRENTDir "currentDir"
 
 #define ORGANIZATION_NAME "MediaTools"
-#define APPLICATION_NAME "MediaDebugger"
+#define APPLICATION_NAME "MediaAnalyzer"
 #define APPLICATION_VERSION "1.0.0"
 
 constexpr auto LOG_SETTINGS_GROUP = "Log";
@@ -39,7 +39,7 @@ constexpr auto CONFIGURE_BUILDER_RECENTFOLDERS_KEY = "RecentFolders";
 
 // Image preview settings
 constexpr auto IMAGE_PREVIEW_PATH_KEY = "ImagePreviewPath";
-constexpr auto DEFAULT_IMAGE_PREVIEW_PATH = "/tmp/media_debuger_preview_images";
+constexpr auto DEFAULT_IMAGE_PREVIEW_PATH = "/tmp/media_analyzer_preview_images";
 
 // config
 /**

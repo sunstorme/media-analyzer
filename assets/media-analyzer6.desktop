@@ -1,11 +1,11 @@
 [Desktop Entry]
 Type=Application
-Name=Media Debuger (Qt6)
+Name=Media Analyzer (Qt6)
 GenericName=Media Analysis Tool (Qt6)
 Comment=Debug and analyze media files (Qt6 version)
-Exec=media-debuger6
-Icon=media-debuger-logo
+Exec=media-analyzer6
+Icon=media-analyzer-logo
 Terminal=false
 Categories=AudioVideo;Audio;Video;Player;
 MimeType=video/*;audio/*;
-StartupWMClass=media-debuger6
+StartupWMClass=media-analyzer6

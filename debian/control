@@ -1,4 +1,4 @@
-Source: media-debuger
+Source: media-analyzer
 Section: utils
 Priority: optional
 Maintainer: zhanghongyuan <2063218120@qq.com>
@@ -19,74 +19,74 @@ Build-Depends:
  libavfilter-dev,
  libx11-dev
 Standards-Version: 4.5.0
-Homepage: https://gitee.com/sunstom/media-debuger.git
-Vcs-Browser: https://github.com/SunStorm2018/media-debuger
-Vcs-Git: https://github.com/SunStorm2018/media-debuger.git
+Homepage: https://gitee.com/sunstom/media-analyzer
+Vcs-Browser: https://gitee.com/sunstom/media-analyzer
+Vcs-Git: https://gitee.com/sunstom/media-analyzer.git
 
-Package: media-debuger
+Package: media-analyzer
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          libqt5widgets5
-Description: Media file debug and analysis tool (Qt5)
- A Qt5-based application for debugging and analyzing media files,
+Description: Media file analysis tool (Qt5)
+ A Qt5-based application for analyzing media files,
  providing detailed information about video/audio formats and codecs.
 
-Package: media-debuger6
+Package: media-analyzer6
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          libqt6widgets6
-Description: Media file debug and analysis tool (Qt6)
- A Qt6-based application for debugging and analyzing media files,
+Description: Media file analysis tool (Qt6)
+ A Qt6-based application for analyzing media files,
  providing detailed information about video/audio formats and codecs.
 
-Package: dfm-xmenu-media-debuger
+Package: dfm-xmenu-media-analyzer
 Architecture: all
-Depends: media-debuger (= ${source:Version}),
+Depends: media-analyzer (= ${source:Version}),
          dde-file-manager,
          ${misc:Depends}
-Description: DDE file manager context menu integration for media-debuger
- Adds media-debuger options to the context menu of DDE file manager.
+Description: DDE file manager context menu integration for media-analyzer
+ Adds media-analyzer options to the context menu of DDE file manager.
 
-Package: dfm-xmenu-media-debuger6
+Package: dfm-xmenu-media-analyzer6
 Architecture: all
-Depends: media-debuger6 (= ${source:Version}),
+Depends: media-analyzer6 (= ${source:Version}),
          dde-file-manager,
          ${misc:Depends}
-Description: DDE file manager context menu integration for media-debuger (Qt6)
- Adds media-debuger6 options to the context menu of DDE file manager.
+Description: DDE file manager context menu integration for media-analyzer (Qt6)
+ Adds media-analyzer6 options to the context menu of DDE file manager.
  
-Package: nautilus-xmenu-media-debuger
+Package: nautilus-xmenu-media-analyzer
 Architecture: all
-Depends: media-debuger (= ${source:Version}),
+Depends: media-analyzer (= ${source:Version}),
          nautilus (>= 42),
          python3-gi,
          gir1.2-nautilus-3.0
-Description: Nautilus file manager context menu integration for media-debuger
- Adds Media Debuger options to the right-click menu in Nautilus file manager.
+Description: Nautilus file manager context menu integration for media-analyzer
+ Adds Media Analyzer options to the right-click menu in Nautilus file manager.
 
-Package: nautilus-xmenu-media-debuger6
+Package: nautilus-xmenu-media-analyzer6
 Architecture: all
-Depends: media-debuger6 (= ${source:Version}),
+Depends: media-analyzer6 (= ${source:Version}),
          nautilus (>= 42),
          python3-gi,
          gir1.2-nautilus-3.0
-Description: Nautilus file manager context menu integration for media-debuger (Qt6)
- Adds Media Debuger6 options to the right-click menu in Nautilus file manager.
+Description: Nautilus file manager context menu integration for media-analyzer (Qt6)
+ Adds Media Analyzer6 options to the right-click menu in Nautilus file manager.
  
-Package: media-debuger-dbus
+Package: media-analyzer-dbus
 Architecture: all
-Depends: media-debuger (= ${source:Version}),
+Depends: media-analyzer (= ${source:Version}),
          python3-gi,
          python3-pydbus,
          python3
-Description: dbus integration for media-debuger
- Adds Media Debuger options to the session dbus.
+Description: dbus integration for media-analyzer
+ Adds Media Analyzer options to the session dbus.
 
-Package: media-debuger6-dbus
+Package: media-analyzer6-dbus
 Architecture: all
-Depends: media-debuger6 (= ${source:Version}),
+Depends: media-analyzer6 (= ${source:Version}),
          python3-gi,
          python3-pydbus,
          python3
-Description: dbus integration for media-debuger (Qt6)
- Adds Media Debuger6 options to the session dbus.
+Description: dbus integration for media-analyzer (Qt6)
+ Adds Media Analyzer6 options to the session dbus.

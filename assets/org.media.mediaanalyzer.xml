@@ -1,14 +1,14 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
 "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
-  <interface name="org.media.mediadebuger">
-    <!-- 对应 media-debuger --basic-info <type> -->
+  <interface name="org.media.mediaanalyzer">
+    <!-- 对应 media-analyzer --basic-info <type> -->
     <method name="GetBasicInfo">
       <arg name="info_type" type="s" direction="in"/> <!-- 输入：version/buildconf/formats等 -->
       <arg name="result" type="s" direction="out"/>   <!-- 输出：命令执行结果字符串 -->
     </method>
 
-    <!-- 对应 media-debuger --media-info <file> [--stream-type <type>] -->
+    <!-- 对应 media-analyzer --media-info <file> [--stream-type <type>] -->
     <method name="GetMediaInfo">
       <arg name="file_path" type="s" direction="in"/>  <!-- 输入：媒体文件路径 -->
       <arg name="stream_type" type="s" direction="in"/> <!-- 输入：audio/video/a/v（空字符串表示不限制） -->
@@ -22,4 +22,3 @@
     </method>
   </interface>
 </node>
-

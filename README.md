@@ -1,13 +1,13 @@
-# MediaDebugger
+# MediaAnalyzer
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/SunStorm2018/media-debuger)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://gitee.com/sunstom/media-analyzer)
 [![Qt Version](https://img.shields.io/badge/Qt-5.15%2B%20%7C%206.x-green.svg)](https://www.qt.io)
-[![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)](https://github.com/SunStorm2018/media-debuger)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/SunStorm2018/media-debuger)
+[![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)](https://gitee.com/sunstom/media-analyzer)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://gitee.com/sunstom/media-analyzer)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
 
-MediaDebugger is a Qt-based multimedia file analysis and debugging tool that uses FFprobe to provide detailed information about media files through a graphical interface.
+MediaAnalyzer is a Qt-based multimedia file analysis and debugging tool that uses FFprobe to provide detailed information about media files through a graphical interface.
 
 ## Features
 
@@ -97,7 +97,7 @@ For detailed information, see [`docs/qt_version_detection.md`](docs/qt_version_d
 ## Project Structure
 
 ```
-media-debuger/
+media-analyzer/
 ├── src/                    # Source code
 │   ├── common/            # Core components
 │   ├── widgets/           # UI components

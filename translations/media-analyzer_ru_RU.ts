@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="es_ES" sourcelanguage="en_US">
+<TS version="2.1" language="ru_RU" sourcelanguage="en_US">
 <context>
     <name>ExportWG</name>
     <message>
@@ -1030,12 +1030,12 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="567"/>
-        <source>About MediaDebuger</source>
+        <source>About MediaAnalyzer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="568"/>
-        <source>MediaDebuger
+        <source>MediaAnalyzer
 
 A powerful media file analysis tool that provides:
 - Detailed media information display

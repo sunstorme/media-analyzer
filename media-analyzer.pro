@@ -5,9 +5,9 @@ QT += core gui concurrent
 
 # Set different TARGET names based on Qt version
 equals(QT_MAJOR_VERSION, 5) {
-    TARGET = media-debuger
+    TARGET = media-analyzer
 } else {
-    TARGET = media-debuger6
+    TARGET = media-analyzer6
 }
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -110,16 +110,16 @@ FORMS += \
     src/widgets/tablefmtwg.ui
 
 TRANSLATIONS += \
-    translations/media-debuger_zh_CN.ts \
-    translations/media-debuger_en_US.ts \
-    translations/media-debuger_ja_JP.ts \
-    translations/media-debuger_ko_KR.ts \
-    translations/media-debuger_fr_FR.ts \
-    translations/media-debuger_de_DE.ts \
-    translations/media-debuger_es_ES.ts \
-    translations/media-debuger_ru_RU.ts \
-    translations/media-debuger_ar_SA.ts \
-    translations/media-debuger_pt_BR.ts
+    translations/media-analyzer_zh_CN.ts \
+    translations/media-analyzer_en_US.ts \
+    translations/media-analyzer_ja_JP.ts \
+    translations/media-analyzer_ko_KR.ts \
+    translations/media-analyzer_fr_FR.ts \
+    translations/media-analyzer_de_DE.ts \
+    translations/media-analyzer_es_ES.ts \
+    translations/media-analyzer_ru_RU.ts \
+    translations/media-analyzer_ar_SA.ts \
+    translations/media-analyzer_pt_BR.ts
 
 
 # Qt6 doesn't have lrelease tool, disable translations for now
@@ -159,7 +159,7 @@ isEmpty(PREFIX) {
 isEmpty(BINDIR): BINDIR = $$PREFIX/bin
 isEmpty(ICONDIR): ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 isEmpty(APPDIR): APPDIR = $$PREFIX/share/applications
-isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc/media-debuger
+isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc/media-analyzer
 # isEmpty(CONTEXTMENUDIR): CONTEXTMENUDIR = $$PREFIX/share/applications/context-menus
 
 target.path = $$BINDIR
@@ -168,14 +168,14 @@ desktop.path = $$APPDIR
 doc.path = $$DOCDIR
 # contextmenu.path = $$CONTEXTMENUDIR
 
-icon.files = assets/128x128/media-debuger-logo.svg
-desktop.files = assets/media-debuger.desktop
+icon.files = assets/128x128/media-analyzer-logo.svg
+desktop.files = assets/media-analyzer.desktop
 doc.files = README.md LICENSE
-# contextmenu.files = assets/media-debuger.conf
+# contextmenu.files = assets/media-analyzer.conf
 
 # Install different desktop file for Qt6 version
 equals(QT_MAJOR_VERSION, 6) {
-    desktop.files = assets/media-debuger6.desktop
+    desktop.files = assets/media-analyzer6.desktop
 }
 
 INSTALLS += target icon desktop doc

@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: media-debuger
-Source: https://github.com/SunStorm2018/media-debuger.git
+Upstream-Name: media-analyzer
+Source: https://github.com/SunStorm2018/media-analyzer.git
 
 Files: *
 Copyright: 2025 zhang hongyuan <2063218120@qq.com>

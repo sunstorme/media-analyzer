@@ -37,7 +37,7 @@ SPDX-FileCopyrightText = "2025 zhang hongyuan <2063218120@qq.com>"
 SPDX-License-Identifier = "MIT"
 
 [[annotations]]
-path = ["media-debuger.pro", "translations/**"]
+path = ["media-analyzer.pro", "translations/**"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2025 zhang hongyuan <2063218120@qq.com>"
 SPDX-License-Identifier = "MIT"

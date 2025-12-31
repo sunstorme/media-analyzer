@@ -6,13 +6,13 @@ import subprocess
 import os
 import sys
 
-BUS_NAME = "org.media.mediadebuger"
-OBJECT_PATH = "/org/media/mediadebuger"
-INTERFACE_NAME = "org.media.mediadebuger"
+BUS_NAME = "org.media.mediaanalyzer6"
+OBJECT_PATH = "/org/media/mediaanalyzer6"
+INTERFACE_NAME = "org.media.mediaanalyzer6"
 
-class MediaDebugerService:
+class MediaAnalyzer6Service:
     """
-    DBus 服务实现，封装 media-debuger 命令
+    DBus service implementation, wrapping media-analyzer6 command
     """
     
     dbus = f"""
@@ -48,7 +48,7 @@ class MediaDebugerService:
         self.bus = SessionBus()
         
     def GetBasicInfo(self, info_type: str) -> str:
-        """获取基本信息（对应 --basic-info）"""
+        """Get basic information (corresponding to --basic-info)"""
         if not info_type:
             return "Error: info_type cannot be empty"
         
@@ -60,13 +60,13 @@ class MediaDebugerService:
         if info_type not in valid_types:
             return f"Error: Invalid info_type. Valid types: {', '.join(valid_types)}"
         
-        cmd = ["media-debuger", "--basic-info", info_type]
+        cmd = ["media-analyzer6", "--basic-info", info_type]
         result = self._run_command(cmd)
         print(f"GetBasicInfo({info_type}): {len(result)} characters returned")
         return result
 
     def GetMediaInfo(self, file_path: str, stream_type: str, frame_type: str) -> str:
-        """获取媒体文件信息（对应 --media-info + --stream-type + --frame-type）- 非阻塞版本"""
+        """Get media file information (corresponding to --media-info + --stream-type + --frame-type) - non-blocking version"""
         if not os.path.exists(file_path):
             return f"Error: File not found - {file_path}"
         
@@ -77,7 +77,7 @@ class MediaDebugerService:
             return "Error: Invalid frame_type (must be frame/packet/f/p)"
         
         cmd = [
-            "media-debuger", "--media-info", file_path,
+            "media-analyzer6", "--media-info", file_path,
             "--frame-type", frame_type,
             "--stream-type", stream_type
         ]
@@ -87,7 +87,7 @@ class MediaDebugerService:
         return result
 
     def OpenMediaInfoWindow(self, file_path: str, stream_type: str, frame_type: str) -> bool:
-        """打开媒体信息窗口，由用户手动关闭（非阻塞调用）"""
+        """Open media information window, closed manually by user (non-blocking call)"""
         if not os.path.exists(file_path):
             print(f"Error: File not found - {file_path}")
             return False
@@ -101,7 +101,7 @@ class MediaDebugerService:
             return False
         
         cmd = [
-            "media-debuger", "--media-info", file_path,
+            "media-analyzer6", "--media-info", file_path,
             "--frame-type", frame_type,
             "--stream-type", stream_type
         ]
@@ -109,7 +109,7 @@ class MediaDebugerService:
         try:
             print(f"Opening media info window: {' '.join(cmd)}")
             
-            # 使用 Popen 非阻塞启动进程，不等待其结束
+            # Use Popen to start process non-blockingly, without waiting for its completion
             process = subprocess.Popen(
                 cmd,
                 stdout=subprocess.PIPE,
@@ -117,7 +117,7 @@ class MediaDebugerService:
                 text=True
             )
             
-            # 不等待进程结束，立即返回
+            # Don't wait for process to end, return immediately
             print(f"Media info window opened with PID: {process.pid}")
             print("Window will remain open until user closes it manually")
             return True
@@ -127,20 +127,20 @@ class MediaDebugerService:
             return False
 
     def IsAvailable(self) -> bool:
-        """检查 media-debuger 工具是否可用"""
+        """Check if media-analyzer6 tool is available"""
         try:
-            # 首先检查命令是否存在
+            # First check if the command exists
             result = subprocess.run(
-                ["which", "media-debuger"],
+                ["which", "media-analyzer6"],
                 capture_output=True,
                 text=True,
                 timeout=5
             )
             
             if result.returncode != 0:
-                # 如果 which 找不到，尝试直接运行
+                # If which can't find it, try running directly
                 result = subprocess.run(
-                    ["media-debuger", "--version"],
+                    ["media-analyzer6", "--version"],
                     capture_output=True,
                     text=True,
                     timeout=5
@@ -155,10 +155,10 @@ class MediaDebugerService:
             return False
 
     def GetVersion(self) -> str:
-        """获取 media-debuger 版本信息"""
+        """Get media-analyzer6 version information"""
         try:
             result = subprocess.run(
-                ["media-debuger", "--version"],
+                ["media-analyzer6", "--version"],
                 capture_output=True,
                 text=True,
                 timeout=5
@@ -177,7 +177,7 @@ class MediaDebugerService:
             return error_msg
 
     def _run_command(self, cmd: list) -> str:
-        """执行命令并返回输出 - 用于需要立即返回结果的命令"""
+        """Execute command and return output - for commands that need immediate result return"""
         try:
             print(f"Executing command: {' '.join(cmd)}")
             
@@ -209,7 +209,7 @@ class MediaDebugerService:
             return error_msg
 
     def _run_command_with_timeout(self, cmd: list, timeout: int = 30) -> str:
-        """执行命令并返回输出（带超时控制）"""
+        """Execute command and return output (with timeout control)"""
         try:
             print(f"Executing command with timeout {timeout}s: {' '.join(cmd)}")
             
@@ -241,15 +241,15 @@ class MediaDebugerService:
             return error_msg
 
 def register_dbus_service():
-    """注册 DBus 服务"""
+    """Register DBus service"""
     try:
-        # 获取会话总线
+        # Get session bus
         bus = SessionBus()
         
-        # 创建服务实例
-        service = MediaDebugerService()
+        # Create service instance
+        service = MediaAnalyzer6Service()
         
-        # 发布服务
+        # Publish service
         bus.publish(BUS_NAME, service)
         
         print(f"DBus service registered successfully:")
@@ -265,37 +265,37 @@ def register_dbus_service():
         return False
 
 def main():
-    """主函数"""
-    print("Starting Media Debuger DBus Service...")
+    """Main function"""
+    print("Starting Media Analyzer6 DBus Service...")
     
-    # 检查 media-debuger 是否可用
-    service = MediaDebugerService()
+    # Check if media-analyzer6 is available
+    service = MediaAnalyzer6Service()
     if not service.IsAvailable():
-        print("Warning: media-debuger command not found. Some functions may not work.")
-        print("Please install media-debuger or ensure it's in your PATH")
+        print("Warning: media-analyzer6 command not found. Some functions may not work.")
+        print("Please install media-analyzer6 or ensure it's in your PATH")
     
-    # 注册 DBus 服务
+    # Register DBus service
     if not register_dbus_service():
         print("Failed to start DBus service. Exiting.")
         sys.exit(1)
     
-    # 启动事件循环
+    # Start event loop
     try:
         loop = GLib.MainLoop()
         print("Service started successfully. Waiting for requests...")
         print("\nAvailable methods:")
-        print("  - GetBasicInfo(info_type): 获取基本信息")
-        print("  - GetMediaInfo(file_path, stream_type, frame_type): 获取媒体信息（阻塞，30秒超时）")
-        print("  - OpenMediaInfoWindow(file_path, stream_type, frame_type): 打开媒体信息窗口（非阻塞，用户手动关闭）")
-        print("  - IsAvailable(): 检查工具是否可用")
-        print("  - GetVersion(): 获取版本信息")
+        print("  - GetBasicInfo(info_type): Get basic information")
+        print("  - GetMediaInfo(file_path, stream_type, frame_type): Get media information (blocking, 30s timeout)")
+        print("  - OpenMediaInfoWindow(file_path, stream_type, frame_type): Open media information window (non-blocking, user closes manually)")
+        print("  - IsAvailable(): Check if tool is available")
+        print("  - GetVersion(): Get version information")
         loop.run()
     except KeyboardInterrupt:
         print("\nService stopped by user")
     except Exception as e:
         print(f"Service error: {e}")
     finally:
-        print("Media Debuger DBus Service stopped")
+        print("Media Analyzer6 DBus Service stopped")
 
 if __name__ == "__main__":
     main()

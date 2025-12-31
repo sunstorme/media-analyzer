@@ -11,12 +11,12 @@ import subprocess
 import json
 import locale
 
-class MediaDebugger6Extension(GObject.GObject, Nautilus.MenuProvider):
+class MediaAnalyzer6Extension(GObject.GObject, Nautilus.MenuProvider):
     
     def __init__(self):
         super().__init__()
-        # Assume media-debuger6 executable is in system PATH
-        self.media_debuger_cmd = "media-debuger6"
+        # Assume media-analyzer6 executable is in system PATH
+        self.media_analyzer_cmd = "media-analyzer6"
         # Localization settings
         self.lang = self._get_system_language()
     
@@ -68,14 +68,14 @@ class MediaDebugger6Extension(GObject.GObject, Nautilus.MenuProvider):
         # Media Info submenu
         meida_info_menu = Nautilus.Menu()
         meida_info_menu_item = Nautilus.MenuItem(
-            name="MediaDebugger6Extension::MediaInfo",
+            name="MediaAnalyzer6Extension::MediaInfo",
             label=self._t("Meida Info (Qt6)", "媒体信息(Qt6)"),
             tip=self._t("Show media information (Qt6)", "显示媒体信息(Qt6)")
         )
         
         # streams Info
         streams_item = Nautilus.MenuItem(
-            name="MediaDebugger6Extension::Streams",
+            name="MediaAnalyzer6Extension::Streams",
             label=self._t("Streams", "流信息"),
             tip=self._t("Show video streams information", "显示流信息")
         )
@@ -84,7 +84,7 @@ class MediaDebugger6Extension(GObject.GObject, Nautilus.MenuProvider):
         
         # Format Info
         format_item = Nautilus.MenuItem(
-            name="MediaDebugger6Extension::FrameAudio",
+            name="MediaAnalyzer6Extension::FrameAudio",
             label=self._t("Formats", "格式"),
             tip=self._t("Show audio frame information", "显示格式信息")
         )
@@ -97,14 +97,14 @@ class MediaDebugger6Extension(GObject.GObject, Nautilus.MenuProvider):
         # Frame Info submenu
         frame_info_menu = Nautilus.Menu()
         frame_info_menu_item = Nautilus.MenuItem(
-            name="MediaDebugger6Extension::FrameInfo",
+            name="MediaAnalyzer6Extension::FrameInfo",
             label=self._t("Frame Info", "帧信息"),
             tip=self._t("Show frame information", "显示帧信息")
         )
         
         # Frame Info - Video
         frame_video_item = Nautilus.MenuItem(
-            name="MediaDebugger6Extension::FrameVideo",
+            name="MediaAnalyzer6Extension::FrameVideo",
             label=self._t("Video", "视频"),
             tip=self._t("Show video frame information", "显示视频帧信息")
         )
@@ -113,7 +113,7 @@ class MediaDebugger6Extension(GObject.GObject, Nautilus.MenuProvider):
         
         # Frame Info - Audio
         frame_audio_item = Nautilus.MenuItem(
-            name="MediaDebugger6Extension::FrameAudio",
+            name="MediaAnalyzer6Extension::FrameAudio",
             label=self._t("Audio", "音频"),
             tip=self._t("Show audio frame information", "显示音频帧信息")
         )
@@ -126,14 +126,14 @@ class MediaDebugger6Extension(GObject.GObject, Nautilus.MenuProvider):
         # Packet Info submenu
         packet_info_menu = Nautilus.Menu()
         packet_info_menu_item = Nautilus.MenuItem(
-            name="MediaDebugger6Extension::PacketInfo",
+            name="MediaAnalyzer6Extension::PacketInfo",
             label=self._t("Packet Info", "包信息"),
             tip=self._t("Show packet information", "显示包信息")
         )
         
         # Packet Info - Video
         packet_video_item = Nautilus.MenuItem(
-            name="MediaDebugger6Extension::PacketVideo",
+            name="MediaAnalyzer6Extension::PacketVideo",
             label=self._t("Video", "视频"),
             tip=self._t("Show video packet information", "显示视频包信息")
         )
@@ -142,7 +142,7 @@ class MediaDebugger6Extension(GObject.GObject, Nautilus.MenuProvider):
         
         # Packet Info - Audio
         packet_audio_item = Nautilus.MenuItem(
-            name="MediaDebugger6Extension::PacketAudio",
+            name="MediaAnalyzer6Extension::PacketAudio",
             label=self._t("Audio", "音频"),
             tip=self._t("Show audio packet information", "显示音频包信息")
         )
@@ -161,7 +161,7 @@ class MediaDebugger6Extension(GObject.GObject, Nautilus.MenuProvider):
         # Basic Info submenu
         basic_info_menu = Nautilus.Menu()
         basic_info_menu_item = Nautilus.MenuItem(
-            name="MediaDebugger6Extension::BasicInfo",
+            name="MediaAnalyzer6Extension::BasicInfo",
             label=self._t("Basic Info (Qt6)", "基础信息(Qt6)"),
             tip=self._t("Show basic information (Qt6)", "显示基础信息(Qt6)")
         )
@@ -189,7 +189,7 @@ class MediaDebugger6Extension(GObject.GObject, Nautilus.MenuProvider):
         
         for label, cmd_type in basic_items:
             item = Nautilus.MenuItem(
-                name=f"MediaDebugger6Extension::Basic{cmd_type}",
+                name=f"MediaAnalyzer6Extension::Basic{cmd_type}",
                 label=label,
                 tip=self._t(f"Show {cmd_type}", f"显示{label}")
             )
@@ -201,57 +201,57 @@ class MediaDebugger6Extension(GObject.GObject, Nautilus.MenuProvider):
         
         return menu_items
     
-    def _execute_media_debuger(self, args):
-        """Execute media-debuger6 command (using GUI interface)"""
+    def _execute_media_analyzer(self, args):
+        """Execute media-analyzer6 command (using GUI interface)"""
         try:
-            cmd = [self.media_debuger_cmd] + args
+            cmd = [self.media_analyzer_cmd] + args
             # Use subprocess.Popen to start GUI application, without waiting for completion
             subprocess.Popen(cmd)
             return True
         except FileNotFoundError:
-            print(f"Error: {self.media_debuger_cmd} not found in PATH")
+            print(f"Error: {self.media_analyzer_cmd} not found in PATH")
             return False
         except Exception as e:
-            print(f"Error executing media-debuger6: {e}")
+            print(f"Error executing media-analyzer6: {e}")
             return False
     
     def _show_basic_info(self, menu, basic_type):
         """Show basic information (using GUI)"""
         args = ["-b", basic_type]
-        self._execute_media_debuger(args)
+        self._execute_media_analyzer(args)
 
     def _show_streams_info(self, menu, file):
         """Show video stream information (using GUI)"""
         file_path = file.get_location().get_path()
         args = ["-m", file_path, "--streams"]
-        self._execute_media_debuger(args)
+        self._execute_media_analyzer(args)
     
     def _show_format_info(self, menu, file):
         """Show video format information (using GUI)"""
         file_path = file.get_location().get_path()
         args = ["-m", file_path, "--format"]
-        self._execute_media_debuger(args)
+        self._execute_media_analyzer(args)
     
     def _show_frame_video_info(self, menu, file):
         """Show video frame information (using GUI)"""
         file_path = file.get_location().get_path()
         args = ["-m", file_path, "-s", "v", "-f", "f"]
-        self._execute_media_debuger(args)
+        self._execute_media_analyzer(args)
     
     def _show_frame_audio_info(self, menu, file):
         """Show audio frame information (using GUI)"""
         file_path = file.get_location().get_path()
         args = ["-m", file_path, "-s", "a", "-f", "f"]
-        self._execute_media_debuger(args)
+        self._execute_media_analyzer(args)
     
     def _show_packet_video_info(self, menu, file):
         """Show video packet information (using GUI)"""
         file_path = file.get_location().get_path()
         args = ["-m", file_path, "-s", "v", "-f", "p"]
-        self._execute_media_debuger(args)
+        self._execute_media_analyzer(args)
     
     def _show_packet_audio_info(self, menu, file):
         """Show audio packet information (using GUI)"""
         file_path = file.get_location().get_path()
         args = ["-m", file_path, "-s", "a", "-f", "p"]
-        self._execute_media_debuger(args)
+        self._execute_media_analyzer(args)

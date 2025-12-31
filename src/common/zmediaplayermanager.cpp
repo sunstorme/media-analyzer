@@ -149,7 +149,7 @@ bool ZMediaPlayerManager::playWithPlayer(const QString& playerKey, const QString
         // MPV: windowed mode
     } else if (playerKey == PLAYER_FFPLAY) {
         // FFplay: windowed mode and autoexit
-        arguments << "-autoexit" << "-window_title" << filePath + "-Media Debuger";
+        arguments << "-autoexit" << "-window_title" << filePath + "-Media Analyzer";
     } else if (playerKey == PLAYER_SMPLAYER) {
         // SMPlayer: windowed mode
     } else if (playerKey == PLAYER_TOTEM) {

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Media Debuger 统一国际化管理工具
+Media Analyzer 统一国际化管理工具
 集成所有翻译相关功能到一个脚本中
 """
 
@@ -15,7 +15,7 @@ class I18nManager:
     def __init__(self, project_root: str = None):
         self.project_root = Path(project_root) if project_root else Path(__file__).parent.parent
         self.translations_dir = self.project_root / "translations"
-        self.pro_file = self.project_root / "media-debuger.pro"
+        self.pro_file = self.project_root / "media-analyzer.pro"
         
         # 支持的语言
         self.languages = {
@@ -107,7 +107,7 @@ class I18nManager:
             # 基本信息
             "Basic Info": "基本信息", "Version": "版本", "Buildconf": "构建配置",
             "Build": "构建", "License": "许可证", "About": "关于",
-            "About MediaDebuger": "关于 MediaDebuger",
+            "About MediaAnalyzer": "关于 MediaAnalyzer",
             
             # 帮助相关
             "Help Query %1=%2": "帮助查询 %1=%2", "No help information available for %1=%2": "没有 %1=%2 的帮助信息",
@@ -141,8 +141,8 @@ class I18nManager:
             " %1 a:0": " %1 a:0", " %1 v:0": " %1 v:0",
             
             # 关于对话框
-            "MediaDebuger\n\nA powerful media file analysis tool that provides:\n- Detailed media information display\n- Multiple format views (JSON, Table)\n- Real-time logging\n- Customizable layout\n- FFmpeg compilation tool\n\nVersion 1.0": 
-            "MediaDebuger\n\n一个强大的媒体文件分析工具，提供：\n- 详细的媒体信息显示\n- 多种格式视图（JSON、表格）\n- 实时日志记录\n- 可自定义的布局\n- FFmpeg 编译工具\n\n版本 1.0",
+            "MediaAnalyzer\n\nA powerful media file analysis tool that provides:\n- Detailed media information display\n- Multiple format views (JSON, Table)\n- Real-time logging\n- Customizable layout\n- FFmpeg compilation tool\n\nVersion 1.0": 
+            "MediaAnalyzer\n\n一个强大的媒体文件分析工具，提供：\n- 详细的媒体信息显示\n- 多种格式视图（JSON、表格）\n- 实时日志记录\n- 可自定义的布局\n- FFmpeg 编译工具\n\n版本 1.0",
             
             # 错误消息
             "No input file.": "没有输入文件。",
@@ -231,7 +231,7 @@ class I18nManager:
         """补全中文翻译"""
         print("补全中文翻译...")
         
-        ts_file = self.translations_dir / "media-debuger_zh_CN.ts"
+        ts_file = self.translations_dir / "media-analyzer_zh_CN.ts"
         if not ts_file.exists():
             print(f"✗ 翻译文件不存在: {ts_file}")
             return False
@@ -277,8 +277,8 @@ class I18nManager:
         """列出支持的语言"""
         print("支持的语言:")
         for code, name in self.languages.items():
-            ts_file = self.translations_dir / f"media-debuger_{code}.ts"
-            qm_file = self.translations_dir / f"media-debuger_{code}.qm"
+            ts_file = self.translations_dir / f"media-analyzer_{code}.ts"
+            qm_file = self.translations_dir / f"media-analyzer_{code}.qm"
             ts_status = "✓" if ts_file.exists() else "✗"
             qm_status = "✓" if qm_file.exists() else "✗"
             print(f"  {code}: {name} [{ts_status} TS] [{qm_status} QM]")
@@ -286,7 +286,7 @@ class I18nManager:
     def open_linguist(self, lang_code=None):
         """打开Qt Linguist"""
         if lang_code and lang_code in self.languages:
-            ts_file = self.translations_dir / f"media-debuger_{lang_code}.ts"
+            ts_file = self.translations_dir / f"media-analyzer_{lang_code}.ts"
             if ts_file.exists():
                 cmd = ['linguist', str(ts_file)]
                 try:
@@ -311,7 +311,7 @@ class I18nManager:
     def show_help(self):
         """显示帮助信息"""
         help_text = """
-Media Debuger 统一国际化管理工具
+Media Analyzer 统一国际化管理工具
 
 用法:
     python i18n_manager.py [命令] [参数]

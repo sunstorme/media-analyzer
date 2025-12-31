@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 # 项目信息
-project(MediaDebugger VERSION 1.0.0 LANGUAGES CXX)
+project(MediaAnalyzer VERSION 1.0.0 LANGUAGES CXX)
 
 # 设置C++标准
 set(CMAKE_CXX_STANDARD 17)
@@ -66,8 +66,8 @@ set(RESOURCES_FILES
 
 # 翻译文件
 set(TRANSLATION_FILES
-    translations/media-debuger_en_US.ts
-    translations/media-debuger_zh_CN.ts
+    translations/media-analyzer_en_US.ts
+    translations/media-analyzer_zh_CN.ts
 )
 
 # 添加QJsonModel子目录
@@ -75,9 +75,9 @@ add_subdirectory(third_part/QJsonModel)
 
 # 创建可执行文件
 if(QT_MAJOR_VERSION EQUAL 6)
-    set(EXECUTABLE_NAME media-debuger-qt6)
+    set(EXECUTABLE_NAME media-analyzer-qt6)
 else()
-    set(EXECUTABLE_NAME media-debuger-qt5)
+    set(EXECUTABLE_NAME media-analyzer-qt5)
 endif()
 
 add_executable(${EXECUTABLE_NAME}
@@ -139,13 +139,13 @@ install(TARGETS ${EXECUTABLE_NAME}
 )
 
 # 安装图标
-install(FILES assets/128x128/media-debuger-logo.svg
+install(FILES assets/128x128/media-analyzer-logo.svg
     DESTINATION ${ICONDIR}
-    RENAME media-debuger.svg
+    RENAME media-analyzer.svg
 )
 
 # 安装桌面文件
-install(FILES assets/media-debuger.desktop
+install(FILES assets/media-analyzer.desktop
     DESTINATION ${APPDIR}
 )
 
@@ -160,19 +160,19 @@ install(FILES README.md LICENSE
 #     qt_install_translations(
 #         ${EXECUTABLE_NAME}
 #         ${TRANSLATION_FILES}
-#         DESTINATION ${CMAKE_INSTALL_DATADIR}/media-debuger/translations
+#         DESTINATION ${CMAKE_INSTALL_DATADIR}/media-analyzer/translations
 #     )
 # else()
 #     qt5_install_translations(
 #         ${EXECUTABLE_NAME}
 #         ${TRANSLATION_FILES}
-#         DESTINATION ${CMAKE_INSTALL_DATADIR}/media-debuger/translations
+#         DESTINATION ${CMAKE_INSTALL_DATADIR}/media-analyzer/translations
 #     )
 # endif()
 
 # 打印配置信息
 message(STATUS "")
-message(STATUS "MediaDebugger Configuration:")
+message(STATUS "MediaAnalyzer Configuration:")
 message(STATUS "  Version: ${PROJECT_VERSION}")
 message(STATUS "  Qt Version: ${QT_MAJOR_VERSION}")
 message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE}")

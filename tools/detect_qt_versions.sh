@@ -59,13 +59,13 @@ echo "=== Build Recommendations ==="
 if [ "$QT5_AVAILABLE" = true ]; then
     echo "可以使用以下命令构建 Qt5 版本:"
     echo "You can build the Qt5 version with:"
-    echo "  mkdir -p build-qt5 && cd build-qt5 && QT_SELECT=5 qmake PREFIX=/usr ../media-debuger.pro && make"
+    echo "  mkdir -p build-qt5 && cd build-qt5 && QT_SELECT=5 qmake PREFIX=/usr ../media-analyzer.pro && make"
 fi
 
 if [ "$QT6_AVAILABLE" = true ]; then
     echo "可以使用以下命令构建 Qt6 版本:"
     echo "You can build the Qt6 version with:"
-    echo "  mkdir -p build-qt6 && cd build-qt6 && qmake6 PREFIX=/usr ../media-debuger.pro && make"
+    echo "  mkdir -p build-qt6 && cd build-qt6 && qmake6 PREFIX=/usr ../media-analyzer.pro && make"
 fi
 
 if [ "$QT5_AVAILABLE" = false ] && [ "$QT6_AVAILABLE" = false ]; then

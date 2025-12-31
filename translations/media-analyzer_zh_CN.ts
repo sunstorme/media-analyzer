@@ -1029,12 +1029,12 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="567" />
-        <source>About MediaDebuger</source>
-        <translation>关于 MediaDebuger</translation>
+        <source>About MediaAnalyzer</source>
+        <translation>关于 MediaAnalyzer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="568" />
-        <source>MediaDebuger
+        <source>MediaAnalyzer
 
 A powerful media file analysis tool that provides:
 - Detailed media information display
@@ -1044,7 +1044,7 @@ A powerful media file analysis tool that provides:
 - FFmpeg compilation tool
 
 Version 1.0</source>
-        <translation>MediaDebuger
+        <translation>MediaAnalyzer
 
 一个强大的媒体文件分析工具，提供：
 - 详细的媒体信息显示

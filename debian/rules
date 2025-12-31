@@ -13,12 +13,12 @@ override_dh_auto_configure:
 	# Build Qt5 version if available
 ifneq ($(QT5_AVAILABLE),)
 	mkdir -p build-qt5
-	cd build-qt5 && QT_SELECT=5 qmake PREFIX=/usr ../media-debuger.pro
+	cd build-qt5 && QT_SELECT=5 qmake PREFIX=/usr ../media-analyzer.pro
 endif
 	# Build Qt6 version if available
 ifneq ($(QT6_AVAILABLE),)
 	mkdir -p build-qt6
-	cd build-qt6 && qmake6 PREFIX=/usr ../media-debuger.pro
+	cd build-qt6 && qmake6 PREFIX=/usr ../media-analyzer.pro
 endif
 
 override_dh_auto_build:
@@ -34,11 +34,11 @@ endif
 override_dh_auto_install:
 	# Install Qt5 version if available
 ifneq ($(QT5_AVAILABLE),)
-	cd build-qt5 && $(MAKE) INSTALL_ROOT=../debian/media-debuger install
+	cd build-qt5 && $(MAKE) INSTALL_ROOT=../debian/media-analyzer install
 endif
 	# Install Qt6 version if available
 ifneq ($(QT6_AVAILABLE),)
-	cd build-qt6 && $(MAKE) INSTALL_ROOT=../debian/media-debuger6 install
+	cd build-qt6 && $(MAKE) INSTALL_ROOT=../debian/media-analyzer6 install
 endif
 
 override_dh_clean:
@@ -50,14 +50,14 @@ override_dh_install:
 	
 	# Change mode for Qt5 version if available
 ifneq ($(QT5_AVAILABLE),)
-	chmod 644 debian/dfm-xmenu-media-debuger/usr/share/applications/context-menus/dfm-xmenu-media-debuger.conf
-	chmod 755 debian/nautilus-xmenu-media-debuger/usr/share/nautilus-python/extensions/nautilus-contextmenu.py
+	chmod 644 debian/dfm-xmenu-media-analyzer/usr/share/applications/context-menus/dfm-xmenu-media-analyzer.conf
+	chmod 755 debian/nautilus-xmenu-media-analyzer/usr/share/nautilus-python/extensions/nautilus-contextmenu.py
 endif
 	
 	# Change mode for Qt6 version if available
 ifneq ($(QT6_AVAILABLE),)
-	chmod 644 debian/dfm-xmenu-media-debuger6/usr/share/applications/context-menus/dfm-xmenu-media-debuger6.conf
-	chmod 755 debian/nautilus-xmenu-media-debuger6/usr/share/nautilus-python/extensions/nautilus-contextmenu6.py
+	chmod 644 debian/dfm-xmenu-media-analyzer6/usr/share/applications/context-menus/dfm-xmenu-media-analyzer6.conf
+	chmod 755 debian/nautilus-xmenu-media-analyzer6/usr/share/nautilus-python/extensions/nautilus-contextmenu6.py
 endif
 
 # Print available Qt versions for debugging

@@ -1,10 +1,10 @@
 # Qt 版本检测和适配
 
-本文档说明如何在系统中同时存在 Qt5 和 Qt6 的情况下构建 media-debuger 项目。
+本文档说明如何在系统中同时存在 Qt5 和 Qt6 的情况下构建 media-analyzer 项目。
 
 ## 概述
 
-media-debuger 项目支持 Qt5 和 Qt6 两个版本。在系统中可能同时存在这两个版本的 Qt，因此需要检测可用的 Qt 版本并相应地构建项目。
+media-analyzer 项目支持 Qt5 和 Qt6 两个版本。在系统中可能同时存在这两个版本的 Qt，因此需要检测可用的 Qt 版本并相应地构建项目。
 
 ## 检测 Qt 版本
 
@@ -61,7 +61,7 @@ qmake6 --version
 mkdir -p build-qt5
 cd build-qt5
 export QT_SELECT=5
-qmake PREFIX=/usr ../media-debuger.pro
+qmake PREFIX=/usr ../media-analyzer.pro
 make
 cd ..
 ```
@@ -71,7 +71,7 @@ cd ..
 ```bash
 mkdir -p build-qt6
 cd build-qt6
-qmake6 PREFIX=/usr ../media-debuger.pro
+qmake6 PREFIX=/usr ../media-analyzer.pro
 make
 cd ..
 ```
@@ -114,14 +114,14 @@ sudo apt-get install qt6-base-dev qt6-tools-dev-tools
 
 ### .pro 文件配置
 
-项目的 `media-debuger.pro` 文件已经配置为根据 Qt 版本自动设置不同的目标名称：
+项目的 `media-analyzer.pro` 文件已经配置为根据 Qt 版本自动设置不同的目标名称：
 
 ```qmake
 # 根据不同的 Qt 版本设置不同的目标名称
 equals(QT_MAJOR_VERSION, 5) {
-    TARGET = media-debuger
+    TARGET = media-analyzer
 } else {
-    TARGET = media-debuger6
+    TARGET = media-analyzer6
 }
 ```
 
@@ -147,7 +147,7 @@ equals(QT_MAJOR_VERSION, 5) {
 
 2. **构建失败**
    - 检查是否安装了所有必需的依赖项
-   - 查看 `media-debuger.pro` 文件中的依赖项配置
+   - 查看 `media-analyzer.pro` 文件中的依赖项配置
 
 3. **版本冲突**
    - 使用 `QT_SELECT` 环境变量指定 Qt 版本
@@ -163,4 +163,4 @@ debian/rules print-qt-versions
 
 ## 总结
 
-通过使用提供的脚本和优化的构建配置，media-debuger 项目可以灵活地适配系统中同时存在 Qt5 和 Qt6 的情况。构建系统会自动检测可用的 Qt 版本并相应地构建项目，无需手动干预。
+通过使用提供的脚本和优化的构建配置，media-analyzer 项目可以灵活地适配系统中同时存在 Qt5 和 Qt6 的情况。构建系统会自动检测可用的 Qt 版本并相应地构建项目，无需手动干预。

@@ -1,7 +1,7 @@
-# Media Debuger 翻译指南
+# Media Analyzer 翻译指南
 
 ## 概述
-本文档说明如何为 Media Debuger 项目贡献翻译。
+本文档说明如何为 Media Analyzer 项目贡献翻译。
 
 ## 支持的语言
 - zh_CN: 简体中文
@@ -22,7 +22,7 @@
 - 或者使用文本编辑器直接编辑 .ts 文件
 
 ### 2. 翻译文件位置
-翻译文件位于 `translations/` 目录下，文件名格式为 `media-debuger_语言代码.ts`
+翻译文件位于 `translations/` 目录下，文件名格式为 `media-analyzer_语言代码.ts`
 
 ### 3. 翻译注意事项
 - 保持专业术语的一致性

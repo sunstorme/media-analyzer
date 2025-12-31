@@ -1,6 +1,6 @@
 # Qt 版本适配优化总结
 
-本文档总结了对 media-debuger 项目进行的 Qt 版本检测和适配优化工作。
+本文档总结了对 media-analyzer 项目进行的 Qt 版本检测和适配优化工作。
 
 ## 优化目标
 
@@ -179,11 +179,11 @@ dpkg-buildpackage -us -uc
 ```bash
 # 构建 Qt5 版本
 mkdir -p build-qt5 && cd build-qt5
-QT_SELECT=5 qmake PREFIX=/usr ../media-debuger.pro && make
+QT_SELECT=5 qmake PREFIX=/usr ../media-analyzer.pro && make
 
 # 构建 Qt6 版本
 mkdir -p build-qt6 && cd build-qt6
-qmake6 PREFIX=/usr ../media-debuger.pro && make
+qmake6 PREFIX=/usr ../media-analyzer.pro && make
 ```
 
 ## 优化效果
@@ -232,7 +232,7 @@ qmake6 PREFIX=/usr ../media-debuger.pro && make
 
 ## 总结
 
-通过这次优化，media-debuger 项目现在能够：
+通过这次优化，media-analyzer 项目现在能够：
 
 1. **自动检测** 系统中可用的 Qt 版本
 2. **智能适配** 不同的 Qt 环境

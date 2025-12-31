@@ -60,7 +60,7 @@ if grep -q "BUILD_QT5 := yes" build_config.mk 2>/dev/null; then
     echo "Building Qt5 version:"
     echo "  mkdir -p build-qt5"
     echo "  cd build-qt5"
-    echo "  QT_SELECT=5 qmake PREFIX=/usr ../media-debuger.pro"
+    echo "  QT_SELECT=5 qmake PREFIX=/usr ../media-analyzer.pro"
     echo "  make"
     echo ""
 fi
@@ -70,7 +70,7 @@ if grep -q "BUILD_QT6 := yes" build_config.mk 2>/dev/null; then
     echo "Building Qt6 version:"
     echo "  mkdir -p build-qt6"
     echo "  cd build-qt6"
-    echo "  qmake6 PREFIX=/usr ../media-debuger.pro"
+    echo "  qmake6 PREFIX=/usr ../media-analyzer.pro"
     echo "  make"
     echo ""
 fi

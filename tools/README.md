@@ -1,8 +1,8 @@
-# Media Debuger 国际化工具使用说明
+# Media Analyzer 国际化工具使用说明
 
 ## 🎯 概述
 
-本目录包含Media Debuger项目的完整国际化支持工具，提供统一的翻译管理功能。
+本目录包含Media Analyzer项目的完整国际化支持工具，提供统一的翻译管理功能。
 
 ## 📁 工具文件
 
@@ -44,7 +44,7 @@ python3 tools/i18n_manager.py list
 python3 tools/i18n_manager.py linguist zh_CN
 
 # 只生成中文.qm文件
-lrelease translations/media-debuger_zh_CN.ts
+lrelease translations/media-analyzer_zh_CN.ts
 
 # 生成所有语言的.qm文件
 python3 tools/i18n_manager.py release
@@ -151,13 +151,13 @@ help            显示帮助信息
 ### Qt标准命令
 ```bash
 # 更新翻译文件
-lupdate media-debuger.pro -ts -no-obsolete
+lupdate media-analyzer.pro -ts -no-obsolete
 
 # 生成.qm文件
 lrelease translations/*.ts
 
 # 编辑翻译文件
-linguist translations/media-debuger_zh_CN.ts
+linguist translations/media-analyzer_zh_CN.ts
 ```
 
 ## 🎯 翻译流程
@@ -191,9 +191,9 @@ tools/
 └── i18n_manager.py              # 统一翻译管理工具
 
 translations/
-├── media-debuger_zh_CN.ts/qm   # 中文翻译
-├── media-debuger_en_US.ts/qm   # 英文翻译
-├── media-debuger_*.ts/qm        # 其他8种语言
+├── media-analyzer_zh_CN.ts/qm   # 中文翻译
+├── media-analyzer_en_US.ts/qm   # 英文翻译
+├── media-analyzer_*.ts/qm        # 其他8种语言
 ├── templates/
 │   └── translation_guide.md   # 翻译指南
 └── README.md                    # 详细文档

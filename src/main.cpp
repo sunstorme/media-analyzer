@@ -79,7 +79,7 @@ void logConfig(const QApplication &app) {
 int commandConfig(const QApplication& app) {
     QCommandLineParser parser;
 
-    parser.setApplicationDescription("Media Debuger - Media file debugging tool");
+    parser.setApplicationDescription("Media Analyzer - Media file debugging tool");
 
     // options
     QCommandLineOption mediaInfoOption(QStringList() << "m" << "media-info",
@@ -256,7 +256,7 @@ void translateConfig(const QApplication& app) {
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {
-        const QString baseName = "media-debuger_" + QLocale(locale).name();
+        const QString baseName = "media-analyzer_" + QLocale(locale).name();
         if (translator.load("./translations/" + baseName)) {
             app.installTranslator(&translator);
             break;

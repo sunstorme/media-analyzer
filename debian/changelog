@@ -1,3 +1,16 @@
+media-analyzer (1.2.1-1) unstable; urgency=medium
+
+  * chore: Update version to 1.2.1-1
+  * refactor(project): rename MediaDebugger to MediaAnalyzer
+  * refactor(widgets): restructure format widgets and fix naming inconsistencies
+  * refactor(config): reorganize media debugger menu structure
+  * refactor(ui): reorganize menu structure and remove redundant copyright headers
+  * fix(ui): resolve widget selection and index handling bugs
+  * feat(utils): add package version detection and display in about dialog
+  * refactor(utils): add directory management utilities and improve preview image handling
+
+ -- zhang hongyuan <2063218120@qq.com>  Wed, 31 Dec 2025 13:57:30 +0800
+
 media-debuger (1.2.0-1) unstable; urgency=medium
 
   * chore: Update version to 1.2.0-1
