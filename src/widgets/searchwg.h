@@ -62,7 +62,7 @@ public:
 
     void setSearchStatus(const QString &text);
 
-    QLineEdit * getSearchLE();
+    QLineEdit *getSearchLE();
 signals:
     void searchRangeSelectionChanged(const QStringList &selectedOptions);
     void searchReady();
@@ -70,12 +70,14 @@ signals:
     void searchNext();
     void searchBefore();
     void searchClear();
+    void matchControlChanged();
 
 private slots:
     void onSelectAllClicked(bool checked);
     void onSelectNoneClicked();
     void onSearchRangeCheckboxToggled();
     void onGroupBoxToggled(bool checked);
+    void onMatchControlChanged();
 
     void on_search_btn_clicked();
     void on_search_le_textChanged(const QString &arg1);
@@ -97,16 +99,20 @@ private:
 
 private:
     Ui::SearchWG *ui;
-    ZFlowLayout *m_floatLayout;
+    ZFlowLayout *m_floatLayout = nullptr;
     
     // Search range controls
-    QRadioButton *m_selectAllRadioBtn;
-    QRadioButton *m_selectNoneRadioBtn;
+    QRadioButton *m_selectAllRadioBtn = nullptr;
+    QRadioButton *m_selectNoneRadioBtn = nullptr;
     QList<QCheckBox*> m_searchRangeCheckBoxes;
     
     // Group box visibility control
     GroupBoxTypes m_visibleGroupBoxes;
     QMap<QGroupBox*, int> m_originalHeights;
+    
+    // Search state tracking
+    bool m_isSearching = false;
+    QString m_lastSearchText;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(SearchWG::GroupBoxTypes)

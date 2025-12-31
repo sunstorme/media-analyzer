@@ -47,8 +47,8 @@ public:
 
     bool setHelpParams(const QString &category, const QString &value);
     void setControlHeaderVisiable(const bool &visiable = true);
-private slots:
 
+private slots:
     void on_category_combx_activated(int index);
     void on_param_combox_activated(int index);
     void on_keep_last_cbx_stateChanged(int state);

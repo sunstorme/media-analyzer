@@ -75,12 +75,12 @@ private slots:
     void toggleSwitchView();
 
 private:
-    QMenu *m_copyMenu;
-    QMenu *m_expandMenu;
-    QMenu *m_collapseMenu;
+    QMenu *m_copyMenu = nullptr;
+    QMenu *m_expandMenu = nullptr;
+    QMenu *m_collapseMenu = nullptr;
 
-    QAction *m_searchAction;
-    QAction *m_switchViewAction;
+    QAction *m_searchAction = nullptr;
+    QAction *m_switchViewAction = nullptr;
     QShortcut *m_searchShortcut = nullptr;
 
 private:

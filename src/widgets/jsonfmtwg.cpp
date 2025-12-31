@@ -40,7 +40,7 @@ void JsonFormatWG::initUI()
     m_searchWG->setVisibleGroupBoxes(requiredBoxes);
     
     // Add search component to layout
-    ui->verticalLayout->addWidget(m_searchWG);
+    ui->treeViewLayout->addWidget(m_searchWG);
     m_searchWG->setVisible(false);
 }
 
@@ -92,6 +92,7 @@ void JsonFormatWG::initConnection()
 
     // Connect search related signals
     connect(m_searchWG, &SearchWG::searchReady, this, &JsonFormatWG::on_searchReady);
+    connect(m_searchWG, &SearchWG::matchControlChanged, this, &JsonFormatWG::on_searchReady);
     connect(m_searchWG, &SearchWG::searchTextChanged, this, &JsonFormatWG::on_searchTextChanged);
     connect(m_searchWG, &SearchWG::searchClear, this, &JsonFormatWG::on_searchClear);
 

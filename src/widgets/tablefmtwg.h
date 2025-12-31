@@ -109,15 +109,10 @@ public slots:
     void showDetailInfo();
 
 private slots:
-    void on_search_btn_clicked();
-    void on_expand_raw_btn_clicked(bool checked);
-    void on_search_le_editingFinished();
-    
-    // Detail search functionality
-    void showDetailSearch();
-    void onDetailSearchCompleted();
-
-    void on_search_le_textChanged(const QString &arg1);
+    // Search functionality
+    void onSearchReady();
+    void onSearchTextChanged(const QString &text);
+    void onSearchClear();
     
     // Column width management slots
     void onHeaderSectionResized(int logicalIndex, int oldSize, int newSize);
@@ -128,8 +123,6 @@ private slots:
     void onContextMenuAboutToShow();
 
 private:
-    void setupSearchButton();
-    void createDetailSearchDialog();
     void updateCurrentModel(); // Helper method to update the current active model
     QString getSelectedText(bool includeHeader = false);
     void setupTableModel(); // Setup table model and view
@@ -151,9 +144,8 @@ private:
     MultiColumnSearchProxyModel *multiColumnSearchModel = nullptr;
     ZTableHeaderManager *m_headerManager = nullptr;
     
-    // Detail search components
-    QMenu *m_searchButtonMenu = nullptr;
-    QAction *m_detailSearchAction;
+    // Search component
+    SearchWG *m_searchWG = nullptr;
 
     // Copy
     QMenu *m_copyMenu = nullptr;
@@ -178,16 +170,15 @@ private:
 
     void updateImageMenuVisibility();
 
-    // Detail search
-    SearchWG *m_detailSearchDialog = nullptr;
-    QShortcut *m_searchShortcut = nullptr;
-
     int m_currentRow;
     int m_currentColumn;
     QString m_helpKey;
     QAction *m_detailAction = nullptr;
     QAction *m_restoreOrderAction = nullptr;
     QAction *m_fitTableColumnAction = nullptr;
+    QAction *m_switchViewAction = nullptr;
+    QAction *m_searchAction = nullptr;
+    QShortcut *m_searchShortcut = nullptr;
     
     // Column width management
     QVector<double> m_columnWidthRatios;

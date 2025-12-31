@@ -62,7 +62,7 @@ public:
     virtual bool loadJson(const QByteArray &json) = 0;
 
 protected:
-    QMenu *m_contextMenu;
+    QMenu *m_contextMenu = nullptr;
 
 private:
     ZExtraInfo m_extraInfo;

@@ -50,8 +50,8 @@ private:
     QString m_mediaFile;
     ZFfprobe m_probe;
     
-    JsonFormatWG *m_formatWidget;
-    JsonFormatWG *m_streamsWidget;
+    JsonFormatWG *m_formatWidget = nullptr;
+    JsonFormatWG *m_streamsWidget = nullptr;
 };
 
 #endif // MEDIAPROPSWG_H

@@ -42,7 +42,7 @@ private:
 private:
     Ui::TabConfigWg *ui;
 
-    ZFlowLayout *m_configFlowLayout;
+    ZFlowLayout *m_configFlowLayout = nullptr;
 
     QMap<QString, QList<QStringList>> m_configs;
 };

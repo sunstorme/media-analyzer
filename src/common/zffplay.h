@@ -49,7 +49,7 @@ private slots:
     void onProcessError(QProcess::ProcessError error);
 
 private:
-    QProcess *m_process;
+    QProcess *m_process = nullptr;
     bool m_isPlaying;
     
     // Execute ffplay command

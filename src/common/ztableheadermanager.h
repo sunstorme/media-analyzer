@@ -48,11 +48,11 @@ private:
     void setupTotalCountLabel();
 
 private:
-    QHeaderView *m_horizontalHeader;
-    QHeaderView *m_verticalHeader;
+    QHeaderView *m_horizontalHeader = nullptr;
+    QHeaderView *m_verticalHeader = nullptr;
     QString m_objectName;
     QHash<QAction*, int> m_actionToColumnMap;
-    QLabel *m_totalCountLabel;
+    QLabel *m_totalCountLabel = nullptr;
     bool m_showVerticalHeader;
 };
 

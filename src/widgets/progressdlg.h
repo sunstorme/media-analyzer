@@ -83,12 +83,12 @@ private:
     void setupUI();
     void updateProgressStyle();
 
-    QProgressBar *m_progressBar;
-    QLabel *m_messageLabel;
-    QLabel *m_timeLabel;
-    QPushButton *m_cancelButton;
-    QTimer *m_animationTimer;
-    QElapsedTimer *m_elapsedTimer;
+    QProgressBar *m_progressBar = nullptr;
+    QLabel *m_messageLabel = nullptr;
+    QLabel *m_timeLabel = nullptr;
+    QPushButton *m_cancelButton = nullptr;
+    QTimer *m_animationTimer = nullptr;
+    QElapsedTimer *m_elapsedTimer = nullptr;
 
     ProgressMode m_mode;
     bool m_autoClose;

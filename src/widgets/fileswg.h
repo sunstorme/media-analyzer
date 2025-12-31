@@ -52,13 +52,13 @@ public slots:
 
 private:
     Ui::FilesWG *ui;
-    FilesHistoryModel *m_model;
-    QMenu *m_contextMenu;
-    QAction *m_removeAction;
-    QAction *m_deleteFileAction;
-    QAction *m_openLocationAction;
-    QAction *m_copyPathAction;
-    QAction *m_playAction;
+    FilesHistoryModel *m_model = nullptr;
+    QMenu *m_contextMenu = nullptr;
+    QAction *m_removeAction = nullptr;
+    QAction *m_deleteFileAction = nullptr;
+    QAction *m_openLocationAction = nullptr;
+    QAction *m_copyPathAction = nullptr;
+    QAction *m_playAction = nullptr;
 
     void createContextMenu();
     void onFilesDropped(const QStringList &filePaths);

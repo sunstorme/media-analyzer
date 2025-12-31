@@ -128,10 +128,10 @@ private:
     void closeInstallProgressDialog();
 
 private:
-    ZMediaPlayerConfig* m_config;
-    QProcess* m_installProcess;
+    ZMediaPlayerConfig* m_config = nullptr;
+    QProcess* m_installProcess = nullptr;
     QString m_currentInstallingPlayer;
-    QMessageBox* m_progressDialog;
+    QMessageBox* m_progressDialog = nullptr;
     QString m_installOutput;
 };
 

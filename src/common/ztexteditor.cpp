@@ -322,6 +322,7 @@ void ZTextEditor::setupSearch()
     
     // Connect search widget signals
     connect(m_searchWG, &SearchWG::searchReady, this, &ZTextEditor::onSearchReady);
+    connect(m_searchWG, &SearchWG::matchControlChanged, this, &ZTextEditor::onSearchReady);
     connect(m_searchWG, &SearchWG::searchClear, this, &ZTextEditor::onSearchClear);
     connect(m_searchWG, &SearchWG::searchNext, this, &ZTextEditor::onSearchNext);
     connect(m_searchWG, &SearchWG::searchBefore, this, &ZTextEditor::onSearchBefore);

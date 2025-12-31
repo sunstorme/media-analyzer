@@ -38,11 +38,11 @@ private slots:
 
 private:
     Ui::LogWG *ui;
-    LogModel *m_logModel;
-    ZTableHeaderManager *m_headerManager;
+    LogModel *m_logModel = nullptr;
+    ZTableHeaderManager *m_headerManager = nullptr;
 
-    ZTextHighlighter *m_highLighter;
-    SearchWG *m_searchWG;
+    ZTextHighlighter *m_highLighter = nullptr;
+    SearchWG *m_searchWG = nullptr;
 };
 
 #endif // LOGWG_H

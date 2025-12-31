@@ -32,8 +32,8 @@ public:
 private:
     Ui::GlobalConfingWG *ui;
 
-    TableFormatWG *generalCfgWg;
-    QButtonGroup *configButtonGroup;
+    TableFormatWG *generalCfgWg = nullptr;
+    QButtonGroup *configButtonGroup = nullptr;
 
 private:
     void loadConfigData(const QString& group, const QStringList& keys = QStringList());

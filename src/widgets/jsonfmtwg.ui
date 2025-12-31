@@ -28,15 +28,15 @@
    </property>
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
-     <widget class="QWidget" name="treeViewLayout">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+     <widget class="QWidget" name="treeViewWidget">
+      <layout class="QVBoxLayout" name="treeViewLayout">
        <item>
         <widget class="QTreeView" name="treeView"/>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="textViewLayout">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+     <widget class="QWidget" name="textViewWidget">
+      <layout class="QVBoxLayout" name="textViewLayout">
        <item>
         <widget class="ZTextEditor" name="textView"/>
        </item>

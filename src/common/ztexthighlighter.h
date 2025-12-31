@@ -59,7 +59,7 @@ private:
     QTextDocument::FindFlags getFindFlags() const;
 
 private:
-    QPlainTextEdit *m_textEdit;
+    QPlainTextEdit *m_textEdit = nullptr;
     QList<QTextCursor> m_highlightedCursors;
     QTextCharFormat m_highlightFormat;
     QString m_currentSearchText;

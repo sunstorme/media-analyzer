@@ -88,13 +88,13 @@ private:
     ZCommandExecutor *m_executor = nullptr;
 
     // Export Media Info Fileds controls
-    QRadioButton *m_selectAllMediaInfoRBtn;
-    QRadioButton *m_selectNoneMediaInfoRBtn;
+    QRadioButton *m_selectAllMediaInfoRBtn = nullptr;
+    QRadioButton *m_selectNoneMediaInfoRBtn = nullptr;
     QList<QCheckBox*> m_exportMediaInfoFiledsCBoxes;
 
     // Export Media Info Fileds controls
-    QRadioButton *m_selectAllBasicInfoRBtn;
-    QRadioButton *m_selectNoneBasicInfoRBtn;
+    QRadioButton *m_selectAllBasicInfoRBtn = nullptr;
+    QRadioButton *m_selectNoneBasicInfoRBtn = nullptr;
     QList<QCheckBox*> m_exportBasicInfoFiledsCBoxes;
 
     ExportModelType m_exportModel = BasicInfo;

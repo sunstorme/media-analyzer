@@ -54,8 +54,8 @@ private:
     void loadConfigureOptions();
 private:
     Ui::ConfigureBuildTool *ui;
-    QAction *m_addRecordAction;
-    QAction *m_RemoveRecordAction;
+    QAction *m_addRecordAction = nullptr;
+    QAction *m_RemoveRecordAction = nullptr;
 
     QStringList m_filePaths;
     QProcess *m_process = nullptr;

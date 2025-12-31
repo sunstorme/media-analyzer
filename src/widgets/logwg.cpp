@@ -44,6 +44,7 @@ LogWG::LogWG(QWidget *parent)
     m_searchWG->setVisible(false);
 
     connect(m_searchWG, &SearchWG::searchReady, this, &LogWG::on_searchReady);
+    connect(m_searchWG, &SearchWG::matchControlChanged, this, &LogWG::on_searchReady);
     connect(m_searchWG, &SearchWG::searchClear, this, [this]() {
         m_highLighter->clearHighlight();
         m_searchWG->setSearchText("");

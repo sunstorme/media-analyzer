@@ -25,7 +25,6 @@ void TableFormatWG::initUI()
 {
     // Setup UI
     ui->setupUi(this);
-    ui->detail_raw_pte->setVisible(false);
 
     m_isUserAdjusted = false;
     m_resizeTimer = new QTimer(this);
@@ -37,11 +36,19 @@ void TableFormatWG::initUI()
     // Setup column width management
     setupColumnWidthManagement();
 
-    // Connect the action
-    createDetailSearchDialog();
+    // Initialize search component
+    m_searchWG = new SearchWG(this);
+    m_searchWG->setWindowTitle(tr("Table Search"));
+    
+    // Configure search component display group boxes
+    auto requiredBoxes = SearchWG::SearchRange | SearchWG::MatchControl | SearchWG::Operation;
+    m_searchWG->setVisibleGroupBoxes(requiredBoxes);
+    
+    // Add search component to layout (at the bottom)
+    ui->tableViewLayout->addWidget(m_searchWG);
+    m_searchWG->setVisible(false);
 
-    // Set context menu policy for search button
-    ui->search_btn->setContextMenuPolicy(Qt::CustomContextMenu);
+    // Set context menu policy for table view
     ui->detail_tb->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
@@ -67,11 +74,6 @@ void TableFormatWG::initMenu()
     m_imageMenu->addAction(m_saveImageAction);
     m_contextMenu->addMenu(m_imageMenu);
     m_contextMenu->addSeparator();
-
-    m_searchButtonMenu = new QMenu(this);
-    m_detailSearchAction = new QAction(tr("Detail Search"), this);
-    m_detailSearchAction->setToolTip(tr("Open advanced search dialog with more options"));
-    m_searchButtonMenu->addAction(m_detailSearchAction);
 
     // copy selected text action
     m_copyMenu = new QMenu("Copy", this);
@@ -103,6 +105,18 @@ void TableFormatWG::initMenu()
 
     // Add copy menu to context menu
     m_contextMenu->addMenu(m_copyMenu);
+    m_contextMenu->addSeparator();
+
+    // Add search action
+    m_searchAction = new QAction(tr("Search"), this);
+    m_contextMenu->addAction(m_searchAction);
+    m_contextMenu->addSeparator();
+
+    // Add switch view action
+    m_switchViewAction = new QAction(tr("Switch View"), this);
+    m_contextMenu->addAction(m_switchViewAction);
+    m_contextMenu->addSeparator();
+    ui->detail_raw_pte->addContextAction(m_switchViewAction);
 }
 
 void TableFormatWG::initConnection()
@@ -148,12 +162,18 @@ void TableFormatWG::initConnection()
 
     connect(m_fitTableColumnAction, &QAction::triggered, this, &TableFormatWG::fitTableColumnToContent);
 
-    connect(m_detailSearchAction, &QAction::triggered, this, &TableFormatWG::showDetailSearch);
+    // Connect search action
+    connect(m_searchAction, &QAction::triggered, this, [this]() {
+        m_searchWG->setVisible(!m_searchWG->isVisible());
+        if (m_searchWG->isVisible()) {
+            m_searchWG->setFocus();
+        }
+    });
 
-    connect(ui->search_btn, &QPushButton::customContextMenuRequested,
-            this, [this](const QPoint &pos) {
-                m_searchButtonMenu->exec(ui->search_btn->mapToGlobal(pos));
-            });
+    connect(m_switchViewAction, &QAction::triggered, this, [this]() {
+        ui->stackedWidget->setCurrentIndex((ui->stackedWidget->currentIndex() + 1) % ui->stackedWidget->count());
+    });
+
     connect(m_copySelectedTextAction, &QAction::triggered, this, &TableFormatWG::copySelectedText);
 
     connect(m_copySelectedTextWithHeaderAction, &QAction::triggered, this, &TableFormatWG::copySelectedTextWithHeader);
@@ -175,6 +195,14 @@ void TableFormatWG::initConnection()
     connect(m_saveImageAction, &QAction::triggered, this, &TableFormatWG::saveImage);
 
     connect(this, &TableFormatWG::contextMenuAboutToShow, this, &TableFormatWG::onContextMenuAboutToShow);
+
+    // Connect search related signals
+    connect(m_searchWG, &SearchWG::searchReady, this, &TableFormatWG::onSearchReady);
+    connect(m_searchWG, &SearchWG::matchControlChanged, this, &TableFormatWG::onSearchReady);
+
+    connect(m_searchWG, &SearchWG::searchTextChanged, this, &TableFormatWG::onSearchTextChanged);
+
+    connect(m_searchWG, &SearchWG::searchClear, this, &TableFormatWG::onSearchClear);
 }
 
 void TableFormatWG::initExtra()
@@ -187,13 +215,18 @@ void TableFormatWG::initShortCut()
 {
     m_searchShortcut = new QShortcut(QKeySequence("Ctrl+F"), this);
     // Setup search shortcut
-    connect(m_searchShortcut, &QShortcut::activated, this, &TableFormatWG::showDetailSearch);
+    connect(m_searchShortcut, &QShortcut::activated, this, [this]() {
+        m_searchWG->setVisible(!m_searchWG->isVisible());
+        if (m_searchWG->isVisible()) {
+            m_searchWG->setFocus();
+        }
+    });
 }
 
 TableFormatWG::~TableFormatWG()
 {
     delete m_headerManager;
-    delete m_detailSearchDialog;
+    delete m_searchWG;
     delete ui;
 }
 
@@ -204,7 +237,7 @@ void TableFormatWG::setHelpInfoKey(const QString &key)
 
 void TableFormatWG::setSearchTitleVisiable(const bool &visiable)
 {
-    ui->search_title_wg->setVisible(visiable);
+    m_searchWG->setVisible(visiable);
 }
 
 QList<QStringList> TableFormatWG::getSelectLines()
@@ -246,10 +279,6 @@ const QList<QStringList> *TableFormatWG::getTableData()
     return &m_data_tb;
 }
 
-void TableFormatWG::on_search_btn_clicked()
-{
-    onDetailSearchCompleted();
-}
 
 void TableFormatWG::clearDetailTb()
 {
@@ -265,6 +294,11 @@ void TableFormatWG::initHeaderDetailTb(const QStringList &headers, QString forma
 
     // Initial resize mode will be set in setupInitialColumnWidths()
     m_headerManager->restoreState();
+
+    // Update search range options with current headers
+    if (!m_headers.isEmpty()) {
+        m_searchWG->setSearchRangeOptions(m_headers);
+    }
 
     ui->detail_raw_pte->clear();
     ui->detail_raw_pte->appendPlainText(m_headers.join(format_join));
@@ -702,84 +736,20 @@ void TableFormatWG::initDetailTb(const QString &data, const QString& format_key)
     updateDataDetailTb(m_data_tb);
 }
 
-void TableFormatWG::on_expand_raw_btn_clicked(bool checked)
-{
-    ui->detail_raw_pte->setVisible(checked);
-}
-
-void TableFormatWG::on_search_le_editingFinished()
-{
-    emit ui->search_btn->clicked();
-}
-
-void TableFormatWG::setupSearchButton()
-{
-
-}
-
-void TableFormatWG::createDetailSearchDialog()
-{
-    if (!m_detailSearchDialog) {
-        m_detailSearchDialog = new SearchWG(this);
-        m_detailSearchDialog->setWindowTitle(tr("Detail Search"));
-        m_detailSearchDialog->setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint);
-        // m_detailSearchDialog->setWindowModality(Qt::ApplicationModal);
-        
-        // Configure to show only the required group boxes for InfoWidgets
-        auto requiredBoxes = SearchWG::SearchRange | SearchWG::MatchControl | SearchWG::Operation;
-        m_detailSearchDialog->setVisibleGroupBoxes(requiredBoxes);
-        
-        // Set search range options based on current table headers
-        if (!m_headers.isEmpty()) {
-            m_detailSearchDialog->setSearchRangeOptions(m_headers);
-        }
-        
-        // Connect signals
-        connect(m_detailSearchDialog, &SearchWG::searchRangeSelectionChanged,
-                this, &TableFormatWG::onDetailSearchCompleted);
-
-        connect(m_detailSearchDialog, &SearchWG::searchReady,
-                this, &TableFormatWG::onDetailSearchCompleted);
-
-        connect(m_detailSearchDialog, &SearchWG::searchTextChanged, [=](QString text) {
-            ui->search_le->setText(text);
-        });
-
-        // Resize dialog appropriately
-        m_detailSearchDialog->adjustSize();
-        m_detailSearchDialog->setMinimumWidth(400);
-    }
-}
-
-void TableFormatWG::showDetailSearch()
-{
-    // Show search title
-    ui->search_title_wg->setVisible(!ui->search_title_wg->isVisible());
-
-    // Update search range options with current headers
-    if (!m_headers.isEmpty()) {
-        m_detailSearchDialog->setSearchRangeOptions(m_headers);
-    }
-    
-    // Show the dialog
-    m_detailSearchDialog->show();
-    m_detailSearchDialog->raise();
-    m_detailSearchDialog->activateWindow();
-}
-
-void TableFormatWG::onDetailSearchCompleted()
+void TableFormatWG::onSearchReady()
 {
     // Get search parameters from SearchWG
-    QStringList selectedRanges = m_detailSearchDialog->getSelectedSearchRanges();
-    QString searchText = ui->search_le->text().trimmed();
+    QStringList selectedRanges = m_searchWG->getSelectedSearchRanges();
+    QString searchText = m_searchWG->getSearchText().trimmed();
     
-    qDebug() << "Detail search completed with selected ranges:" << selectedRanges;
+    qDebug() << "Search completed with selected ranges:" << selectedRanges;
     qDebug() << "Search text:" << searchText;
     
     if (searchText.isEmpty()) {
         ui->detail_tb->setModel(multiColumnSearchModel);
         multiColumnSearchModel->resetFilters();
         updateCurrentModel();
+        m_searchWG->setSearchStatus(tr("Search text is empty"));
         return;
     }
     
@@ -787,9 +757,9 @@ void TableFormatWG::onDetailSearchCompleted()
     multiColumnSearchModel->setSearchText(searchText);
     
     // Set match control options from SearchWG
-    multiColumnSearchModel->setCaseSensitive(m_detailSearchDialog->isCaseSensitive());
-    multiColumnSearchModel->setMatchWholeWords(m_detailSearchDialog->isMatchWholewords());
-    multiColumnSearchModel->setUseRegularExpression(m_detailSearchDialog->isUseRegularExpression());
+    multiColumnSearchModel->setCaseSensitive(m_searchWG->isCaseSensitive());
+    multiColumnSearchModel->setMatchWholeWords(m_searchWG->isMatchWholewords());
+    multiColumnSearchModel->setUseRegularExpression(m_searchWG->isUseRegularExpression());
     
     // Configure search columns
     if (selectedRanges.isEmpty()) {
@@ -807,7 +777,33 @@ void TableFormatWG::onDetailSearchCompleted()
     
     updateCurrentModel();
     
-    qDebug() << "Multi-column search applied. Filtered rows:" << multiColumnSearchModel->rowCount();
+    // Update search status
+    int filteredCount = multiColumnSearchModel->rowCount();
+    int totalCount = m_data_tb.size();
+    if (filteredCount > 0) {
+        m_searchWG->setSearchStatus(tr("Found %1 of %2 items").arg(filteredCount).arg(totalCount));
+    } else {
+        m_searchWG->setSearchStatus(tr("No items found"));
+    }
+    
+    qDebug() << "Multi-column search applied. Filtered rows:" << filteredCount;
+}
+
+void TableFormatWG::onSearchTextChanged(const QString &text)
+{
+    if (text.isEmpty()) {
+        multiColumnSearchModel->resetFilters();
+        updateCurrentModel();
+        m_searchWG->setSearchStatus("");
+    }
+}
+
+void TableFormatWG::onSearchClear()
+{
+    multiColumnSearchModel->resetFilters();
+    updateCurrentModel();
+    m_searchWG->setSearchText("");
+    m_searchWG->setSearchStatus("");
 }
 
 void TableFormatWG::updateCurrentModel()
@@ -1120,12 +1116,6 @@ QString TableFormatWG::prepareCopyData(CopyOperation operation)
     return text;
 }
 
-void TableFormatWG::on_search_le_textChanged(const QString &arg1)
-{
-    if (m_detailSearchDialog) {
-        m_detailSearchDialog->setSearchText(arg1);
-    }
-}
 
 void TableFormatWG::copySelectedText()
 {

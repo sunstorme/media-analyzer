@@ -36,7 +36,6 @@ void SearchWG::setupGroupBoxes()
     ui->match_control_groupBox->setCheckable(true);
     ui->file_groupBox->setCheckable(true);
     ui->time_groupBox->setCheckable(true);
-    ui->operation_groupBox->setCheckable(true);
 
     // Store original heights
     m_originalHeights[ui->search_range_groupBox] = ui->search_range_groupBox->sizeHint().height();
@@ -50,7 +49,6 @@ void SearchWG::setupGroupBoxes()
     ui->match_control_groupBox->setChecked(false);
     ui->file_groupBox->setChecked(false);
     ui->time_groupBox->setChecked(false);
-    ui->operation_groupBox->setChecked(true);
 
     // Connect group box toggle signals
     connect(ui->search_range_groupBox, &QGroupBox::toggled, this, &SearchWG::onGroupBoxToggled);
@@ -58,6 +56,11 @@ void SearchWG::setupGroupBoxes()
     connect(ui->file_groupBox, &QGroupBox::toggled, this, &SearchWG::onGroupBoxToggled);
     connect(ui->time_groupBox, &QGroupBox::toggled, this, &SearchWG::onGroupBoxToggled);
     connect(ui->operation_groupBox, &QGroupBox::toggled, this, &SearchWG::onGroupBoxToggled);
+
+    // Connect match control checkbox signals
+    connect(ui->case_sensitive_cbx, &QCheckBox::stateChanged, this, &SearchWG::onMatchControlChanged);
+    connect(ui->match_whole_word_cbx, &QCheckBox::stateChanged, this, &SearchWG::onMatchControlChanged);
+    connect(ui->use_regular_express_cbx, &QCheckBox::stateChanged, this, &SearchWG::onMatchControlChanged);
 
     // Apply initial visibility
     updateGroupBoxDetail(ui->search_range_groupBox, false);
@@ -201,6 +204,11 @@ void SearchWG::onGroupBoxToggled(bool checked)
     if (groupBox) {
         updateGroupBoxDetail(groupBox, checked);
     }
+}
+
+void SearchWG::onMatchControlChanged()
+{
+    emit matchControlChanged();
 }
 
 void SearchWG::updateGroupBoxDetail(QGroupBox *groupBox, bool visible)
@@ -355,6 +363,8 @@ QLineEdit *SearchWG::getSearchLE()
 
 void SearchWG::on_search_btn_clicked()
 {
+    m_isSearching = true;
+    m_lastSearchText = ui->search_le->text();
     emit searchReady();
 }
 
@@ -367,7 +377,16 @@ void SearchWG::on_search_le_textChanged(const QString &arg1)
 
 void SearchWG::on_search_le_editingFinished()
 {
-    emit ui->search_btn->clicked();
+    QString text = ui->search_le->text();
+    if (!text.isEmpty()) {
+        if (m_isSearching && text == m_lastSearchText) {
+            emit searchNext();
+        } else {
+            m_isSearching = true;
+            m_lastSearchText = text;
+            emit searchReady();
+        }
+    }
 }
 
 
@@ -385,6 +404,8 @@ void SearchWG::on_next_btn_clicked()
 
 void SearchWG::on_clear_btn_clicked()
 {
+    m_isSearching = false;
+    m_lastSearchText.clear();
     emit searchClear();
 }
 
