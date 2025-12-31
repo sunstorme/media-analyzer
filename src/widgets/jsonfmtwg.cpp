@@ -9,8 +9,15 @@ JsonFormatWG::JsonFormatWG(QWidget *parent)
     : BaseFormatWG(parent)
     , ui(new Ui::JsonFormatWG)
 {
+    initialize();
+}
+
+void JsonFormatWG::initUI()
+{
+    // Setup UI
     ui->setupUi(this);
 
+    // Initialize models
     m_model = new QJsonModel(this);
     m_proxyModel = new QSortFilterProxyModel(this);
     m_proxyModel->setSourceModel(m_model);
@@ -18,56 +25,90 @@ JsonFormatWG::JsonFormatWG(QWidget *parent)
     m_proxyModel->setRecursiveFilteringEnabled(true);
     m_proxyModel->setFilterRole(Qt::DisplayRole);
 
+    // Configure tree view    
     ui->treeView->setModel(m_proxyModel);
     ui->treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-
-    m_contextMenu = new QMenu(this);
-    
-    // Create copy submenu
-    QMenu *copyMenu = m_contextMenu->addMenu(tr("Copy"));
-    copyMenu->addAction(tr("Value"), this, &JsonFormatWG::copyValue);
-    copyMenu->addAction(tr("Key"), this, &JsonFormatWG::copyKey);
-    copyMenu->addAction(tr("Key-Value"), this, &JsonFormatWG::copyKeyValue);
-    copyMenu->addSeparator();
-    copyMenu->addAction(tr("All Data"), this, &JsonFormatWG::copyAllData);
-    
-    m_contextMenu->addSeparator();
-    m_contextMenu->addAction(tr("Search"), this, &JsonFormatWG::toggleSearch);
-    m_contextMenu->addSeparator();
-    m_contextMenu->addAction(tr("Expand All"), this, &JsonFormatWG::expandAll);
-    m_contextMenu->addAction(tr("Collapse All"), this, &JsonFormatWG::collapseAll);
-    m_contextMenu->addSeparator();
-    m_contextMenu->addAction(tr("Switch View"), this, &JsonFormatWG::toggleSwitchView);
-
     ui->treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
     ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->treeView, &QTreeView::customContextMenuRequested, this, &JsonFormatWG::showContextMenu);
 
-    ui->textView->addContextSeparator();
-    QAction *foundAction = Common::findActionByText(m_contextMenu, "Switch View");
-    if (foundAction) {
-        ui->textView->addContextAction(foundAction);
-    }
-
+    // Initialize search component
     m_searchWG = new SearchWG(this);
     m_searchWG->setWindowTitle(tr("JSON Search"));
-
-    // Configure to show only the required group boxes for JsonFormatWG
+    
+    // Configure search component display group boxes
     auto requiredBoxes = SearchWG::MatchControl | SearchWG::Operation;
     m_searchWG->setVisibleGroupBoxes(requiredBoxes);
-
+    
+    // Add search component to layout
     ui->verticalLayout->addWidget(m_searchWG);
     m_searchWG->setVisible(false);
+}
 
-    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+F"), this);
-    connect(shortcut, &QShortcut::activated, this, [this]() {
+void JsonFormatWG::initMenu()
+{
+    // Add menu for text view
+    ui->textView->addContextSeparator();
+
+    m_searchAction = new QAction(tr("Search"), m_contextMenu);
+    m_switchViewAction = new QAction(tr("Switch View"), m_contextMenu);
+
+    ui->textView->addContextAction(m_switchViewAction);
+
+    // Create copy submenu
+    m_copyMenu = new QMenu(tr("Copy"), m_contextMenu);
+    m_copyMenu->addAction(tr("Value"), this, &JsonFormatWG::copyValue);
+    m_copyMenu->addAction(tr("Key"), this, &JsonFormatWG::copyKey);
+    m_copyMenu->addAction(tr("Key-Value"), this, &JsonFormatWG::copyKeyValue);
+    m_copyMenu->addSeparator();
+    m_copyMenu->addAction(tr("All Data"), this, &JsonFormatWG::copyAllData);
+
+    // Tree view operation menu
+    m_contextMenu->addSeparator();
+    m_expandMenu = new QMenu(tr("Expand"), m_contextMenu);
+    m_expandMenu->addAction(tr("Expand"), this, &JsonFormatWG::expand);
+    m_expandMenu->addAction(tr("Expand All"), this, &JsonFormatWG::expandAll);
+    m_contextMenu->addMenu(m_expandMenu);
+
+    m_collapseMenu = new QMenu(tr("Collapse"), m_contextMenu);
+    m_collapseMenu->addAction(tr("Collapse"), this, &JsonFormatWG::collapse);
+    m_collapseMenu->addAction(tr("Collapse All"), this, &JsonFormatWG::collapseAll);
+    m_contextMenu->addMenu(m_collapseMenu);
+
+    // Basic operation menu
+    m_contextMenu->addSeparator();
+    m_contextMenu->addAction(m_searchAction);
+    m_contextMenu->addSeparator();
+    m_contextMenu->addAction(m_switchViewAction);
+}
+
+void JsonFormatWG::initConnection()
+{
+    // Set right-click menu policy for tree view
+    connect(ui->treeView, &QTreeView::customContextMenuRequested, this, &JsonFormatWG::showContextMenu);
+
+    connect(m_searchShortcut, &QShortcut::activated, this, [this]() {
         m_searchWG->setVisible(!m_searchWG->isVisible());
     });
 
+    // Connect search related signals
     connect(m_searchWG, &SearchWG::searchReady, this, &JsonFormatWG::on_searchReady);
     connect(m_searchWG, &SearchWG::searchTextChanged, this, &JsonFormatWG::on_searchTextChanged);
     connect(m_searchWG, &SearchWG::searchClear, this, &JsonFormatWG::on_searchClear);
+
+    connect(m_switchViewAction, &QAction::triggered, this, &JsonFormatWG::toggleSwitchView);
+    connect(m_searchAction, &QAction::triggered, this, &JsonFormatWG::toggleSearch);
+}
+
+void JsonFormatWG::initShortCut()
+{
+    // Set search shortcut
+    m_searchShortcut = new QShortcut(QKeySequence("Ctrl+F"), this);
+}
+
+void JsonFormatWG::initExtra()
+{
+    // Additional initialization code (if any)
+    // Currently JsonFormatWG has no additional initialization requirements
 }
 
 JsonFormatWG::~JsonFormatWG()
@@ -90,15 +131,18 @@ bool JsonFormatWG::loadJson(const QByteArray &json)
 
 void JsonFormatWG::showContextMenu(const QPoint &pos)
 {
+    // Get the index at the clicked position
     QModelIndex index = ui->treeView->indexAt(pos);
+    
+    // Check if there is a valid selection
     if (index.isValid() || !ui->treeView->selectionModel()->selectedIndexes().isEmpty()) {
-        m_contextMenu->exec(ui->treeView->viewport()->mapToGlobal(pos));
+        BaseFormatWG::showContextMenu(pos);
     }
 }
 
 void JsonFormatWG::copyValue()
 {
-    QModelIndexList selectedIndexes = ui->treeView->selectionModel()->selectedIndexes();
+    QModelIndexList selectedIndexes = getSelectedIndexes();
     if (selectedIndexes.isEmpty()) return;
 
     QStringList values;
@@ -118,7 +162,7 @@ void JsonFormatWG::copyValue()
 
 void JsonFormatWG::copyKeyValue()
 {
-    QModelIndexList selectedIndexes = ui->treeView->selectionModel()->selectedIndexes();
+    QModelIndexList selectedIndexes = getSelectedIndexes();
     if (selectedIndexes.isEmpty()) return;
 
     QStringList keyValues;
@@ -143,7 +187,7 @@ void JsonFormatWG::copyKeyValue()
 
 void JsonFormatWG::copyKey()
 {
-    QModelIndexList selectedIndexes = ui->treeView->selectionModel()->selectedIndexes();
+    QModelIndexList selectedIndexes = getSelectedIndexes();
     if (selectedIndexes.isEmpty()) return;
 
     QStringList keys;
@@ -163,15 +207,29 @@ void JsonFormatWG::copyKey()
 
 void JsonFormatWG::copyAllData()
 {
-    QByteArray jsonData = m_model->json(false); // false表示不压缩，格式化输出
-    if (!jsonData.isEmpty()) {
-        QApplication::clipboard()->setText(QString::fromUtf8(jsonData));
+    QString allData = getAllData();
+    if (!allData.isEmpty()) {
+        QApplication::clipboard()->setText(allData);
+    }
+}
+
+void JsonFormatWG::expand()
+{
+    if (ui->treeView->currentIndex().isValid()) {
+        ui->treeView->expand(ui->treeView->currentIndex());
     }
 }
 
 void JsonFormatWG::expandAll()
 {
     ui->treeView->expandAll();
+}
+
+void JsonFormatWG::collapse()
+{
+    if (ui->treeView->currentIndex().isValid()) {
+        ui->treeView->collapse(ui->treeView->currentIndex());
+    }
 }
 
 void JsonFormatWG::collapseAll()
@@ -235,6 +293,26 @@ QString JsonFormatWG::getValueForIndex(const QModelIndex &proxyIndex)
                 return value.toString();
             }
         }
+    }
+    return QString();
+}
+
+// Implementation of base class virtual functions
+QModelIndexList JsonFormatWG::getSelectedIndexes()
+{
+    return ui->treeView->selectionModel()->selectedIndexes();
+}
+
+bool JsonFormatWG::hasValidSelection()
+{
+    return !ui->treeView->selectionModel()->selectedIndexes().isEmpty();
+}
+
+QString JsonFormatWG::getAllData()
+{
+    QByteArray jsonData = m_model->json(false); // false means no compression, formatted output
+    if (!jsonData.isEmpty()) {
+        return QString::fromUtf8(jsonData);
     }
     return QString();
 }
@@ -340,7 +418,7 @@ void JsonFormatWG::countVisibleAndTotalItems(QAbstractItemModel *model, const QM
                     childModel = m_proxyModel;
                     childParent = proxyIndex;
                 } else {
-                    childModel = nullptr; // Skip children if parent is not visible
+                    childModel = nullptr;
                 }
             }
 

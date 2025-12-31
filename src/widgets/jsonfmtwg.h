@@ -37,30 +37,56 @@ private:
     QJsonModel * m_model;
     QSortFilterProxyModel * m_proxyModel;
     SearchWG * m_searchWG;
-    QMenu *m_contextMenu;
 
 protected:
+    // Implement pure virtual functions from base class
+    void initUI() override;
+    void initMenu() override;
+    void initConnection() override;
+    void initShortCut() override;
+    void initExtra() override;
+    
     bool loadJson(const QByteArray &json) override;
+    
+    // Override base class virtual functions
+    void showContextMenu(const QPoint &pos) override;
+    
+    // Override base class information retrieval functions
+    QString getKeyForIndex(const QModelIndex &index) override;
+    QString getValueForIndex(const QModelIndex &index) override;
+    QModelIndexList getSelectedIndexes() override;
+    bool hasValidSelection() override;
+    QString getAllData() override;
 
 private slots:
     void on_searchReady();
     void on_searchTextChanged(const QString &text);
     void on_searchClear();
-    void showContextMenu(const QPoint &pos);
+
     void copyValue();
     void copyKeyValue();
     void copyKey();
     void copyAllData();
+    void expand();
     void expandAll();
+    void collapse();
     void collapseAll();
     void toggleSearch();
     void toggleSwitchView();
 
 private:
+    QMenu *m_copyMenu;
+    QMenu *m_expandMenu;
+    QMenu *m_collapseMenu;
+
+    QAction *m_searchAction;
+    QAction *m_switchViewAction;
+    QShortcut *m_searchShortcut = nullptr;
+
+private:
     void countVisibleAndTotalItems(QAbstractItemModel *model, const QModelIndex &parent, int &visibleCount, int &totalCount);
-    QString getKeyForIndex(const QModelIndex &index);
-    QString getValueForIndex(const QModelIndex &index);
     QJsonTreeItem* getItemForIndex(const QModelIndex &index);
+
 };
 
 #endif // JSONFMTWG_H

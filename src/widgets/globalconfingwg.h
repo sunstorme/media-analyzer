@@ -11,7 +11,7 @@
 #include <QButtonGroup>
 #include <QPushButton>
 
-#include <widgets/infotablewg.h>
+#include <widgets/tablefmtwg.h>
 
 #include <common/qtcompat.h>
 
@@ -32,7 +32,7 @@ public:
 private:
     Ui::GlobalConfingWG *ui;
 
-    InfoWidgets *generalCfgWg;
+    TableFormatWG *generalCfgWg;
     QButtonGroup *configButtonGroup;
 
 private:

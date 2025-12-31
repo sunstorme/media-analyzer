@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com> -->
-<!-- SPDX-License-Identifier: MIT -->
 <ui version="4.0">
  <class>TabConfigWg</class>
  <widget class="QWidget" name="TabConfigWg">
@@ -28,15 +26,15 @@
     </widget>
    </item>
    <item>
-    <widget class="InfoWidgets" name="config_tb" native="true"/>
+    <widget class="TableFormatWG" name="config_tb" native="true"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>InfoWidgets</class>
+   <class>TableFormatWG</class>
    <extends>QWidget</extends>
-   <header location="global">widgets/infotablewg.h</header>
+   <header location="global">widgets/tablefmtwg.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

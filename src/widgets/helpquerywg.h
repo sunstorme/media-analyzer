@@ -8,9 +8,9 @@
 #include <QDebug>
 #include <QShortcut>
 
-#include <common/common.h>
-#include <common/zffprobe.h>
-#include <common/ztexthighlighter.h>
+#include "common/common.h"
+#include "common/zffprobe.h"
+#include "common/ztexthighlighter.h"
 
 #include <widgets/searchwg.h>
 

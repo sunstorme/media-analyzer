@@ -13,7 +13,7 @@
 #include <QtGlobal>
 #include <QSettings>
 
-#include <common/common.h>
+#include "common/common.h"
 
 // Macros for convenient usage
 #define LOG_DEBUG(module, message)    ZLogger::instance()->debug(module, message)

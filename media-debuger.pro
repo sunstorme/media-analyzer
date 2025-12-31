@@ -49,14 +49,13 @@ SOURCES += \
     src/widgets/helpquerywg.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
-    src/widgets/infotablewg.cpp \
     src/widgets/jsonfmtwg.cpp \
     src/widgets/logwg.cpp \
     src/widgets/progressdlg.cpp \
     src/widgets/searchwg.cpp \
     src/widgets/tabconfigwg.cpp \
-    src/widgets/tabelfmtwg.cpp \
-    src/widgets/mediapropswg.cpp
+    src/widgets/mediapropswg.cpp \
+    src/widgets/tablefmtwg.cpp
 
 HEADERS += \
     src/common/zmediaplayerconfig.h \
@@ -87,14 +86,13 @@ HEADERS += \
     src/widgets/globalconfingwg.h \
     src/widgets/helpquerywg.h \
     src/mainwindow.h \
-    src/widgets/infotablewg.h \
     src/widgets/jsonfmtwg.h \
     src/widgets/logwg.h \
     src/widgets/progressdlg.h \
     src/widgets/searchwg.h \
     src/widgets/tabconfigwg.h \
-    src/widgets/tabelfmtwg.h \
-    src/widgets/mediapropswg.h
+    src/widgets/mediapropswg.h \
+    src/widgets/tablefmtwg.h
 
 FORMS += \
     src/widgets/configurebuildtool.ui \
@@ -104,13 +102,12 @@ FORMS += \
     src/widgets/globalconfingwg.ui \
     src/widgets/helpquerywg.ui \
     src/mainwindow.ui \
-    src/widgets/infotablewg.ui \
     src/widgets/jsonfmtwg.ui \
     src/widgets/logwg.ui \
     src/widgets/searchwg.ui \
     src/widgets/tabconfigwg.ui \
-    src/widgets/tabelfmtwg.ui \
-    src/widgets/mediapropswg.ui
+    src/widgets/mediapropswg.ui \
+    src/widgets/tablefmtwg.ui
 
 TRANSLATIONS += \
     translations/media-debuger_zh_CN.ts \

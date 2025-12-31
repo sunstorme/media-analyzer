@@ -43,7 +43,7 @@ void TabConfigWg::setupConfigs(const QStringList headers, const QMap<QString, QL
 {
     // title
     m_configs = configs;
-    ui->config_tb->init_header_detail_tb(headers);
+    ui->config_tb->initHeaderDetailTb(headers);
     setupConfigGroup(m_configs.keys());
 
     if (configs.size() > 0) {
@@ -53,12 +53,12 @@ void TabConfigWg::setupConfigs(const QStringList headers, const QMap<QString, QL
 
 void TabConfigWg::addContextMenu(QMenu *menu)
 {
-    ui->config_tb->addContextMenu(menu);
+    ui->config_tb->addContextMenuMenu(menu);
 }
 
 void TabConfigWg::addContextAction(QAction *action)
 {
-    ui->config_tb->addContextAction(action);
+    ui->config_tb->addContextMenuAction(action);
 }
 
 QList<QStringList> TabConfigWg::getSelectLines()
@@ -73,11 +73,11 @@ void TabConfigWg::loadConfigData(const QString &key)
     if (!m_configs.contains(key)) {
         qWarning() << "No match config key in list :" << key;
     } if (key == ALL_DEFAULT_CONFIG_KEY) {
-        ui->config_tb->update_data_detail_tb(m_configs, "=");
+        ui->config_tb->updateDataDetailTb(m_configs, "=");
         return;
     }
 
-    ui->config_tb->update_data_detail_tb(m_configs.value(key), "=");
+    ui->config_tb->updateDataDetailTb(m_configs.value(key), "=");
 }
 
 void TabConfigWg::on_category_gbx_clicked(bool checked)

@@ -183,14 +183,14 @@ void MainWindow::InitConnectation()
 
 void MainWindow::popBasicInfoWindow(QString title, const QString &info, const ZExtraInfo &extrainfo)
 {
-    InfoWidgets *infoWindow = new InfoWidgets;
+    TableFormatWG *infoWindow = new TableFormatWG;
     infoWindow->setObjectName(title.replace(" ", "") + "Wg");
     infoWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     infoWindow->setWindowTitle(title);
     infoWindow->show();
     ZWindowHelper::centerToParent(infoWindow);
-    infoWindow->init_detail_tb(info, extrainfo.formatKey.toLower());
+    infoWindow->initDetailTb(info, extrainfo.formatKey.toLower());
 
     // fit help option
     infoWindow->setHelpInfoKey(extrainfo.formatKey.mid(0, extrainfo.formatKey.length() - 1).toLower());
@@ -204,7 +204,7 @@ void MainWindow::popMediaInfoWindow(QString title, const QString &info, const ZE
     if (extrainfo.formatKey == FORMAT_JSON) {
         mediaInfoWindow = new JsonFormatWG;
     } else if (extrainfo.formatKey == FORMAT_TABLE) {
-        mediaInfoWindow = new TabelFormatWG;
+        mediaInfoWindow = new TableFormatWG;
     }
 
     if (mediaInfoWindow == nullptr)
@@ -790,7 +790,7 @@ void MainWindow::slotPlayerInstallationChanged(const QString& playerKey, bool in
 
 void MainWindow::slotShowInstallPlayersDialog()
 {
-    InfoWidgets *infoWindow = new InfoWidgets;
+    TableFormatWG *infoWindow = new TableFormatWG;
     infoWindow->setObjectName("PlayerInstallationStatusWg");
     infoWindow->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -815,8 +815,8 @@ void MainWindow::slotShowInstallPlayersDialog()
         playerData.append(rowData);
     }
 
-    infoWindow->init_header_detail_tb(headers);
-    infoWindow->update_data_detail_tb(playerData);
+    infoWindow->initHeaderDetailTb(headers);
+    infoWindow->updateDataDetailTb(playerData);
 
     infoWindow->setHelpInfoKey("players");
     

@@ -9,14 +9,14 @@ GlobalConfingWG::GlobalConfingWG(QWidget *parent)
     , ui(new Ui::GlobalConfingWG)
 {
     ui->setupUi(this);
-    generalCfgWg = new InfoWidgets(this);
+    generalCfgWg = new TableFormatWG(this);
 
     setWindowTitle("Global Config");
     setupButtonGroup();
     
     ui->genreral_tab_layout->addWidget(generalCfgWg);
 
-    connect(generalCfgWg, &InfoWidgets::dataChanged, [=](QStringList configs) {
+    connect(generalCfgWg, &TableFormatWG::dataChanged, [=](QStringList configs) {
         if (configs.size() == 2) {
             QStringList settingParts = configs.at(0).split("/", QT_SKIP_EMPTY_PARTS);
             if (settingParts.size() == 2) {
@@ -82,7 +82,7 @@ void GlobalConfingWG::loadConfigData(const QString& group, const QStringList& ke
         settings.endGroup();
     }
 
-    generalCfgWg->init_header_detail_tb(headers);
-    generalCfgWg->update_data_detail_tb(data, "=");
+    generalCfgWg->initHeaderDetailTb(headers);
+    generalCfgWg->updateDataDetailTb(data, "=");
 
 }

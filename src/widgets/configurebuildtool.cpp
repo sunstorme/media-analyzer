@@ -28,24 +28,24 @@ ConfigureBuildTool::ConfigureBuildTool(QWidget *parent)
     m_RemoveRecordAction = new QAction("Remove Selected");
 
     ui->configure_complie_options_tb->addContextAction(m_addRecordAction);
-    ui->select_option_tb->addContextAction(m_RemoveRecordAction);
+    ui->select_option_tb->addContextMenuAction(m_RemoveRecordAction);
 
     // action connect
     connect(m_addRecordAction, &QAction::triggered, [=]() {
-        ui->select_option_tb->clear_detail_tb();
-        ui->select_option_tb->init_header_detail_tb(QStringList{"Option", "Description", "Default Value"});
-        ui->select_option_tb->append_data_detail_tb(ui->configure_complie_options_tb->getSelectLines());
+        ui->select_option_tb->clearDetailTb();
+        ui->select_option_tb->initHeaderDetailTb(QStringList{"Option", "Description", "Default Value"});
+        ui->select_option_tb->appendDataDetailTb(ui->configure_complie_options_tb->getSelectLines());
 
         ui->cmd_ple->setPlainText(getConfigCmd());
     });
 
     connect(m_RemoveRecordAction, &QAction::triggered, [=]() {
-        ui->select_option_tb->remove_selected_row();
+        ui->select_option_tb->removeSelectedRow();
 
         ui->cmd_ple->setPlainText(getConfigCmd());
     });
 
-    connect(ui->select_option_tb, &InfoWidgets::dataChanged, [=](){
+    connect(ui->select_option_tb, &TableFormatWG::dataChanged, [=](){
         ui->cmd_ple->setPlainText(getConfigCmd());
     });
 

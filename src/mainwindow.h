@@ -20,10 +20,9 @@
 #include "common/zlogger.h"
 #include "common/zmediaplayermanager.h"
 
-#include "widgets/infotablewg.h"
+#include "widgets/tablefmtwg.h"
 #include "widgets/jsonfmtwg.h"
 #include "widgets/globalconfingwg.h"
-#include "widgets/tabelfmtwg.h"
 #include "widgets/logwg.h"
 #include "widgets/fileswg.h"
 #include "widgets/progressdlg.h"

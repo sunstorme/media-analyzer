@@ -14,7 +14,7 @@
 #include <QMenu>
 #include <QContextMenuEvent>
 
-#include <common/common.h>
+#include "common/common.h"
 
 class FilesHistoryModel : public QAbstractListModel
 {
