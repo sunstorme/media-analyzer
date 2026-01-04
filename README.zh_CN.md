@@ -32,9 +32,6 @@ MediaAnalyzer 是一个基于 Qt 的多媒体文件分析调试工具，使用 F
 sudo apt update
 sudo apt install build-essential cmake pkg-config
 sudo apt install qt5-default qttools5-dev qt6-base-dev qt6-tools-dev
-sudo apt install libavcodec-dev libavformat-dev libavutil-dev
-sudo apt install libswscale-dev libswresample-dev libavfilter-dev
-sudo apt install libx11-dev
 ```
 
 ## 构建方法
@@ -117,12 +114,6 @@ media-analyzer/
 # 安装Qt开发包
 sudo apt install qt6-base-dev qt6-tools-dev  # Qt6
 sudo apt install qt5-default qttools5-dev    # Qt5
-```
-
-**找不到FFmpeg**：
-```bash
-sudo apt install libavcodec-dev libavformat-dev libavutil-dev
-sudo apt install libswscale-dev libswresample-dev libavfilter-dev
 ```
 
 ## 开发

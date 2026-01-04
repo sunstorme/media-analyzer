@@ -32,9 +32,6 @@ MediaAnalyzer is a Qt-based multimedia file analysis and debugging tool that use
 sudo apt update
 sudo apt install build-essential cmake pkg-config
 sudo apt install qt5-default qttools5-dev qt6-base-dev qt6-tools-dev
-sudo apt install libavcodec-dev libavformat-dev libavutil-dev
-sudo apt install libswscale-dev libswresample-dev libavfilter-dev
-sudo apt install libx11-dev
 ```
 
 ## Build Methods
@@ -117,12 +114,6 @@ media-analyzer/
 # Install Qt development packages
 sudo apt install qt6-base-dev qt6-tools-dev  # Qt6
 sudo apt install qt5-default qttools5-dev    # Qt5
-```
-
-**FFmpeg Not Found**:
-```bash
-sudo apt install libavcodec-dev libavformat-dev libavutil-dev
-sudo apt install libswscale-dev libswresample-dev libavfilter-dev
 ```
 
 ## Development

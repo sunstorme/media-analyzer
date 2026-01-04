@@ -11,13 +11,6 @@
 #include <QColor>
 #include <QRgb>
 
-extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavcodec/bsf.h>
-#include <libavformat/avformat.h>
-#include <libavfilter/avfilter.h>
-}
-
 #define FFPROBE "ffprobe"
 #define VERSION "-version"
 #define BUILDCONF "-buildconf"
@@ -149,6 +142,16 @@ extern "C" {
 #define V4L2 "v4l2"
 #define ALSA "alsa"
 
+#define LONG_FMT "long"           // Print advanced tool options in addition to the basic tool options.
+#define FULL_FMT "full"           // Print complete list of options, including shared and private options for encoders, decoders, demuxers, muxers, filters, etc.
+#define DECODER_FMT "decoder"     // Print detailed information about the decoder
+#define ENCODER_FMT "encoder"     // Print detailed information about the encoder
+#define DEMUXER_FMT "demuxer"     // Print detailed information about the demuxer
+#define MUXER_FMT "muxer"         // Print detailed information about the muxer
+#define FILTER_FMT "filter"       // Print detailed information about the filter
+#define BSF_FMT "bsf"             // Print detailed information about the bitstream filter
+#define PROTOCOL_FMT "protocol"   // Print detailed information about the protocol
+
 #define EXECUTE_FFPROBE_COMMAND(command) \
 []() -> QByteArray { \
         QProcess process; \
@@ -218,26 +221,21 @@ public:
     
     QList<StreamInfo> getMediaStreams(const QString& fileName);
 
-    QStringList getCodecsFromLibav(CodecType type);
-    QStringList getMuxersFromLibav(MuxerType type);
-    QStringList getFiltersFromLibav();
-    QStringList getBsfFromLibav();
-    QStringList getProtocolFromLibav();
+    QStringList getCodecsOrMuxersNames(const QString& key);
+    QStringList getFiltersNames();
+    QStringList getBsfsNames();
+    QStringList getProtocolNames();
 
 /*
  * Utilities Info
  */
     Q_INVOKABLE QMap<QString, QList<QVariant>> getVideoSizeMap(const QString &key = "");             // get video size.
     Q_INVOKABLE QMap<QString, QList<QVariant>> getVideoRateMap(const QString &key = "");             // get video rate.
-    Q_INVOKABLE QMap<QString, QList<QVariant>> getColor(const QString &key);                      // get color.
+    Q_INVOKABLE QMap<QString, QList<QVariant>> getColor(const QString &key);                         // get color.
 signals:
 
 private:
     QString getFFprobeCommandOutput(const QString& command, const QStringList &otherParms = {});
-
-    int get_codecs_sorted(const AVCodecDescriptor ***rcodecs);
-    char get_media_type_char(enum AVMediaType type);
-    static int compare_codec_desc(const void *a, const void *b);
 private:
     QString cacheVersion;
 };

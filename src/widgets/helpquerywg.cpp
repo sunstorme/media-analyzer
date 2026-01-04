@@ -69,25 +69,25 @@ void HelpQueryWg::on_category_combx_activated(int index)
     bool success = false;
     
     if (currentCategory == DECODER_FMT) {
-        items = m_probe.getCodecsFromLibav(CODEC_TYPE_DECODER);
+        items = m_probe.getCodecsOrMuxersNames(currentCategory);
         success = !items.isEmpty();
     } else if (currentCategory == ENCODER_FMT) {
-        items = m_probe.getCodecsFromLibav(CODEC_TYPE_ENCODER);
+        items = m_probe.getCodecsOrMuxersNames(currentCategory);
         success = !items.isEmpty();
     } else if (currentCategory == DEMUXER_FMT) {
-        items = m_probe.getMuxersFromLibav(MUXER_TYPE_DEMUXER);
+        items = m_probe.getCodecsOrMuxersNames(currentCategory);
         success = !items.isEmpty();
     } else if (currentCategory == MUXER_FMT) {
-        items = m_probe.getMuxersFromLibav(MUXER_TYPE_MUXER);
+        items = m_probe.getCodecsOrMuxersNames(currentCategory);
         success = !items.isEmpty();
     } else if (currentCategory == FILTER_FMT) {
-        items = m_probe.getFiltersFromLibav();
+        items = m_probe.getFiltersNames();
         success = !items.isEmpty();
     } else if (currentCategory == BSF_FMT) {
-        items = m_probe.getBsfFromLibav();
+        items = m_probe.getBsfsNames();
         success = !items.isEmpty();
     } else if (currentCategory == PROTOCOL_FMT) {
-        items = m_probe.getProtocolFromLibav();
+        items = m_probe.getProtocolNames();
         success = !items.isEmpty();
     }
 

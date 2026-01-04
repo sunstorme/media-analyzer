@@ -239,140 +239,89 @@ QList<ZFfprobe::StreamInfo> ZFfprobe::getMediaStreams(const QString& fileName)
     return streams;
 }
 
-QStringList ZFfprobe::getCodecsFromLibav(CodecType type)
+QStringList ZFfprobe::getCodecsOrMuxersNames(const QString &key)
 {
-    QStringList codecNames;
+    QString cacheString;
 
-    const AVCodecDescriptor **codecs;
-    unsigned int i;
-    int nb_codecs = get_codecs_sorted(&codecs);
-
-    for (i = 0; i < nb_codecs; i++) {
-        const AVCodecDescriptor *desc = codecs[i];
-
-        if (type & CODEC_TYPE_DECODER) {
-            if (avcodec_find_decoder(desc->id)) {
-                codecNames.append(desc->name);
-            }
-        }
-
-        if (type & CODEC_TYPE_ENCODER) {
-            if (avcodec_find_encoder(desc->id)) {
-                codecNames.append(desc->name);
-            }
-        }
-
-        if (strstr(desc->name, "_deprecated"))
-            continue;
-
-        printf("\n");
+    if (key == DECODER_FMT) {
+        cacheString = getDecoders();
+    } else if (key == ENCODER_FMT) {
+        cacheString = getEncoders();
+    } else if (key == DEMUXER_FMT) {
+        cacheString = getDemuxers();
+    } else if (key == MUXER_FMT) {
+        cacheString = getMuxers();
     }
-    av_free(codecs);
 
-    return codecNames;
+    QStringList cache = cacheString.split("\n", QT_SKIP_EMPTY_PARTS);
+
+    if (cache.first().contains(":")) {
+        cache.pop_front();
+    }
+    auto it = std::remove_if(cache.begin(), cache.end(),
+                             [](const QString& protocol) {
+                                 return protocol.contains("=") ||
+                                        protocol.contains("--");
+                             });
+    cache.erase(it, cache.end());
+
+    for (int i = 0; i < cache.size(); i++) {
+        QStringList tmpList = cache.at(i).split(" ", QT_SKIP_EMPTY_PARTS);
+        if (tmpList.size() > 1) {
+            cache[i] = tmpList.at(1).trimmed();
+        }
+    }
+
+    return cache;
 }
 
-QStringList ZFfprobe::getMuxersFromLibav(MuxerType type)
+QStringList ZFfprobe::getFiltersNames()
 {
-    QStringList muxerNames;
+    QString filterString = getFilters();
+    QStringList filters = filterString.split("\n", QT_SKIP_EMPTY_PARTS);
 
-    if (type & MUXER_TYPE_MUXER) {
-        const AVOutputFormat *fmt = NULL;
-        void *opaque = NULL;
+    auto it = std::remove_if(filters.begin(), filters.end(),
+                             [](const QString& protocol) {
+                                 return protocol.contains(":") ||
+                                        protocol.contains("=") ||
+                                        protocol.contains("--");
+                             });
+    filters.erase(it, filters.end());
 
-        while ((fmt = av_muxer_iterate(&opaque)) != NULL) {
-            muxerNames.append(fmt->name);
+    for (int i = 0; i < filters.size(); i++) {
+        QStringList tmpList = filters.at(i).split(" ", QT_SKIP_EMPTY_PARTS);
+        if (tmpList.size() > 1) {
+            filters[i] = tmpList.at(1).trimmed();
         }
     }
 
-    if (type & MUXER_TYPE_DEMUXER) {
-        const AVInputFormat *fmt = NULL;
-        void *opaque = NULL;
-
-        while ((fmt = av_demuxer_iterate(&opaque)) != NULL) {
-            muxerNames.append(fmt->name);
-        }
-    }
-
-    return muxerNames;
+    return filters;
 }
 
-QStringList ZFfprobe::getFiltersFromLibav()
+QStringList ZFfprobe::getBsfsNames()
 {
-    QStringList filterNames;
-    const AVFilter *filter = NULL;
-    void *opaque = NULL;
-
-#if LIBAVFILTER_VERSION_INT >= AV_VERSION_INT(7, 14, 100)
-    // new api（FFmpeg 4.0+）
-    while ((filter = av_filter_iterate(&opaque)) != NULL) {
-        if (filter->name && !filterNames.contains(filter->name)) {
-            filterNames.append(filter->name);
-        }
+    QString bsfsString = getBsfs().replace(" ", "");
+    QStringList bsfs = bsfsString.split("\n", QT_SKIP_EMPTY_PARTS);
+    if (bsfs.first().contains(":")) {
+        bsfs.pop_front();
     }
-#else
-    filter = av_filter_next(NULL);
-    while (filter != NULL) {
-        if (filter->name && !filterNames.contains(filter->name)) {
-            filterNames.append(filter->name);
-        }
-        filter = av_filter_next(filter);
-    }
-#endif
 
-    filterNames.sort();
-    return filterNames;
+    return bsfs;
 }
 
-QStringList ZFfprobe::getBsfFromLibav()
+QStringList ZFfprobe::getProtocolNames()
 {
-    QStringList bsfNames;
-    const AVBitStreamFilter *bsf = NULL;
-    void *opaque = NULL;
+    QString protocolString = getProtocols().replace(" ", "");
+    QStringList protocols = protocolString.split("\n", QT_SKIP_EMPTY_PARTS);
 
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(58, 18, 100)
-    // new api（FFmpeg 4.0+）
-    while ((bsf = av_bsf_iterate(&opaque)) != NULL) {
-        if (bsf->name && !bsfNames.contains(bsf->name)) {
-            bsfNames.append(bsf->name);
-        }
-    }
-#else
-    bsf = av_bsf_next(NULL);
-    while (bsf != NULL) {
-        if (bsf->name && !bsfNames.contains(bsf->name)) {
-            bsfNames.append(bsf->name);
-        }
-        bsf = av_bsf_next(bsf);
-    }
-#endif
+    auto it = std::remove_if(protocols.begin(), protocols.end(),
+                             [](const QString& protocol) {
+                                 return protocol.contains(":");
+                             });
 
-    bsfNames.sort();
-    return bsfNames;
-}
+    protocols.erase(it, protocols.end());
 
-QStringList ZFfprobe::getProtocolFromLibav()
-{
-    QStringList protocolNames;
-    void *opaque = NULL;
-    const char *protocol_name;
-
-    opaque = NULL;
-    while ((protocol_name = avio_enum_protocols(&opaque, 0))) {
-        if (protocol_name && !protocolNames.contains(protocol_name)) {
-            protocolNames.append(protocol_name);
-        }
-    }
-
-    opaque = NULL;
-    while ((protocol_name = avio_enum_protocols(&opaque, 1))) {
-        if (protocol_name && !protocolNames.contains(protocol_name)) {
-            protocolNames.append(protocol_name);
-        }
-    }
-
-    protocolNames.sort();
-    return protocolNames;
+    return protocols;
 }
 
 QMap<QString, QList<QVariant>> ZFfprobe::getVideoSizeMap(const QString &key)
@@ -649,44 +598,4 @@ QString ZFfprobe::getFFprobeCommandOutput(const QString &command, const QStringL
     qDebug() << "cmd: " << process.arguments().join(" ").prepend(" ").prepend(FFPROBE);
     process.waitForFinished(-1);
     return process.readAll();
-}
-
-int ZFfprobe::get_codecs_sorted(const AVCodecDescriptor ***rcodecs)
-{
-    const AVCodecDescriptor *desc = NULL;
-    const AVCodecDescriptor **codecs;
-    unsigned nb_codecs = 0, i = 0;
-
-    while ((desc = avcodec_descriptor_next(desc)))
-        nb_codecs++;
-    if (!(codecs = (const AVCodecDescriptor**)av_calloc(nb_codecs, sizeof(*codecs))))
-        return AVERROR(ENOMEM);
-    desc = NULL;
-    while ((desc = avcodec_descriptor_next(desc)))
-        codecs[i++] = desc;
-
-    qsort(codecs, nb_codecs, sizeof(*codecs), compare_codec_desc);
-    *rcodecs = codecs;
-    return nb_codecs;
-}
-
-char ZFfprobe::get_media_type_char(AVMediaType type)
-{
-    switch (type) {
-    case AVMEDIA_TYPE_VIDEO:    return 'V';
-    case AVMEDIA_TYPE_AUDIO:    return 'A';
-    case AVMEDIA_TYPE_DATA:     return 'D';
-    case AVMEDIA_TYPE_SUBTITLE: return 'S';
-    case AVMEDIA_TYPE_ATTACHMENT:return 'T';
-    default:                    return '?';
-    }
-}
-
-int ZFfprobe::compare_codec_desc(const void *a, const void *b)
-{
-    const AVCodecDescriptor * const *da = (const AVCodecDescriptor**)a;
-    const AVCodecDescriptor * const *db = (const AVCodecDescriptor**)b;
-
-    return (*da)->type != (*db)->type ? FFDIFFSIGN((*da)->type, (*db)->type) :
-               strcmp((*da)->name, (*db)->name);
 }

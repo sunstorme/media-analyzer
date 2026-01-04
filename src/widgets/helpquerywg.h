@@ -15,16 +15,6 @@ namespace Ui {
 class HelpQueryWg;
 }
 
-#define LONG_FMT "long"           // Print advanced tool options in addition to the basic tool options.
-#define FULL_FMT "full"           // Print complete list of options, including shared and private options for encoders, decoders, demuxers, muxers, filters, etc.
-#define DECODER_FMT "decoder"     // Print detailed information about the decoder
-#define ENCODER_FMT "encoder"     // Print detailed information about the encoder
-#define DEMUXER_FMT "demuxer"     // Print detailed information about the demuxer
-#define MUXER_FMT "muxer"         // Print detailed information about the muxer
-#define FILTER_FMT "filter"       // Print detailed information about the filter
-#define BSF_FMT "bsf"             // Print detailed information about the bitstream filter
-#define PROTOCOL_FMT "protocol"   // Print detailed information about the protocol
-
 static const QStringList HELP_OPTION_FORMATS = {
     LONG_FMT,
     FULL_FMT,

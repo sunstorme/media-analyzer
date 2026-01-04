@@ -10,14 +10,7 @@ Build-Depends:
  qttools5-dev-tools,
  qt6-base-dev,
  qt6-tools-dev,
- qt6-tools-dev-tools,
- libavcodec-dev,
- libavformat-dev,
- libavutil-dev,
- libswscale-dev,
- libswresample-dev,
- libavfilter-dev,
- libx11-dev
+ qt6-tools-dev-tools
 Standards-Version: 4.5.0
 Homepage: https://gitee.com/sunstom/media-analyzer
 Vcs-Browser: https://gitee.com/sunstom/media-analyzer

@@ -130,20 +130,6 @@ equals(QT_MAJOR_VERSION, 5) {
 
 include(third_part/QJsonModel/QJsonModel.pri)
 
-CONFIG += link_pkgconfig
-PKGCONFIG += \
-    libavcodec \
-    libavformat \
-    libavutil \
-    libswscale \
-    libswresample \
-    libavfilter
-
-# Add X11 support for Linux
-unix:!macx {
-    LIBS += -lX11
-}
-
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

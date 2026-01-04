@@ -3,46 +3,35 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-# 项目信息
+# Project information
 project(MediaAnalyzer VERSION 1.0.0 LANGUAGES CXX)
 
-# 设置C++标准
+# Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# 设置输出目录
+# Set output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-# 包含CMake模块路径
+# Include CMake module paths
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-# Qt版本检测和配置
+# Qt version detection and configuration
 include(FindQtCompat)
 
-# 启用Qt MOC、UIC、RCC
+# Enable Qt MOC, UIC, RCC
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-# 设置包含路径
+# Set include paths
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/third_part/QJsonModel/include)
 
-# 查找FFmpeg库
-include(FindFFmpegCompat)
-
-# X11支持（Linux）
-if(UNIX AND NOT APPLE)
-    find_package(X11)
-    if(X11_FOUND)
-        set(X11_LIBRARIES ${X11_LIBRARIES})
-    endif()
-endif()
-
-# 收集源文件
+# Collect source files
 file(GLOB_RECURSE SOURCES 
     "src/*.cpp"
     "src/*.h"
@@ -56,24 +45,24 @@ file(GLOB_RECURSE FORM_FILES
     "src/widgets/*.ui"
 )
 
-# 合并UI文件
+# Merge UI files
 list(APPEND UI_FILES ${FORM_FILES})
 
-# 资源文件
+# Resource files
 set(RESOURCES_FILES
     assets/resources.qrc
 )
 
-# 翻译文件
+# Translation files
 set(TRANSLATION_FILES
     translations/media-analyzer_en_US.ts
     translations/media-analyzer_zh_CN.ts
 )
 
-# 添加QJsonModel子目录
+# Add QJsonModel subdirectory
 add_subdirectory(third_part/QJsonModel)
 
-# 创建可执行文件
+# Create executable
 if(QT_MAJOR_VERSION EQUAL 6)
     set(EXECUTABLE_NAME media-analyzer-qt6)
 else()
@@ -86,7 +75,7 @@ add_executable(${EXECUTABLE_NAME}
     ${RESOURCES_FILES}
 )
 
-# 链接Qt库
+# Link Qt libraries
 target_link_libraries(${EXECUTABLE_NAME}
     ${QT_CORE_TARGET}
     ${QT_WIDGETS_TARGET}
@@ -94,18 +83,10 @@ target_link_libraries(${EXECUTABLE_NAME}
     ${QT_CONCURRENT_TARGET}
 )
 
-# 链接QJsonModel
+# Link QJsonModel
 target_link_libraries(${EXECUTABLE_NAME} QJsonModel)
 
-# 链接FFmpeg库
-target_link_libraries(${EXECUTABLE_NAME} FFMpeg::FFmpeg)
-
-# 链接X11库（Linux）
-if(UNIX AND NOT APPLE AND X11_FOUND)
-    target_link_libraries(${EXECUTABLE_NAME} ${X11_LIBRARIES})
-endif()
-
-# 设置编译定义
+# Set compile definitions
 target_compile_definitions(${EXECUTABLE_NAME} PRIVATE
     ${QT_COMPAT_DEFINES}
 )
@@ -121,7 +102,7 @@ target_compile_definitions(${EXECUTABLE_NAME} PRIVATE
 #     qt_compat_add_lrelease(QM_FILES ${TRANSLATION_FILES})
 # endif()
 
-# 安装配置
+# Installation configuration
 include(GNUInstallDirs)
 
 if(NOT CMAKE_INSTALL_PREFIX)
@@ -133,23 +114,23 @@ set(ICONDIR ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
 set(APPDIR ${CMAKE_INSTALL_DATADIR}/applications)
 set(DOCDIR ${CMAKE_INSTALL_DOCDIR})
 
-# 安装可执行文件
+# Install executable
 install(TARGETS ${EXECUTABLE_NAME}
     RUNTIME DESTINATION ${BINDIR}
 )
 
-# 安装图标
+# Install icon
 install(FILES assets/128x128/media-analyzer-logo.svg
     DESTINATION ${ICONDIR}
     RENAME media-analyzer.svg
 )
 
-# 安装桌面文件
+# Install desktop file
 install(FILES assets/media-analyzer.desktop
     DESTINATION ${APPDIR}
 )
 
-# 安装文档
+# Install documentation
 install(FILES README.md LICENSE
     DESTINATION ${DOCDIR}
 )
@@ -170,7 +151,7 @@ install(FILES README.md LICENSE
 #     )
 # endif()
 
-# 打印配置信息
+# Print configuration information
 message(STATUS "")
 message(STATUS "MediaAnalyzer Configuration:")
 message(STATUS "  Version: ${PROJECT_VERSION}")
