@@ -126,6 +126,10 @@ void MainWindow::showBasicInfo(const QString &function, const QString &windwowTi
 
 void MainWindow::showMediaInfo(const QString fileName, const QString &function, const QString &windwowTitle, const ZExtraInfo &extrainfo)
 {
+    if (fileName != Common::instance()->getConfigValue(CURRENTFILE).toString()) {
+        Common::instance()->setConfigValue(CURRENTFILE, fileName);
+    }
+
     ProgressDialog *progressDlg = new ProgressDialog;
     progressDlg->setWindowTitle(tr("Parse Media: %1").arg(fileName));
     progressDlg->setProgressMode(ProgressDialog::Indeterminate);
