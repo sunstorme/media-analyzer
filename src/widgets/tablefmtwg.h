@@ -104,6 +104,8 @@ public slots:
 
     void copyAllDataWithHeader();
 
+    void copyCmd();
+
     void fitTableColumnToContent();
 
     void showDetailInfo();
@@ -157,6 +159,7 @@ private:
     QAction *m_copySelectedColumnsWithHeaderAction = nullptr;
     QAction *m_copyAllDataAction = nullptr;
     QAction *m_copyAllDataWithHeaderAction = nullptr;
+    QAction *m_copyCmdAction = nullptr;
 
     // image menu
     QMenu *m_imageMenu = nullptr;

@@ -221,25 +221,36 @@ int commandConfig(const QApplication& app) {
     }
 
     MainWindow w;
+    ZExtraInfo info;
 
     if (parser.isSet(mediaInfoOption) &&
         parser.isSet(mediaInfoStreamTypeOption) &&
         parser.isSet(mediaInfoFrameTypeOption)) {
         QString filePath = parser.value(mediaInfoOption);
+        info.commandKey = mediaCmd;
+        info.commandList << FFPROBE << ffmpegCommandList << mediaCmd << OF << JSON << FI << filePath;
+        info.formatKey = FORMAT_TABLE;
 
-        w.showMediaInfo(filePath, mediaCmd, QString("%1").arg(mediaCmd), ZExtraInfo(mediaCmd, FORMAT_TABLE));
+        w.showMediaInfo(filePath, mediaCmd, QString("[%1] - %2").arg(filePath).arg(info.commandList.join(" ")), info);
     }
 
     if (parser.isSet(mediaInfoFormatOption) || parser.isSet(mediaInfoStreamsOption)) {
         QString filePath = parser.value(mediaInfoOption);
+        info.commandKey = mediaCmd;
+        info.commandList << FFPROBE << ffmpegCommandList << mediaCmd << OF << JSON << FI << filePath;
+        info.formatKey = FORMAT_JSON;
 
-        w.showMediaInfo(filePath, mediaCmd, QString("%1").arg(mediaCmd), ZExtraInfo(mediaCmd, FORMAT_JSON));
+        w.showMediaInfo(filePath, mediaCmd, info.commandList.join(" "), info);
     }
 
     if (parser.isSet(basicInfoOption)) {
         QString function = parser.value(basicInfoOption);
 
-        w.showBasicInfo(function, function, ZExtraInfo(function, function));
+        info.commandKey = function;
+        info.commandList << FFPROBE << ffmpegCommandList << function.toLower().prepend("-");
+        info.formatKey = FORMAT_TABLE;
+
+        w.showBasicInfo(function, info.commandList.join(" "), info);
     }
 
     if (parser.isSet(cliOption) || parser.isSet(mediaInfoOption) || parser.isSet(basicInfoOption)) {

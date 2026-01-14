@@ -64,7 +64,6 @@ public:
 protected:
     QMenu *m_contextMenu = nullptr;
 
-private:
     ZExtraInfo m_extraInfo;
 };
 

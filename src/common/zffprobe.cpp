@@ -591,8 +591,7 @@ QMap<QString, QList<QVariant>> ZFfprobe::getColor(const QString &key)
 QString ZFfprobe::getFFprobeCommandOutput(const QString &command, const QStringList &otherParms)
 {
     QProcess process;
-    process.start(FFPROBE, QStringList() << HIDEBANNER <<
-                               LOGLEVEL << QUIET <<
+    process.start(FFPROBE, QStringList() << ffmpegCommandList <<
                                command << otherParms);
 
     qDebug() << "cmd: " << process.arguments().join(" ").prepend(" ").prepend(FFPROBE);

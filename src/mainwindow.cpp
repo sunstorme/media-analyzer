@@ -124,21 +124,21 @@ void MainWindow::showBasicInfo(const QString &function, const QString &windwowTi
                        extrainfo);
 }
 
-void MainWindow::showMediaInfo(const QString fileName, const QString &function, const QString &windwowTitle, const ZExtraInfo &extrainfo)
+void MainWindow::showMediaInfo(const QString filePath, const QString &function, const QString &windwowTitle, const ZExtraInfo &extrainfo)
 {
-    if (fileName != Common::instance()->getConfigValue(CURRENTFILE).toString()) {
-        Common::instance()->setConfigValue(CURRENTFILE, fileName);
+    if (filePath != Common::instance()->getConfigValue(CURRENTFILE).toString()) {
+        Common::instance()->setConfigValue(CURRENTFILE, filePath);
     }
 
     ProgressDialog *progressDlg = new ProgressDialog;
-    progressDlg->setWindowTitle(tr("Parse Media: %1").arg(fileName));
+    progressDlg->setWindowTitle(tr("Parse Media: %1").arg(filePath));
     progressDlg->setProgressMode(ProgressDialog::Indeterminate);
     progressDlg->setMessage("Parsing...");
     progressDlg->setAutoClose(true);
 
     progressDlg->start();
     QtConcurrent::run([=](){
-        QString formats = m_probe.getMediaInfoJsonFormat(function, fileName);
+        QString formats = m_probe.getMediaInfoJsonFormat(function, filePath);
         bool ok = QMetaObject::invokeMethod(this, "popMediaInfoWindow",
                                   Qt::QueuedConnection,
                                   Q_ARG(QString, windwowTitle),
@@ -185,16 +185,17 @@ void MainWindow::InitConnectation()
     });
 }
 
-void MainWindow::popBasicInfoWindow(QString title, const QString &info, const ZExtraInfo &extrainfo)
+void MainWindow::popBasicInfoWindow(const QString &title, const QString &info, const ZExtraInfo &extrainfo)
 {
     TableFormatWG *infoWindow = new TableFormatWG;
-    infoWindow->setObjectName(title.replace(" ", "") + "Wg");
+    // infoWindow->setObjectName(title.replace(" ", "") + "Wg");
     infoWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     infoWindow->setWindowTitle(title);
     infoWindow->show();
+    infoWindow->setExtraInfo(extrainfo);
     ZWindowHelper::centerToParent(infoWindow);
-    infoWindow->initDetailTb(info, extrainfo.formatKey.toLower());
+    infoWindow->initDetailTb(info, extrainfo.commandKey.toLower());
 
     // fit help option
     infoWindow->setHelpInfoKey(extrainfo.formatKey.mid(0, extrainfo.formatKey.length() - 1).toLower());
@@ -202,7 +203,7 @@ void MainWindow::popBasicInfoWindow(QString title, const QString &info, const ZE
     qDebug() << title << info;
 }
 
-void MainWindow::popMediaInfoWindow(QString title, const QString &info, const ZExtraInfo &extrainfo)
+void MainWindow::popMediaInfoWindow(const QString &title, const QString &info, const ZExtraInfo &extrainfo)
 {
     BaseFormatWG *mediaInfoWindow = nullptr;
     if (extrainfo.formatKey == FORMAT_JSON) {
@@ -225,48 +226,48 @@ void MainWindow::popMediaInfoWindow(QString title, const QString &info, const ZE
     qDebug() << title << info.size();
 }
 
-void MainWindow::popMediaPropsWindow(const QString &fileName)
+void MainWindow::popMediaPropsWindow(const QString &filePath)
 {
     // Update content if a valid file is provided
-    if (!fileName.isEmpty() && &m_mediaPropsWidget) {
-        loadMediaProperties(fileName);
+    if (!filePath.isEmpty() && &m_mediaPropsWidget) {
+        loadMediaProperties(filePath);
         
         // Update window title to reflect current file
-        setWindowTitle(tr("%1 - Media Properties: %2").arg(APPLICATION_NAME, QFileInfo(fileName).fileName()));
+        setWindowTitle(tr("%1 - Media Properties: %2").arg(APPLICATION_NAME, QFileInfo(filePath).fileName()));
     }
 }
 
-void MainWindow::loadMediaProperties(const QString &fileName)
+void MainWindow::loadMediaProperties(const QString &filePath)
 {
-    if (!fileName.isEmpty() && &m_mediaPropsWidget) {
+    if (!filePath.isEmpty() && &m_mediaPropsWidget) {
         // Check if file exists before processing
-        if (!QFile::exists(fileName)) {
-            qWarning() << "Media file does not exist:" << fileName;
+        if (!QFile::exists(filePath)) {
+            qWarning() << "Media file does not exist:" << filePath;
             return;
         }
         
         // Update dock title
-        m_mediaPropsWGDock->setWindowTitle(tr("Properties: %1").arg(QFileInfo(fileName).fileName()));
+        m_mediaPropsWGDock->setWindowTitle(tr("Properties: %1").arg(QFileInfo(filePath).fileName()));
         
         // Update MediaPropsWidget
-        m_mediaPropsWidget.setMediaFile(fileName);
+        m_mediaPropsWidget.setMediaFile(filePath);
     }
 }
 
-void MainWindow::loadMediaPropertiesAsync(const QString &fileName)
+void MainWindow::loadMediaPropertiesAsync(const QString &filePath)
 {
-    if (!fileName.isEmpty() && &m_mediaPropsWidget) {
+    if (!filePath.isEmpty() && &m_mediaPropsWidget) {
         // Check if file exists before processing
-        if (!QFile::exists(fileName)) {
-            qWarning() << "Media file does not exist:" << fileName;
+        if (!QFile::exists(filePath)) {
+            qWarning() << "Media file does not exist:" << filePath;
             return;
         }
         
         // Update dock title immediately
-        m_mediaPropsWGDock->setWindowTitle(tr("Properties: %1").arg(QFileInfo(fileName).fileName()));
+        m_mediaPropsWGDock->setWindowTitle(tr("Properties: %1").arg(QFileInfo(filePath).fileName()));
         
         // Update MediaPropsWidget (it will handle async loading internally)
-        m_mediaPropsWidget.setMediaFile(fileName);
+        m_mediaPropsWidget.setMediaFile(filePath);
     }
 }
 
@@ -367,11 +368,14 @@ void MainWindow::slotMenuBasic_InfoTriggered(QAction *action)
         return;
     }
 
-    QString function = action->objectName().replace("action", "get");
+    QString function = action->objectName().replace("action", "");
+    ZExtraInfo info;
 
-    showBasicInfo(function,
-                  action->objectName().replace("action", "Detail Info : ") + m_filesWG.getCurrentSelectFileName(),
-                  ZExtraInfo(function, action->objectName().replace("action", "")));
+    info.commandKey = function;
+    info.commandList << FFPROBE << ffmpegCommandList << function.toLower().prepend("-");
+    info.formatKey = FORMAT_TABLE;
+
+    showBasicInfo(function, info.commandList.join(" "), info);
 }
 
 void MainWindow::slotMenuMedia_InfoTriggered(bool checked)
@@ -384,6 +388,7 @@ void MainWindow::slotMenuMedia_InfoTriggered(bool checked)
         return;
     }
 
+    ZExtraInfo extrainfo;
     QString function = senderAction->objectName().replace("action", "-").toLower();
     if (function.isEmpty()) {
         function = QObject::sender()->objectName();
@@ -400,9 +405,10 @@ void MainWindow::slotMenuMedia_InfoTriggered(bool checked)
         QString fileName = m_filesWG.getCurrentSelectFileName();
         if (!fileName.isEmpty()) {
             QString formats = m_probe.getMediaInfoJsonFormat(function, fileName);
-            ZExtraInfo extrainfo(function, FORMAT_JSON);
-            popMediaInfoWindow(senderAction->objectName().replace("action", "Detail Info : ") + m_filesWG.getCurrentSelectFileName(),
-                               formats, extrainfo);
+            extrainfo.commandKey = function;
+            extrainfo.formatKey = FORMAT_JSON;
+            extrainfo.commandList << FFPROBE << ffmpegCommandList << function << OF << JSON << FI  << fileName;
+            popMediaInfoWindow(extrainfo.commandList.join(" "), formats, extrainfo);
         } else {
             qWarning() << CURRENTFILE << "is empty, please retray";
         }
@@ -419,34 +425,6 @@ void MainWindow::slotMenuMedia_InfoTriggered(bool checked)
         } else {
             qWarning() << CURRENTFILE << "is empty, please retry";
         }
-        return;
-    }
-
-    // Note: SHOW_FRAMES_VIDEO, SHOW_FRAMES_AUDIO, SHOW_PACKETS_VIDEO, SHOW_PACKETS_AUDIO
-    // are now handled dynamically by slotDynamicStreamActionTriggered
-    // This section is kept for backward compatibility but should not be reached
-    if (QStringList{
-            SHOW_FRAMES_VIDEO, SHOW_FRAMES_AUDIO,
-            SHOW_PACKETS_VIDEO, SHOW_PACKETS_AUDIO
-        }.contains(function))
-    {
-        QString tmpFunction = function;
-        if (function.contains("audio",Qt::CaseInsensitive)){
-            tmpFunction = tmpFunction.replace("_audio", "", Qt::CaseInsensitive);
-            tmpFunction += tr(" %1 a:0").arg(SELECT_STREAMS);
-        }
-        if (function.contains("video",Qt::CaseInsensitive)){
-            tmpFunction = tmpFunction.replace("_video", "", Qt::CaseInsensitive);
-            tmpFunction += tr(" %1 v:0").arg(SELECT_STREAMS);
-        }
-        QString fileName = m_filesWG.getCurrentSelectFileName();
-
-        if (!fileName.isEmpty()) {
-            showMediaInfo(fileName, tmpFunction, senderAction->objectName().replace("action", "Detail Info : "), ZExtraInfo(tmpFunction, FORMAT_TABLE));
-        } else {
-            qWarning() << CURRENTFILE << fileName  << "is empty, please retray";
-        }
-
         return;
     }
 
@@ -467,7 +445,10 @@ void MainWindow::slotMenuMedia_InfoTriggered(bool checked)
         QString fileName = m_filesWG.getCurrentSelectFileName();
 
         if (!fileName.isEmpty()) {
-            showMediaInfo(fileName, tmpFunction, senderAction->objectName().replace("action", "Detail Info : "), ZExtraInfo(tmpFunction, FORMAT_JSON));
+            extrainfo.commandKey = tmpFunction;
+            extrainfo.formatKey = FORMAT_JSON;
+            extrainfo.commandList << FFPROBE << ffmpegCommandList << tmpFunction << OF << JSON << FI  << fileName;
+            showMediaInfo(fileName, tmpFunction, extrainfo.commandList.join(" "), extrainfo);
         } else {
             qWarning() << CURRENTFILE << fileName  << "is empty, please retray";
         }
@@ -882,12 +863,12 @@ void MainWindow::slotDynamicStreamActionTriggered()
         // Build the ffprobe command for default actions (use first stream of type)
         QString command = QString("%1 %2 %3").arg(SHOW_FRAMES)
                               .arg(SELECT_STREAMS)
-                              // .arg(0)
                               .arg(streamIndex);
-        
+        ZExtraInfo extrainfo(command, FORMAT_TABLE);
+        extrainfo.commandList << FFPROBE << ffmpegCommandList << command << OF << JSON << FI << fileName;
         showMediaInfo(fileName, command,
-                      QString("[%1] - %2 - (%3)").arg(fileName).arg(senderAction->text()).arg(command),
-                      ZExtraInfo(command, FORMAT_TABLE));
+                      QString("[%1] - %2").arg(fileName).arg(extrainfo.commandList.join(" ")),
+                      extrainfo);
         return;
     }
 }

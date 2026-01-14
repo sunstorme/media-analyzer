@@ -54,15 +54,15 @@ public:
     QList<QMenu *> getMediaInfoAvailableMenus();
 
     void showBasicInfo(const QString& function, const QString& windwowTitle, const ZExtraInfo &extrainfo);
-    void showMediaInfo(const QString fileName, const QString& function, const QString& windwowTitle, const ZExtraInfo &extrainfo);
+    void showMediaInfo(const QString filePath, const QString& function, const QString& windwowTitle, const ZExtraInfo &extrainfo);
 
 private slots:
     void InitConnectation();
-    void popBasicInfoWindow(QString title, const QString &info, const ZExtraInfo &extrainfo);
-    void popMediaInfoWindow(QString title, const QString &info, const ZExtraInfo &extrainfo);
-    void popMediaPropsWindow(const QString &fileName);
-    void loadMediaProperties(const QString &fileName);
-    void loadMediaPropertiesAsync(const QString &fileName);
+    void popBasicInfoWindow(const QString &title, const QString &info, const ZExtraInfo &extrainfo);
+    void popMediaInfoWindow(const QString &title, const QString &info, const ZExtraInfo &extrainfo);
+    void popMediaPropsWindow(const QString &filePath);
+    void loadMediaProperties(const QString &filePath);
+    void loadMediaPropertiesAsync(const QString &filePath);
 
     void createDockWidgets();
     void saveLayoutSettings();

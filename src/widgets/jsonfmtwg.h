@@ -67,6 +67,7 @@ private slots:
     void copyKeyValue();
     void copyKey();
     void copyAllData();
+    void copyCmd();
     void expand();
     void expandAll();
     void collapse();

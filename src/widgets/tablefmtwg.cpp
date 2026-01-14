@@ -102,6 +102,10 @@ void TableFormatWG::initMenu()
     m_copyAllDataWithHeaderAction = new QAction("All Data With Header", this);
     m_copyMenu->addAction(m_copyAllDataAction);
     m_copyMenu->addAction(m_copyAllDataWithHeaderAction);
+    m_copyMenu->addSeparator();
+
+    m_copyCmdAction = new QAction("Cmd", this);
+    m_copyMenu->addAction(m_copyCmdAction);
 
     // Add copy menu to context menu
     m_contextMenu->addMenu(m_copyMenu);
@@ -189,6 +193,8 @@ void TableFormatWG::initConnection()
     connect(m_copyAllDataAction, &QAction::triggered, this, &TableFormatWG::copyAllData);
 
     connect(m_copyAllDataWithHeaderAction, &QAction::triggered, this, &TableFormatWG::copyAllDataWithHeader);
+
+    connect(m_copyCmdAction, &QAction::triggered, this, &TableFormatWG::copyCmd);
 
     connect(m_previewImageAction, &QAction::triggered, this, &TableFormatWG::previewImage);
 
@@ -1155,6 +1161,16 @@ void TableFormatWG::copyAllData()
 void TableFormatWG::copyAllDataWithHeader()
 {
     copyData(CopyAllDataWithHeader);
+}
+
+void TableFormatWG::copyCmd()
+{
+    QString text = m_extraInfo.commandList.join(" ");
+
+    if (!text.isEmpty()) {
+        // Copy text directly
+        QApplication::clipboard()->setText(text);
+    }
 }
 
 void TableFormatWG::fitTableColumnToContent()

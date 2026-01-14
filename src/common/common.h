@@ -81,6 +81,7 @@ typedef struct ZExtraInfo
 
     QString commandKey = "";
     QString formatKey = "json";
+    QStringList commandList;
 } ZExtraInfo;
 
 Q_DECLARE_METATYPE(ZExtraInfo)

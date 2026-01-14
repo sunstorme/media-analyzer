@@ -152,24 +152,12 @@
 #define BSF_FMT "bsf"             // Print detailed information about the bitstream filter
 #define PROTOCOL_FMT "protocol"   // Print detailed information about the protocol
 
-#define EXECUTE_FFPROBE_COMMAND(command) \
-[]() -> QByteArray { \
-        QProcess process; \
-        process.start(FFPROBE, QStringList() << command << HIDEBANNER); \
-        process.waitForFinished(); \
-        return process.readAll(); \
-}()
-
 enum CodecType {
     CODEC_TYPE_DECODER = 1,
     CODEC_TYPE_ENCODER = 2
 };
 
-enum MuxerType {
-    MUXER_TYPE_MUXER = 1,
-    MUXER_TYPE_DEMUXER = 2
-};
-
+static QStringList ffmpegCommandList = {HIDEBANNER, LOGLEVEL, QUIET};
 
 class ZFfprobe : public QObject
 {
