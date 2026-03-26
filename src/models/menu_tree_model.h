@@ -27,7 +27,10 @@ public:
         ExecCommandRole,
         MenuTypesRole,
         SupportSuffixRole,
-        PositionNumberRole
+        PositionNumberRole,
+        CommentRole,
+        CommentLocalRole,
+        VersionRole
     };
     
     explicit MenuTreeModel(QObject *parent = nullptr);
@@ -76,6 +79,9 @@ private:
         QString configFile;
         bool isSystem;
         int row;  // 在父节点中的位置
+        
+        // 根节点属性
+        QString version;
         
         // 用于构建树形结构的指针
         TreeItem *parentItem;

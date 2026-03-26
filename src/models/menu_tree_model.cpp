@@ -108,6 +108,12 @@ QVariant MenuTreeModel::data(const QModelIndex &index, int role) const {
         return item->supportSuffix;
     case PositionNumberRole:
         return item->positionNumber;
+    case CommentRole:
+        return item->comment;
+    case CommentLocalRole:
+        return item->commentLocal;
+    case VersionRole:
+        return item->version;
     case Qt::DisplayRole:
         return item->nameLocal.isEmpty() ? item->name : item->nameLocal;
     default:
@@ -128,6 +134,9 @@ QHash<int, QByteArray> MenuTreeModel::roleNames() const {
     roles[MenuTypesRole] = "menuTypes";
     roles[SupportSuffixRole] = "supportSuffix";
     roles[PositionNumberRole] = "positionNumber";
+    roles[CommentRole] = "comment";
+    roles[CommentLocalRole] = "commentLocal";
+    roles[VersionRole] = "version";
     return roles;
 }
 
@@ -277,6 +286,7 @@ void MenuTreeModel::buildTree(const ConfigParser::ConfigData &data) {
         m_rootItem->configFile = rootAction->configFile;
         m_rootItem->isSystem = rootAction->isSystem;
         m_rootItem->childActions = rootAction->childActions;
+        m_rootItem->version = data.version;  // 添加版本号
         
         queue.append(qMakePair(m_rootItem, rootAction->childActions));
         visited.insert("root");

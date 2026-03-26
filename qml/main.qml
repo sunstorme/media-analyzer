@@ -81,6 +81,8 @@ ApplicationWindow {
                 TapHandler {
                     onTapped: {
                         console.log("Clicked item:", model.name, "nameLocal:", model.nameLocal, "depth:", delegateItem.depth, "hasChildren:", delegateItem.hasChildren)
+                        // 更新当前选中的菜单项
+                        currentItem = model
                     }
                 }
             }
@@ -376,91 +378,300 @@ ApplicationWindow {
                 anchors.fill: parent
                 anchors.margins: Styles.Style.padding
                 
-                Column {
+                Item {
                     width: parent.width
-                    spacing: Styles.Style.spacing * 2
+                    height: childrenRect.height
                     
-                    Text {
-                        text: qsTr("属性编辑")
-                        font.pixelSize: 16
-                        font.bold: true
-                        color: Styles.Style.textColor
-                    }
-                    
-                    // 菜单名称
                     Column {
                         width: parent.width
-                        spacing: 5
+                        spacing: Styles.Style.spacing * 2
                         
                         Text {
-                            text: qsTr("菜单名称")
-                            font.pixelSize: 12
-                            color: Styles.Style.secondaryTextColor
+                            text: currentItem ? qsTr("属性编辑: ") + (currentItem.nameLocal || currentItem.name || "") : qsTr("属性编辑")
+                            font.pixelSize: 16
+                            font.bold: true
+                            color: Styles.Style.textColor
+                        }
+                    
+                    // 根节点属性
+                    Column {
+                        visible: currentItem !== null && currentItem.level === 0
+                        width: parent.width
+                        spacing: Styles.Style.spacing
+                        
+                        // Comment
+                        Column {
+                            width: parent.width
+                            spacing: 5
+                            
+                            Text {
+                                text: qsTr("描述")
+                                font.pixelSize: 12
+                                color: Styles.Style.secondaryTextColor
+                            }
+                            
+                            TextField {
+                                width: parent.width
+                                height: Styles.Style.itemHeight
+                                font.pixelSize: 14
+                                text: currentItem ? currentItem.comment || "" : ""
+                                
+                                background: Rectangle {
+                                    color: Styles.Style.backgroundColor
+                                    border.color: Styles.Style.borderColor
+                                    border.width: 1
+                                    radius: Styles.Style.borderRadius
+                                }
+                            }
                         }
                         
-                        TextField {
+                        // Comment[zh_CN]
+                        Column {
                             width: parent.width
-                            height: Styles.Style.itemHeight
-                            font.pixelSize: 14
+                            spacing: 5
                             
-                            background: Rectangle {
-                                color: Styles.Style.backgroundColor
-                                border.color: Styles.Style.borderColor
-                                border.width: 1
-                                radius: Styles.Style.borderRadius
+                            Text {
+                                text: qsTr("描述(中文)")
+                                font.pixelSize: 12
+                                color: Styles.Style.secondaryTextColor
+                            }
+                            
+                            TextField {
+                                width: parent.width
+                                height: Styles.Style.itemHeight
+                                font.pixelSize: 14
+                                text: currentItem ? currentItem.commentLocal || "" : ""
+                                
+                                background: Rectangle {
+                                    color: Styles.Style.backgroundColor
+                                    border.color: Styles.Style.borderColor
+                                    border.width: 1
+                                    radius: Styles.Style.borderRadius
+                                }
+                            }
+                        }
+                        
+                        // Version
+                        Column {
+                            width: parent.width
+                            spacing: 5
+                            
+                            Text {
+                                text: qsTr("版本号")
+                                font.pixelSize: 12
+                                color: Styles.Style.secondaryTextColor
+                            }
+                            
+                            TextField {
+                                width: parent.width
+                                height: Styles.Style.itemHeight
+                                font.pixelSize: 14
+                                text: currentItem ? currentItem.version || "" : ""
+                                
+                                background: Rectangle {
+                                    color: Styles.Style.backgroundColor
+                                    border.color: Styles.Style.borderColor
+                                    border.width: 1
+                                    radius: Styles.Style.borderRadius
+                                }
                             }
                         }
                     }
                     
-                    // 菜单名称(中文)
+                    // 菜单项属性
                     Column {
+                        visible: currentItem !== null && currentItem.level > 0
                         width: parent.width
-                        spacing: 5
+                        spacing: Styles.Style.spacing
                         
-                        Text {
-                            text: qsTr("菜单名称(中文)")
-                            font.pixelSize: 12
-                            color: Styles.Style.secondaryTextColor
+                        // Name
+                        Column {
+                            width: parent.width
+                            spacing: 5
+                            
+                            Text {
+                                text: qsTr("菜单名称")
+                                font.pixelSize: 12
+                                color: Styles.Style.secondaryTextColor
+                            }
+                            
+                            TextField {
+                                width: parent.width
+                                height: Styles.Style.itemHeight
+                                font.pixelSize: 14
+                                text: currentItem ? currentItem.name || "" : ""
+                                
+                                background: Rectangle {
+                                    color: Styles.Style.backgroundColor
+                                    border.color: Styles.Style.borderColor
+                                    border.width: 1
+                                    radius: Styles.Style.borderRadius
+                                }
+                            }
                         }
                         
-                        TextField {
+                        // Name[zh_CN]
+                        Column {
                             width: parent.width
-                            height: Styles.Style.itemHeight
-                            font.pixelSize: 14
+                            spacing: 5
                             
-                            background: Rectangle {
-                                color: Styles.Style.backgroundColor
-                                border.color: Styles.Style.borderColor
-                                border.width: 1
-                                radius: Styles.Style.borderRadius
+                            Text {
+                                text: qsTr("菜单名称(中文)")
+                                font.pixelSize: 12
+                                color: Styles.Style.secondaryTextColor
+                            }
+                            
+                            TextField {
+                                width: parent.width
+                                height: Styles.Style.itemHeight
+                                font.pixelSize: 14
+                                text: currentItem ? currentItem.nameLocal || "" : ""
+                                
+                                background: Rectangle {
+                                    color: Styles.Style.backgroundColor
+                                    border.color: Styles.Style.borderColor
+                                    border.width: 1
+                                    radius: Styles.Style.borderRadius
+                                }
+                            }
+                        }
+                        
+                        // X-DFM-MenuTypes (checkbox)
+                        Column {
+                            width: parent.width
+                            spacing: 5
+                            
+                            Text {
+                                text: qsTr("菜单类型")
+                                font.pixelSize: 12
+                                color: Styles.Style.secondaryTextColor
+                            }
+                            
+                            GridLayout {
+                                width: parent.width
+                                columns: 2
+                                rowSpacing: 5
+                                columnSpacing: 10
+                                
+                                CheckBox {
+                                    text: "SingleFile"
+                                    checked: currentItem && currentItem.menuTypes ? currentItem.menuTypes.indexOf("SingleFile") >= 0 : false
+                                }
+                                CheckBox {
+                                    text: "MultiFiles"
+                                    checked: currentItem && currentItem.menuTypes ? currentItem.menuTypes.indexOf("MultiFiles") >= 0 : false
+                                }
+                                CheckBox {
+                                    text: "Filemanager"
+                                    checked: currentItem && currentItem.menuTypes ? currentItem.menuTypes.indexOf("Filemanager") >= 0 : false
+                                }
+                                CheckBox {
+                                    text: "SingleDir"
+                                    checked: currentItem && currentItem.menuTypes ? currentItem.menuTypes.indexOf("SingleDir") >= 0 : false
+                                }
+                                CheckBox {
+                                    text: "BlankSpace"
+                                    checked: currentItem && currentItem.menuTypes ? currentItem.menuTypes.indexOf("BlankSpace") >= 0 : false
+                                }
+                            }
+                        }
+                        
+                        // X-DFM-SupportSuffix (简化版，只显示几个常用的)
+                        Column {
+                            width: parent.width
+                            spacing: 5
+                            
+                            Text {
+                                text: qsTr("支持的后缀")
+                                font.pixelSize: 12
+                                color: Styles.Style.secondaryTextColor
+                            }
+                            
+                            GridLayout {
+                                width: parent.width
+                                columns: 3
+                                rowSpacing: 5
+                                columnSpacing: 10
+                                
+                                CheckBox {
+                                    text: "视频"
+                                    checked: currentItem && currentItem.supportSuffix ? currentItem.supportSuffix.some(suffix => suffix.startsWith("mp4") || suffix.startsWith("avi") || suffix.startsWith("mkv")) : false
+                                }
+                                CheckBox {
+                                    text: "音频"
+                                    checked: currentItem && currentItem.supportSuffix ? currentItem.supportSuffix.some(suffix => suffix.startsWith("mp3") || suffix.startsWith("wav") || suffix.startsWith("flac")) : false
+                                }
+                                CheckBox {
+                                    text: "图片"
+                                    checked: currentItem && currentItem.supportSuffix ? currentItem.supportSuffix.some(suffix => suffix.startsWith("jpg") || suffix.startsWith("png") || suffix.startsWith("gif")) : false
+                                }
+                                CheckBox {
+                                    text: "文档"
+                                    checked: currentItem && currentItem.supportSuffix ? currentItem.supportSuffix.some(suffix => suffix.startsWith("pdf") || suffix.startsWith("doc") || suffix.startsWith("txt")) : false
+                                }
+                            }
+                        }
+                        
+                        // PosNum
+                        Column {
+                            width: parent.width
+                            spacing: 5
+                            
+                            Text {
+                                text: qsTr("位置编号")
+                                font.pixelSize: 12
+                                color: Styles.Style.secondaryTextColor
+                            }
+                            
+                            SpinBox {
+                                width: parent.width
+                                height: Styles.Style.itemHeight
+                                from: 1
+                                to: 100
+                                value: currentItem ? currentItem.positionNumber || 1 : 1
+                                font.pixelSize: 14
+                            }
+                        }
+                        
+                        // Exec (仅在有 Exec 命令时显示)
+                        Column {
+                            visible: currentItem && currentItem.execCommand && currentItem.execCommand.length > 0
+                            width: parent.width
+                            spacing: 5
+                            
+                            Text {
+                                text: qsTr("可执行命令")
+                                font.pixelSize: 12
+                                color: Styles.Style.secondaryTextColor
+                            }
+                            
+                            TextField {
+                                width: parent.width
+                                height: Styles.Style.itemHeight
+                                font.pixelSize: 14
+                                text: currentItem ? currentItem.execCommand || "" : ""
+                                
+                                background: Rectangle {
+                                    color: Styles.Style.backgroundColor
+                                    border.color: Styles.Style.borderColor
+                                    border.width: 1
+                                    radius: Styles.Style.borderRadius
+                                }
                             }
                         }
                     }
-                    
-                    // 可执行命令
-                    Column {
-                        width: parent.width
-                        spacing: 5
-                        
-                        Text {
-                            text: qsTr("可执行命令")
-                            font.pixelSize: 12
-                            color: Styles.Style.secondaryTextColor
-                        }
-                        
-                        TextField {
-                            width: parent.width
-                            height: Styles.Style.itemHeight
-                            font.pixelSize: 14
-                            
-                            background: Rectangle {
-                                color: Styles.Style.backgroundColor
-                                border.color: Styles.Style.borderColor
-                                border.width: 1
-                                radius: Styles.Style.borderRadius
-                            }
-                        }
                     }
+                }
+                
+                // 未选中任何项时的提示（在ScrollView底部）
+                Text {
+                    visible: currentItem === null
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: Styles.Style.padding * 2
+                    text: qsTr("请选择一个菜单项")
+                    font.pixelSize: 14
+                    color: Styles.Style.secondaryTextColor
                 }
             }
             
@@ -528,6 +739,9 @@ ApplicationWindow {
     
     // 当前菜单树模型
     property var currentMenuModel: null
+    
+    // 当前选中的菜单项
+    property var currentItem: null
     
     // 保存列宽
     property real filePanelWidth: 350
