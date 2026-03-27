@@ -16,6 +16,22 @@ ApplicationWindow {
     minimumHeight: 600
     title: qsTr("DFM Context Menu Manager")
     
+    // F5按键刷新功能
+    FocusScope {
+        id: keyHandler
+        anchors.fill: parent
+        focus: true
+        
+        Keys.onPressed: function(event) {
+            if (event.key === Qt.Key_F5) {
+                console.log("F5 pressed, refreshing file lists")
+                userFileModel.refresh()
+                systemFileModel.refresh()
+                event.accepted = true
+            }
+        }
+    }
+    
     // TreeView delegate
     Component {
         id: treeViewDelegate
@@ -769,11 +785,75 @@ ApplicationWindow {
             
             MouseArea {
                 id: mouseArea
+                property var currentModel: ListView.view ? ListView.view.model : null
                 anchors.fill: parent
                 hoverEnabled: true
-                onClicked: {
-                    selectedFilePath = model.filePath || ""
-                    menuManager.setCurrentConfig(model.filePath || "")
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: function(mouse) {
+                    if (mouse.button === Qt.LeftButton) {
+                        selectedFilePath = model.filePath || ""
+                        menuManager.setCurrentConfig(model.filePath || "")
+                    } else if (mouse.button === Qt.RightButton) {
+                        contextMenu.filePath = model.filePath || ""
+                        contextMenu.modelRef = currentModel
+                        contextMenu.popup()
+                    }
+                }
+            }
+            
+            // 右键上下文菜单
+            Menu {
+                id: contextMenu
+                property string filePath: ""
+                property var modelRef: null
+                
+                MenuItem {
+                    text: qsTr("Refresh List")
+                    onTriggered: {
+                        console.log("Refreshing file lists")
+                        userFileModel.refresh()
+                        systemFileModel.refresh()
+                    }
+                }
+                
+                MenuSeparator {}
+                
+                MenuItem {
+                    text: qsTr("Open Containing Folder")
+                    enabled: contextMenu.filePath !== ""
+                    onTriggered: {
+                        console.log("Opening containing folder for:", contextMenu.filePath)
+                        if (contextMenu.modelRef === userFileModel) {
+                            console.log("Calling userFileModel.openContainingFolder")
+                            userFileModel.openContainingFolder(contextMenu.filePath)
+                        } else if (contextMenu.modelRef === systemFileModel) {
+                            console.log("Calling systemFileModel.openContainingFolder")
+                            systemFileModel.openContainingFolder(contextMenu.filePath)
+                        } else {
+                            console.log("Unknown model, trying both")
+                            // 如果无法确定模型，尝试两个都调用
+                            userFileModel.openContainingFolder(contextMenu.filePath)
+                        }
+                    }
+                }
+                
+                MenuItem {
+                    text: qsTr("Open File")
+                    enabled: contextMenu.filePath !== ""
+                    onTriggered: {
+                        console.log("Opening file:", contextMenu.filePath)
+                        if (contextMenu.modelRef === userFileModel) {
+                            console.log("Calling userFileModel.openFile")
+                            userFileModel.openFile(contextMenu.filePath)
+                        } else if (contextMenu.modelRef === systemFileModel) {
+                            console.log("Calling systemFileModel.openFile")
+                            systemFileModel.openFile(contextMenu.filePath)
+                        } else {
+                            console.log("Unknown model, trying both")
+                            // 如果无法确定模型，尝试两个都调用
+                            userFileModel.openFile(contextMenu.filePath)
+                        }
+                    }
                 }
             }
         }

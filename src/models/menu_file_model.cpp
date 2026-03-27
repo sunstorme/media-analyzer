@@ -1,16 +1,81 @@
 // SPDX-FileCopyrightText: 2026 zhanghongyuan <zhanghongyuan@uniontech.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "menu_file_model.h"
+#include "../core/file_watcher.h"
 #include "../utils/file_utils.h"
 #include <QDir>
 #include <QFileInfo>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QProcess>
+#include <QTimer>
+#include <QDebug>
 
 MenuFileModel::MenuFileModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_showSystemOnly(false)
+    , m_fileWatcher(nullptr)
 {
     // 自动加载文件列表
     refresh();
+    
+    // 设置文件监控
+    setupFileWatcher();
+}
+
+MenuFileModel::~MenuFileModel() {
+    cleanupFileWatcher();
+}
+
+void MenuFileModel::setupFileWatcher() {
+    if (!m_fileWatcher) {
+        m_fileWatcher = new FileWatcher(this);
+        
+        connect(m_fileWatcher, &FileWatcher::fileChanged,
+                this, &MenuFileModel::onFileChanged);
+        connect(m_fileWatcher, &FileWatcher::directoryChanged,
+                this, &MenuFileModel::onDirectoryChanged);
+    }
+    
+    // 监控用户配置目录
+    QString userDir = FileUtils::getUserConfigDir();
+    if (QDir(userDir).exists()) {
+        m_fileWatcher->watchDirectory(userDir);
+        qDebug() << "Watching user directory:" << userDir;
+    }
+    
+    // 监控系统配置目录
+    QString systemDir = FileUtils::getSystemConfigDir();
+    if (QDir(systemDir).exists()) {
+        m_fileWatcher->watchDirectory(systemDir);
+        qDebug() << "Watching system directory:" << systemDir;
+    }
+}
+
+void MenuFileModel::cleanupFileWatcher() {
+    if (m_fileWatcher) {
+        QString userDir = FileUtils::getUserConfigDir();
+        QString systemDir = FileUtils::getSystemConfigDir();
+        
+        m_fileWatcher->unwatchDirectory(userDir);
+        m_fileWatcher->unwatchDirectory(systemDir);
+    }
+}
+
+void MenuFileModel::onFileChanged(const QString &path) {
+    qDebug() << "File changed, refreshing model:" << path;
+    // 延迟刷新以避免频繁更新
+    QTimer::singleShot(100, this, [this]() {
+        refresh();
+    });
+}
+
+void MenuFileModel::onDirectoryChanged(const QString &path) {
+    qDebug() << "Directory changed, refreshing model:" << path;
+    // 延迟刷新以避免频繁更新
+    QTimer::singleShot(100, this, [this]() {
+        refresh();
+    });
 }
 
 int MenuFileModel::rowCount(const QModelIndex &parent) const {
@@ -145,4 +210,59 @@ QString MenuFileModel::copyFile(const QString &sourcePath, bool toSystem) {
     Q_UNUSED(toSystem)
     // TODO: 实现复制文件
     return QString();
+}
+
+void MenuFileModel::openFile(const QString &path) {
+    QFileInfo fileInfo(path);
+    if (!fileInfo.exists()) {
+        qWarning() << "File does not exist:" << path;
+        return;
+    }
+    
+    qDebug() << "Attempting to open file:" << path;
+    
+    // 使用Qt的QDesktopServices打开文件（跨平台方式）
+    QUrl url = QUrl::fromLocalFile(path);
+    bool success = QDesktopServices::openUrl(url);
+    
+    if (success) {
+        qDebug() << "Successfully opened file with Qt:" << path;
+    } else {
+        qWarning() << "Failed to open file with Qt:" << path;
+    }
+}
+
+void MenuFileModel::openContainingFolder(const QString &path) {
+    QFileInfo fileInfo(path);
+    if (!fileInfo.exists()) {
+        qWarning() << "File does not exist:" << path;
+        return;
+    }
+    
+    QString folderPath = fileInfo.absolutePath();
+    qDebug() << "Attempting to open containing folder:" << folderPath;
+    
+    // 首先尝试使用dde-file-manager打开文件夹并选中文件（深度定制功能）
+    QStringList ddeArgs;
+    ddeArgs << "--show-item" << path;
+    
+    qint64 ddePid = 0;
+    bool ddeSuccess = QProcess::startDetached("dde-file-manager", ddeArgs, QString(), &ddePid);
+    
+    if (ddeSuccess && ddePid > 0) {
+        qDebug() << "Successfully started dde-file-manager for:" << path << "PID:" << ddePid;
+        return;
+    } else {
+        qDebug() << "dde-file-manager not available, using Qt to open folder:" << folderPath;
+    }
+    
+    // 如果dde-file-manager不可用，使用Qt的QDesktopServices打开文件夹
+    QUrl url = QUrl::fromLocalFile(folderPath);
+    bool success = QDesktopServices::openUrl(url);
+    
+    if (success) {
+        qDebug() << "Successfully opened folder with Qt:" << folderPath;
+    } else {
+        qWarning() << "Failed to open folder with Qt:" << folderPath;
+    }
 }

@@ -6,6 +6,8 @@
 #include <QAbstractListModel>
 #include <QStringList>
 
+class FileWatcher;
+
 class MenuFileModel : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(bool showSystemOnly READ showSystemOnly WRITE setShowSystemOnly NOTIFY showSystemOnlyChanged)
@@ -21,6 +23,7 @@ public:
     };
     
     explicit MenuFileModel(QObject *parent = nullptr);
+    ~MenuFileModel();
     
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -33,6 +36,8 @@ public:
     Q_INVOKABLE void deleteFile(const QString &path);
     Q_INVOKABLE void renameFile(const QString &path, const QString &newName);
     Q_INVOKABLE QString copyFile(const QString &sourcePath, bool toSystem = false);
+    Q_INVOKABLE void openFile(const QString &path);
+    Q_INVOKABLE void openContainingFolder(const QString &path);
     
     bool showSystemOnly() const { return m_showSystemOnly; }
     void setShowSystemOnly(bool show) { 
@@ -47,8 +52,14 @@ signals:
     void showSystemOnlyChanged();
     void searchFilterChanged();
     
+private slots:
+    void onFileChanged(const QString &path);
+    void onDirectoryChanged(const QString &path);
+    
 private:
     void applySearchFilter();
+    void setupFileWatcher();
+    void cleanupFileWatcher();
     
     struct FileInfo {
         QString name;
@@ -62,6 +73,7 @@ private:
     QList<FileInfo> m_allFiles;  // 保存所有文件，用于搜索过滤
     bool m_showSystemOnly;
     QString m_searchFilter;
+    FileWatcher *m_fileWatcher;
 };
 
 #endif // MENUFILEMODEL_H
