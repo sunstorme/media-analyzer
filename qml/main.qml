@@ -5,6 +5,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import DFMMenu 1.0
 import "qrc:/qml/styles" as Styles
+import "qrc:/qml/components" as Components
 
 ApplicationWindow {
     id: root
@@ -596,7 +597,7 @@ ApplicationWindow {
                             }
                         }
                         
-                        // X-DFM-SupportSuffix (简化版，只显示几个常用的)
+                        // X-DFM-SupportSuffix (多行输入框+选择按钮)
                         Column {
                             width: parent.width
                             spacing: 5
@@ -607,27 +608,56 @@ ApplicationWindow {
                                 color: Styles.Style.secondaryTextColor
                             }
                             
-                            GridLayout {
+                            Row {
                                 width: parent.width
-                                columns: 3
-                                rowSpacing: 5
-                                columnSpacing: 10
+                                height: Styles.Style.itemHeight * 3
+                                spacing: Styles.Style.spacing
                                 
-                                CheckBox {
-                                    text: "视频"
-                                    checked: currentItem && currentItem.supportSuffix ? currentItem.supportSuffix.some(suffix => suffix.startsWith("mp4") || suffix.startsWith("avi") || suffix.startsWith("mkv")) : false
+                                ScrollView {
+                                    width: parent.width - selectButton.width - parent.spacing
+                                    height: parent.height
+                                    clip: true
+                                    
+                                    TextArea {
+                                        id: suffixTextArea
+                                        width: parent.width
+                                        height: parent.height
+                                        wrapMode: TextArea.Wrap
+                                        font: Styles.Style.bodyFont
+                                        placeholderText: qsTr("输入支持的后缀，用冒号分隔，如：mp4:avi:mkv")
+                                        text: {
+                                            if (currentItem && currentItem.supportSuffix) {
+                                                return currentItem.supportSuffix.join(":")
+                                            }
+                                            return ""
+                                        }
+                                        
+                                        background: Rectangle {
+                                            color: Styles.Style.backgroundColor
+                                            border.color: Styles.Style.borderColor
+                                            border.width: 1
+                                            radius: Styles.Style.borderRadius
+                                        }
+                                        
+                                        onTextChanged: {
+                                            // 更新当前项的后缀列表
+                                            if (currentItem) {
+                                                var suffixes = text.split(":").filter(function(s) { return s.trim() !== "" })
+                                                currentItem.supportSuffix = suffixes
+                                            }
+                                        }
+                                    }
                                 }
-                                CheckBox {
-                                    text: "音频"
-                                    checked: currentItem && currentItem.supportSuffix ? currentItem.supportSuffix.some(suffix => suffix.startsWith("mp3") || suffix.startsWith("wav") || suffix.startsWith("flac")) : false
-                                }
-                                CheckBox {
-                                    text: "图片"
-                                    checked: currentItem && currentItem.supportSuffix ? currentItem.supportSuffix.some(suffix => suffix.startsWith("jpg") || suffix.startsWith("png") || suffix.startsWith("gif")) : false
-                                }
-                                CheckBox {
-                                    text: "文档"
-                                    checked: currentItem && currentItem.supportSuffix ? currentItem.supportSuffix.some(suffix => suffix.startsWith("pdf") || suffix.startsWith("doc") || suffix.startsWith("txt")) : false
+                                
+                                Components.DButton {
+                                    id: selectButton
+                                    width: 80
+                                    // height: parent.height
+                                    text: qsTr("选择")
+                                     
+                                    onClicked: {
+                                        fileTypeSelectorDialog.open()
+                                    }
                                 }
                             }
                         }
@@ -785,6 +815,39 @@ ApplicationWindow {
             } else {
                 console.log("Failed to load menu model")
             }
+        }
+    }
+    
+    // 文件类型选择弹窗
+    Components.DFileTypeSelectorDialog {
+        id: fileTypeSelectorDialog
+        parent: root
+        
+        allFileTypes: fileTypeManager.allFileTypes
+        categories: fileTypeManager.categories
+        
+        onOpened: {
+            // 初始化已选择的后缀列表
+            if (currentItem && currentItem.supportSuffix) {
+                selectedSuffixes = currentItem.supportSuffix.slice()  // 复制数组
+            } else {
+                selectedSuffixes = []
+            }
+            console.log("Dialog opened, current suffixes:", selectedSuffixes)
+        }
+        
+        onAccepted: {
+            // 确认选择，更新后缀列表
+            if (currentItem) {
+                currentItem.supportSuffix = selectedSuffixes.slice()  // 复制数组
+                // 更新文本框显示
+                suffixTextArea.text = selectedSuffixes.join(":")
+                console.log("Suffixes updated:", selectedSuffixes.join(":"))
+            }
+        }
+        
+        onSelectionChanged: function(suffixes) {
+            console.log("Selection changed:", suffixes.join(":"))
         }
     }
 }

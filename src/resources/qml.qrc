@@ -4,5 +4,9 @@
         <file>../../qml/main.qml</file>
         <file>../../qml/styles/Style.qml</file>
         <file>../../qml/styles/qmldir</file>
+        <file>../../qml/components/DFileTypeSelectorDialog.qml</file>
+        <file>../../qml/components/DButton.qml</file>
+        <file>../../qml/components/DMultiSelectComboBox.qml</file>
+        <file>file_types.json</file>
     </qresource>
 </RCC>

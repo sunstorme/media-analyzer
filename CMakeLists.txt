@@ -7,11 +7,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 # Qt6 依赖
-find_package(Qt6 REQUIRED COMPONENTS 
+find_package(Qt6 REQUIRED COMPONENTS
     Core
     Gui
-    Quick 
-    Qml 
+    Quick
+    Qml
     LinguistTools
 )
 
@@ -22,6 +22,7 @@ set(SOURCES
     src/core/config_parser.cpp
     src/core/config_writer.cpp
     src/core/file_watcher.cpp
+    src/core/file_type_manager.cpp
     src/models/menu_tree_model.cpp
     src/models/menu_file_model.cpp
     src/models/menu_action_item.cpp
@@ -36,6 +37,7 @@ set(HEADERS
     src/core/config_parser.h
     src/core/config_writer.h
     src/core/file_watcher.h
+    src/core/file_type_manager.h
     src/models/menu_tree_model.h
     src/models/menu_file_model.h
     src/models/menu_action_item.h

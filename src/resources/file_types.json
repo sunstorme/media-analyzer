@@ -1,0 +1,540 @@
+{
+  "categories": {
+    "video": {
+      "name": "视频",
+      "name_en": "Video",
+      "icon": "video-x-generic"
+    },
+    "audio": {
+      "name": "音频",
+      "name_en": "Audio",
+      "icon": "audio-x-generic"
+    },
+    "image": {
+      "name": "图片",
+      "name_en": "Image",
+      "icon": "image-x-generic"
+    },
+    "document": {
+      "name": "文档",
+      "name_en": "Document",
+      "icon": "x-office-document"
+    },
+    "archive": {
+      "name": "压缩包",
+      "name_en": "Archive",
+      "icon": "package-x-generic"
+    },
+    "other": {
+      "name": "其他",
+      "name_en": "Other",
+      "icon": "unknown"
+    }
+  },
+  "file_types": [
+    {
+      "suffix": "mp4",
+      "name": "MP4视频",
+      "name_en": "MP4 Video",
+      "category": "video"
+    },
+    {
+      "suffix": "avi",
+      "name": "AVI视频",
+      "name_en": "AVI Video",
+      "category": "video"
+    },
+    {
+      "suffix": "mkv",
+      "name": "MKV视频",
+      "name_en": "MKV Video",
+      "category": "video"
+    },
+    {
+      "suffix": "mov",
+      "name": "MOV视频",
+      "name_en": "MOV Video",
+      "category": "video"
+    },
+    {
+      "suffix": "wmv",
+      "name": "WMV视频",
+      "name_en": "WMV Video",
+      "category": "video"
+    },
+    {
+      "suffix": "flv",
+      "name": "FLV视频",
+      "name_en": "FLV Video",
+      "category": "video"
+    },
+    {
+      "suffix": "webm",
+      "name": "WebM视频",
+      "name_en": "WebM Video",
+      "category": "video"
+    },
+    {
+      "suffix": "m4v",
+      "name": "M4V视频",
+      "name_en": "M4V Video",
+      "category": "video"
+    },
+    {
+      "suffix": "3gp",
+      "name": "3GP视频",
+      "name_en": "3GP Video",
+      "category": "video"
+    },
+    {
+      "suffix": "mpg",
+      "name": "MPG视频",
+      "name_en": "MPG Video",
+      "category": "video"
+    },
+    {
+      "suffix": "mpeg",
+      "name": "MPEG视频",
+      "name_en": "MPEG Video",
+      "category": "video"
+    },
+    {
+      "suffix": "vob",
+      "name": "VOB视频",
+      "name_en": "VOB Video",
+      "category": "video"
+    },
+    {
+      "suffix": "ts",
+      "name": "TS视频",
+      "name_en": "TS Video",
+      "category": "video"
+    },
+    {
+      "suffix": "mts",
+      "name": "MTS视频",
+      "name_en": "MTS Video",
+      "category": "video"
+    },
+    {
+      "suffix": "m2ts",
+      "name": "M2TS视频",
+      "name_en": "M2TS Video",
+      "category": "video"
+    },
+    {
+      "suffix": "ogv",
+      "name": "OGV视频",
+      "name_en": "OGV Video",
+      "category": "video"
+    },
+    {
+      "suffix": "divx",
+      "name": "DivX视频",
+      "name_en": "DivX Video",
+      "category": "video"
+    },
+    {
+      "suffix": "xvid",
+      "name": "Xvid视频",
+      "name_en": "Xvid Video",
+      "category": "video"
+    },
+    {
+      "suffix": "mp3",
+      "name": "MP3音频",
+      "name_en": "MP3 Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "wav",
+      "name": "WAV音频",
+      "name_en": "WAV Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "flac",
+      "name": "FLAC音频",
+      "name_en": "FLAC Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "aac",
+      "name": "AAC音频",
+      "name_en": "AAC Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "ogg",
+      "name": "OGG音频",
+      "name_en": "OGG Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "wma",
+      "name": "WMA音频",
+      "name_en": "WMA Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "m4a",
+      "name": "M4A音频",
+      "name_en": "M4A Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "aiff",
+      "name": "AIFF音频",
+      "name_en": "AIFF Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "au",
+      "name": "AU音频",
+      "name_en": "AU Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "ra",
+      "name": "RA音频",
+      "name_en": "RA Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "rm",
+      "name": "RM音频",
+      "name_en": "RM Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "ape",
+      "name": "APE音频",
+      "name_en": "APE Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "ac3",
+      "name": "AC3音频",
+      "name_en": "AC3 Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "dts",
+      "name": "DTS音频",
+      "name_en": "DTS Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "amr",
+      "name": "AMR音频",
+      "name_en": "AMR Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "mid",
+      "name": "MIDI音频",
+      "name_en": "MIDI Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "midi",
+      "name": "MIDI音频",
+      "name_en": "MIDI Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "mod",
+      "name": "MOD音频",
+      "name_en": "MOD Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "mpc",
+      "name": "MPC音频",
+      "name_en": "MPC Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "opus",
+      "name": "OPUS音频",
+      "name_en": "OPUS Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "spx",
+      "name": "SPX音频",
+      "name_en": "SPX Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "tta",
+      "name": "TTA音频",
+      "name_en": "TTA Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "wv",
+      "name": "WV音频",
+      "name_en": "WV Audio",
+      "category": "audio"
+    },
+    {
+      "suffix": "jpg",
+      "name": "JPG图片",
+      "name_en": "JPG Image",
+      "category": "image"
+    },
+    {
+      "suffix": "jpeg",
+      "name": "JPEG图片",
+      "name_en": "JPEG Image",
+      "category": "image"
+    },
+    {
+      "suffix": "png",
+      "name": "PNG图片",
+      "name_en": "PNG Image",
+      "category": "image"
+    },
+    {
+      "suffix": "gif",
+      "name": "GIF图片",
+      "name_en": "GIF Image",
+      "category": "image"
+    },
+    {
+      "suffix": "bmp",
+      "name": "BMP图片",
+      "name_en": "BMP Image",
+      "category": "image"
+    },
+    {
+      "suffix": "tiff",
+      "name": "TIFF图片",
+      "name_en": "TIFF Image",
+      "category": "image"
+    },
+    {
+      "suffix": "tif",
+      "name": "TIF图片",
+      "name_en": "TIF Image",
+      "category": "image"
+    },
+    {
+      "suffix": "webp",
+      "name": "WebP图片",
+      "name_en": "WebP Image",
+      "category": "image"
+    },
+    {
+      "suffix": "ico",
+      "name": "ICO图标",
+      "name_en": "ICO Icon",
+      "category": "image"
+    },
+    {
+      "suffix": "svg",
+      "name": "SVG矢量图",
+      "name_en": "SVG Vector",
+      "category": "image"
+    },
+    {
+      "suffix": "raw",
+      "name": "RAW图片",
+      "name_en": "RAW Image",
+      "category": "image"
+    },
+    {
+      "suffix": "cr2",
+      "name": "CR2图片",
+      "name_en": "CR2 Image",
+      "category": "image"
+    },
+    {
+      "suffix": "nef",
+      "name": "NEF图片",
+      "name_en": "NEF Image",
+      "category": "image"
+    },
+    {
+      "suffix": "arw",
+      "name": "ARW图片",
+      "name_en": "ARW Image",
+      "category": "image"
+    },
+    {
+      "suffix": "dng",
+      "name": "DNG图片",
+      "name_en": "DNG Image",
+      "category": "image"
+    },
+    {
+      "suffix": "psd",
+      "name": "PSD图片",
+      "name_en": "PSD Image",
+      "category": "image"
+    },
+    {
+      "suffix": "ai",
+      "name": "AI矢量图",
+      "name_en": "AI Vector",
+      "category": "image"
+    },
+    {
+      "suffix": "eps",
+      "name": "EPS矢量图",
+      "name_en": "EPS Vector",
+      "category": "image"
+    },
+    {
+      "suffix": "pdf",
+      "name": "PDF文档",
+      "name_en": "PDF Document",
+      "category": "document"
+    },
+    {
+      "suffix": "heic",
+      "name": "HEIC图片",
+      "name_en": "HEIC Image",
+      "category": "image"
+    },
+    {
+      "suffix": "heif",
+      "name": "HEIF图片",
+      "name_en": "HEIF Image",
+      "category": "image"
+    },
+    {
+      "suffix": "avif",
+      "name": "AVIF图片",
+      "name_en": "AVIF Image",
+      "category": "image"
+    },
+    {
+      "suffix": "doc",
+      "name": "Word文档",
+      "name_en": "Word Document",
+      "category": "document"
+    },
+    {
+      "suffix": "docx",
+      "name": "Word文档",
+      "name_en": "Word Document",
+      "category": "document"
+    },
+    {
+      "suffix": "xls",
+      "name": "Excel表格",
+      "name_en": "Excel Spreadsheet",
+      "category": "document"
+    },
+    {
+      "suffix": "xlsx",
+      "name": "Excel表格",
+      "name_en": "Excel Spreadsheet",
+      "category": "document"
+    },
+    {
+      "suffix": "ppt",
+      "name": "PowerPoint演示",
+      "name_en": "PowerPoint Presentation",
+      "category": "document"
+    },
+    {
+      "suffix": "pptx",
+      "name": "PowerPoint演示",
+      "name_en": "PowerPoint Presentation",
+      "category": "document"
+    },
+    {
+      "suffix": "txt",
+      "name": "文本文件",
+      "name_en": "Text File",
+      "category": "document"
+    },
+    {
+      "suffix": "odt",
+      "name": "ODT文档",
+      "name_en": "ODT Document",
+      "category": "document"
+    },
+    {
+      "suffix": "ods",
+      "name": "ODS表格",
+      "name_en": "ODS Spreadsheet",
+      "category": "document"
+    },
+    {
+      "suffix": "odp",
+      "name": "ODP演示",
+      "name_en": "ODP Presentation",
+      "category": "document"
+    },
+    {
+      "suffix": "rtf",
+      "name": "RTF文档",
+      "name_en": "RTF Document",
+      "category": "document"
+    },
+    {
+      "suffix": "zip",
+      "name": "ZIP压缩包",
+      "name_en": "ZIP Archive",
+      "category": "archive"
+    },
+    {
+      "suffix": "rar",
+      "name": "RAR压缩包",
+      "name_en": "RAR Archive",
+      "category": "archive"
+    },
+    {
+      "suffix": "7z",
+      "name": "7Z压缩包",
+      "name_en": "7Z Archive",
+      "category": "archive"
+    },
+    {
+      "suffix": "tar",
+      "name": "TAR压缩包",
+      "name_en": "TAR Archive",
+      "category": "archive"
+    },
+    {
+      "suffix": "gz",
+      "name": "GZ压缩包",
+      "name_en": "GZ Archive",
+      "category": "archive"
+    },
+    {
+      "suffix": "bz2",
+      "name": "BZ2压缩包",
+      "name_en": "BZ2 Archive",
+      "category": "archive"
+    },
+    {
+      "suffix": "xz",
+      "name": "XZ压缩包",
+      "name_en": "XZ Archive",
+      "category": "archive"
+    },
+    {
+      "suffix": "tar.gz",
+      "name": "TAR.GZ压缩包",
+      "name_en": "TAR.GZ Archive",
+      "category": "archive"
+    },
+    {
+      "suffix": "tar.bz2",
+      "name": "TAR.BZ2压缩包",
+      "name_en": "TAR.BZ2 Archive",
+      "category": "archive"
+    },
+    {
+      "suffix": "tar.xz",
+      "name": "TAR.XZ压缩包",
+      "name_en": "TAR.XZ Archive",
+      "category": "archive"
+    }
+  ]
+}

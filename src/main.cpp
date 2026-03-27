@@ -24,6 +24,7 @@
 #include <QLocale>
 #include <QDebug>
 #include "core/menu_manager.h"
+#include "core/file_type_manager.h"
 #include "models/menu_tree_model.h"
 #include "models/menu_file_model.h"
 #include "utils/window_manager.h"
@@ -80,6 +81,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<MenuTreeModel>("DFMMenu", 1, 0, "MenuTreeModel");
     qmlRegisterType<MenuFileModel>("DFMMenu", 1, 0, "MenuFileModel");
     qmlRegisterType<MenuManager>("DFMMenu", 1, 0, "MenuManager");
+    qmlRegisterType<FileTypeManager>("DFMMenu", 1, 0, "FileTypeManager");
     qmlRegisterSingletonType<WindowManager>("DFMMenu", 1, 0, "WindowManager",
         [](QQmlEngine *engine, QJSEngine *scriptEngine) -> QObject* {
             Q_UNUSED(scriptEngine)
@@ -98,6 +100,11 @@ int main(int argc, char *argv[])
     menuManager.loadConfigurations();
     qDebug() << "Configurations loaded";
     
+    // 创建文件类型管理器
+    qDebug() << "Creating FileTypeManager...";
+    FileTypeManager fileTypeManager;
+    qDebug() << "FileTypeManager created";
+    
     // QML引擎
     qDebug() << "Creating QML engine...";
     QQmlApplicationEngine engine;
@@ -109,6 +116,7 @@ int main(int argc, char *argv[])
     // 暴露管理器到QML
     qDebug() << "Setting context properties...";
     engine.rootContext()->setContextProperty("menuManager", &menuManager);
+    engine.rootContext()->setContextProperty("fileTypeManager", &fileTypeManager);
     
     // 加载主QML文件
     const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
