@@ -38,6 +38,8 @@ public:
     Q_INVOKABLE QString copyFile(const QString &sourcePath, bool toSystem = false);
     Q_INVOKABLE void openFile(const QString &path);
     Q_INVOKABLE void openContainingFolder(const QString &path);
+    Q_INVOKABLE void startNewFile();
+    Q_INVOKABLE void cancelNewFile();
     
     bool showSystemOnly() const { return m_showSystemOnly; }
     void setShowSystemOnly(bool show) { 

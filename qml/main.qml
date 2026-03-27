@@ -16,22 +16,6 @@ ApplicationWindow {
     minimumHeight: 600
     title: qsTr("DFM Context Menu Manager")
     
-    // F5按键刷新功能
-    FocusScope {
-        id: keyHandler
-        anchors.fill: parent
-        focus: true
-        
-        Keys.onPressed: function(event) {
-            if (event.key === Qt.Key_F5) {
-                console.log("F5 pressed, refreshing file lists")
-                userFileModel.refresh()
-                systemFileModel.refresh()
-                event.accepted = true
-            }
-        }
-    }
-    
     // TreeView delegate
     Component {
         id: treeViewDelegate
@@ -243,6 +227,29 @@ ApplicationWindow {
                                     }
                                     delegate: fileDelegate
                                     clip: true
+                                    
+                                    // 键盘事件处理
+                                    Keys.onPressed: function(event) {
+                                        console.log("userList: Key pressed:", event.key)
+                                        if (event.key === Qt.Key_F5) {
+                                            console.log("F5 pressed, refreshing file lists")
+                                            userFileModel.refresh()
+                                            systemFileModel.refresh()
+                                            event.accepted = true
+                                        } else if (event.key === Qt.Key_Delete) {
+                                            console.log("Delete key pressed, selectedFilePath:", selectedFilePath)
+                                            if (selectedFilePath !== "") {
+                                                var isSystemFile = selectedFilePath.indexOf("/usr/share/") !== -1
+                                                if (!isSystemFile) {
+                                                    console.log("Deleting user file:", selectedFilePath)
+                                                    userFileModel.deleteFile(selectedFilePath)
+                                                } else {
+                                                    console.log("Cannot delete system file")
+                                                }
+                                                event.accepted = true
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -326,6 +333,21 @@ ApplicationWindow {
                                     }
                                     delegate: fileDelegate
                                     clip: true
+                                    
+                                    // 键盘事件处理
+                                    Keys.onPressed: function(event) {
+                                        console.log("systemList: Key pressed:", event.key)
+                                        if (event.key === Qt.Key_F5) {
+                                            console.log("F5 pressed, refreshing file lists")
+                                            userFileModel.refresh()
+                                            systemFileModel.refresh()
+                                            event.accepted = true
+                                        } else if (event.key === Qt.Key_Delete) {
+                                            console.log("Delete key pressed in system list, but system files cannot be deleted")
+                                            // 系统文件列表不允许删除
+                                            event.accepted = true
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -762,15 +784,87 @@ ApplicationWindow {
                 }
             }
             
-            Text {
+            // 文件名显示或编辑框
+            Loader {
+                id: fileNameLoader
                 anchors.left: parent.left
                 anchors.leftMargin: Styles.Style.padding
                 anchors.verticalCenter: parent.verticalCenter
-                text: model.fileName || ""
-                font.pixelSize: Styles.Style.bodyFont.pixelSize
-                font.family: Styles.Style.bodyFont.family
-                font.bold: model.filePath === selectedFilePath
-                color: Styles.Style.textColor
+                anchors.right: parent.right
+                anchors.rightMargin: Styles.Style.padding + (model.isSystem ? 50 : 0)
+                
+                // 判断是否应该显示编辑框
+                property bool shouldShowEdit: {
+                    // 新建文件的占位符项（路径为空）
+                    if (isNewFile && model.filePath === "" && editingModelRef) {
+                        return true
+                    }
+                    // 重命名现有文件
+                    if (!isNewFile && editingFilePath === model.filePath && !model.isSystem) {
+                        return true
+                    }
+                    return false
+                }
+                
+                sourceComponent: shouldShowEdit ? editComponent : textComponent
+            }
+            
+            Component {
+                id: textComponent
+                Text {
+                    text: model.fileName || ""
+                    font.pixelSize: Styles.Style.bodyFont.pixelSize
+                    font.family: Styles.Style.bodyFont.family
+                    font.bold: model.filePath === selectedFilePath
+                    color: Styles.Style.textColor
+                    elide: Text.ElideRight
+                }
+            }
+            
+            Component {
+                id: editComponent
+                TextInput {
+                    id: textInput
+                    text: {
+                        if (isNewFile) {
+                            return ""
+                        } else {
+                            // 移除 .conf 扩展名用于编辑
+                            var fileName = model.fileName || ""
+                            return fileName.replace(/\.conf$/, '')
+                        }
+                    }
+                    font.pixelSize: Styles.Style.bodyFont.pixelSize
+                    font.family: Styles.Style.bodyFont.family
+                    color: Styles.Style.textColor
+                    selectByMouse: true
+                    selectionColor: Styles.Style.primaryColor
+                    
+                    onAccepted: {
+                        finishEditing(text)
+                    }
+                    
+                    onEditingFinished: {
+                        if (!isNewFile && editingFilePath === model.filePath) {
+                            finishEditing(text)
+                        }
+                    }
+                    
+                    Keys.onPressed: function(event) {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                            event.accepted = true
+                            finishEditing(text)
+                        } else if (event.key === Qt.Key_Escape) {
+                            event.accepted = true
+                            cancelEditing()
+                        }
+                    }
+                    
+                    Component.onCompleted: {
+                        forceActiveFocus()
+                        selectAll()
+                    }
+                }
             }
             
             Text {
@@ -785,76 +879,76 @@ ApplicationWindow {
             
             MouseArea {
                 id: mouseArea
-                property var currentModel: ListView.view ? ListView.view.model : null
+                // 根据文件路径判断是用户文件还是系统文件
+                property var currentModel: model.filePath && model.filePath.indexOf("/.local/share/") !== -1 ? userFileModel : 
+                                          model.filePath && model.filePath.indexOf("/usr/share/") !== -1 ? systemFileModel : null
                 anchors.fill: parent
                 hoverEnabled: true
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
+                // 禁用点击，让Loader处理
+                enabled: !fileNameLoader.shouldShowEdit
+                
+                onDoubleClicked: function(mouse) {
+                    if (mouse.button === Qt.LeftButton && model.filePath !== "" && !model.isSystem) {
+                        console.log("Double-clicked on file:", model.filePath)
+                        console.log("currentModel:", currentModel, "typeof:", typeof currentModel)
+                        editingFilePath = model.filePath
+                        isNewFile = false
+                        editingModelRef = currentModel
+                        console.log("Set editingModelRef to:", editingModelRef)
+                    }
+                }
+                
                 onClicked: function(mouse) {
                     if (mouse.button === Qt.LeftButton) {
                         selectedFilePath = model.filePath || ""
                         menuManager.setCurrentConfig(model.filePath || "")
+                        contextMenu.filePath = model.filePath || ""
                     } else if (mouse.button === Qt.RightButton) {
                         contextMenu.filePath = model.filePath || ""
                         contextMenu.modelRef = currentModel
+                        console.log("Right-click: setting contextMenu.modelRef to", currentModel, "typeof:", typeof currentModel)
                         contextMenu.popup()
                     }
                 }
             }
             
-            // 右键上下文菜单
-            Menu {
-                id: contextMenu
-                property string filePath: ""
-                property var modelRef: null
+            // 完成编辑的函数
+            function finishEditing(newName) {
+                var trimmedName = newName.trim()
+                console.log("finishEditing called with:", trimmedName, "isNewFile:", isNewFile, "editingFilePath:", editingFilePath, "model.filePath:", model.filePath)
                 
-                MenuItem {
-                    text: qsTr("Refresh List")
-                    onTriggered: {
-                        console.log("Refreshing file lists")
-                        userFileModel.refresh()
-                        systemFileModel.refresh()
+                if (trimmedName !== "") {
+                    console.log("Finishing edit with name:", trimmedName)
+                    var currentModel = ListView.view ? ListView.view.model : null
+                    console.log("currentModel:", currentModel, "editingModelRef:", editingModelRef, "typeof editingModelRef:", typeof editingModelRef)
+                    
+                    if (isNewFile && model.filePath === "" && editingModelRef && editingModelRef.createFile) {
+                        // 创建新文件
+                        console.log("Creating new file:", trimmedName)
+                        editingModelRef.createFile(trimmedName)
+                    } else if (!isNewFile && editingFilePath !== "" && editingModelRef && editingModelRef.renameFile) {
+                        // 重命名文件
+                        console.log("Renaming file from", editingFilePath, "to", trimmedName)
+                        editingModelRef.renameFile(editingFilePath, trimmedName)
+                    } else {
+                        console.log("Condition not met - isNewFile:", isNewFile, "editingFilePath:", editingFilePath, "model.filePath:", model.filePath, "editingModelRef:", editingModelRef, "has createFile:", editingModelRef && editingModelRef.createFile, "has renameFile:", editingModelRef && editingModelRef.renameFile)
                     }
                 }
-                
-                MenuSeparator {}
-                
-                MenuItem {
-                    text: qsTr("Open Containing Folder")
-                    enabled: contextMenu.filePath !== ""
-                    onTriggered: {
-                        console.log("Opening containing folder for:", contextMenu.filePath)
-                        if (contextMenu.modelRef === userFileModel) {
-                            console.log("Calling userFileModel.openContainingFolder")
-                            userFileModel.openContainingFolder(contextMenu.filePath)
-                        } else if (contextMenu.modelRef === systemFileModel) {
-                            console.log("Calling systemFileModel.openContainingFolder")
-                            systemFileModel.openContainingFolder(contextMenu.filePath)
-                        } else {
-                            console.log("Unknown model, trying both")
-                            // 如果无法确定模型，尝试两个都调用
-                            userFileModel.openContainingFolder(contextMenu.filePath)
-                        }
-                    }
+                cancelEditing()
+            }
+            
+            // 取消编辑的函数
+            function cancelEditing() {
+                console.log("cancelEditing called - isNewFile:", isNewFile, "model.filePath:", model.filePath)
+                if (isNewFile && model.filePath === "" && editingModelRef && editingModelRef.cancelNewFile) {
+                    // 取消新建文件，移除占位符
+                    console.log("Calling cancelNewFile")
+                    editingModelRef.cancelNewFile()
                 }
-                
-                MenuItem {
-                    text: qsTr("Open File")
-                    enabled: contextMenu.filePath !== ""
-                    onTriggered: {
-                        console.log("Opening file:", contextMenu.filePath)
-                        if (contextMenu.modelRef === userFileModel) {
-                            console.log("Calling userFileModel.openFile")
-                            userFileModel.openFile(contextMenu.filePath)
-                        } else if (contextMenu.modelRef === systemFileModel) {
-                            console.log("Calling systemFileModel.openFile")
-                            systemFileModel.openFile(contextMenu.filePath)
-                        } else {
-                            console.log("Unknown model, trying both")
-                            // 如果无法确定模型，尝试两个都调用
-                            userFileModel.openFile(contextMenu.filePath)
-                        }
-                    }
-                }
+                editingFilePath = ""
+                isNewFile = false
+                editingModelRef = null
             }
         }
     }
@@ -865,9 +959,111 @@ ApplicationWindow {
     
     // 当前选中的文件路径
     property string selectedFilePath: ""
-    
+
     // 当前菜单树模型
     property var currentMenuModel: null
+    
+    // 编辑状态管理
+    property string editingFilePath: ""  // 当前正在编辑的文件路径
+    property bool isNewFile: false       // 是否是新建文件
+    property var editingModelRef: null   // 正在编辑的模型引用
+    
+    // 右键上下文菜单（移到ApplicationWindow级别以访问所有模型）
+    Menu {
+        id: contextMenu
+        property string filePath: ""
+        property var modelRef: null
+        
+        MenuItem {
+            text: qsTr("Refresh List")
+            onTriggered: {
+                console.log("Refreshing file lists")
+                userFileModel.refresh()
+                systemFileModel.refresh()
+            }
+        }
+        
+        MenuSeparator {}
+        
+        MenuItem {
+            text: qsTr("New File")
+            onTriggered: {
+                console.log("Creating new file inline")
+                var currentModel = contextMenu.modelRef
+                if (currentModel && currentModel.startNewFile) {
+                    currentModel.startNewFile()
+                    // 设置编辑状态
+                    editingFilePath = ""
+                    isNewFile = true
+                    editingModelRef = currentModel
+                }
+            }
+        }
+        
+        MenuItem {
+            text: qsTr("Rename")
+            enabled: contextMenu.filePath !== ""
+            onTriggered: {
+                console.log("Rename triggered: contextMenu.modelRef =", contextMenu.modelRef, "typeof:", typeof contextMenu.modelRef)
+                console.log("Starting inline edit for:", contextMenu.filePath)
+                editingFilePath = contextMenu.filePath
+                isNewFile = false
+                editingModelRef = contextMenu.modelRef
+                console.log("Set editingModelRef to:", editingModelRef)
+            }
+        }
+        
+        MenuItem {
+            text: qsTr("Delete")
+            enabled: contextMenu.filePath !== ""
+            onTriggered: {
+                console.log("Deleting file:", contextMenu.filePath)
+                if (contextMenu.modelRef === userFileModel) {
+                    userFileModel.deleteFile(contextMenu.filePath)
+                } else if (contextMenu.modelRef === systemFileModel) {
+                    systemFileModel.deleteFile(contextMenu.filePath)
+                }
+            }
+        }
+        
+        MenuSeparator {}
+        
+        MenuItem {
+            text: qsTr("Open Containing Folder")
+            enabled: contextMenu.filePath !== ""
+            onTriggered: {
+                console.log("Opening containing folder for:", contextMenu.filePath)
+                if (contextMenu.modelRef === userFileModel) {
+                    console.log("Calling userFileModel.openContainingFolder")
+                    userFileModel.openContainingFolder(contextMenu.filePath)
+                } else if (contextMenu.modelRef === systemFileModel) {
+                    console.log("Calling systemFileModel.openContainingFolder")
+                    systemFileModel.openContainingFolder(contextMenu.filePath)
+                } else {
+                    console.log("Unknown model, trying both")
+                    userFileModel.openContainingFolder(contextMenu.filePath)
+                }
+            }
+        }
+        
+        MenuItem {
+            text: qsTr("Open File")
+            enabled: contextMenu.filePath !== ""
+            onTriggered: {
+                console.log("Opening file:", contextMenu.filePath)
+                if (contextMenu.modelRef === userFileModel) {
+                    console.log("Calling userFileModel.openFile")
+                    userFileModel.openFile(contextMenu.filePath)
+                } else if (contextMenu.modelRef === systemFileModel) {
+                    console.log("Calling systemFileModel.openFile")
+                    systemFileModel.openFile(contextMenu.filePath)
+                } else {
+                    console.log("Unknown model, trying both")
+                    userFileModel.openFile(contextMenu.filePath)
+                }
+            }
+        }
+    }
     
     // 当前选中的菜单项
     property var currentItem: null

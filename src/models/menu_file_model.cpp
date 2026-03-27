@@ -190,19 +190,165 @@ void MenuFileModel::applySearchFilter() {
 }
 
 void MenuFileModel::createFile(const QString &name) {
-    Q_UNUSED(name)
-    // TODO: 实现创建文件
+    if (name.isEmpty()) {
+        qWarning() << "Cannot create file with empty name";
+        return;
+    }
+    
+    // 确定目标目录
+    QString targetDir;
+    if (m_showSystemOnly) {
+        targetDir = FileUtils::getSystemConfigDir();
+    } else {
+        targetDir = FileUtils::getUserConfigDir();
+    }
+    
+    // 确保目录存在
+    if (!FileUtils::ensureDirExists(targetDir)) {
+        qWarning() << "Failed to create directory:" << targetDir;
+        return;
+    }
+    
+    // 构建文件路径
+    QString filePath = targetDir + "/" + name;
+    if (!filePath.endsWith(".conf")) {
+        filePath += ".conf";
+    }
+    
+    // 检查文件是否已存在
+    if (QFile::exists(filePath)) {
+        qWarning() << "File already exists:" << filePath;
+        return;
+    }
+    
+    // 创建空文件
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write("# DFM Context Menu Configuration\n");
+        file.close();
+        qDebug() << "Successfully created file:" << filePath;
+        
+        // 重新启动文件监视以包含新文件
+        QTimer::singleShot(50, this, [this]() {
+            setupFileWatcher();
+        });
+        
+        // 刷新模型以显示新文件
+        QTimer::singleShot(100, this, [this]() {
+            refresh();
+        });
+    } else {
+        qWarning() << "Failed to create file:" << filePath;
+    }
 }
 
 void MenuFileModel::deleteFile(const QString &path) {
-    Q_UNUSED(path)
-    // TODO: 实现删除文件
+    if (path.isEmpty()) {
+        qWarning() << "Cannot delete file with empty path";
+        return;
+    }
+    
+    QFileInfo fileInfo(path);
+    if (!fileInfo.exists()) {
+        qWarning() << "File does not exist:" << path;
+        return;
+    }
+    
+    // 检查是否为系统文件（需要特殊权限）
+    bool isSystemFile = path.startsWith(FileUtils::getSystemConfigDir());
+    if (isSystemFile) {
+        qWarning() << "Cannot delete system file without proper permissions:" << path;
+        return;
+    }
+    
+    // 临时停止文件监视，以便删除操作
+    if (m_fileWatcher) {
+        m_fileWatcher->unwatchDirectory(fileInfo.absolutePath());
+    }
+    
+    // 删除文件
+    QFile file(path);
+    if (file.remove()) {
+        qDebug() << "Successfully deleted file:" << path;
+        
+        // 重新启动文件监视
+        QTimer::singleShot(50, this, [this]() {
+            setupFileWatcher();
+        });
+        
+        // 刷新模型以更新显示
+        QTimer::singleShot(100, this, [this]() {
+            refresh();
+        });
+    } else {
+        qWarning() << "Failed to delete file:" << path;
+        // 即使失败也要重新启动监视
+        QTimer::singleShot(50, this, [this]() {
+            setupFileWatcher();
+        });
+    }
 }
 
 void MenuFileModel::renameFile(const QString &path, const QString &newName) {
-    Q_UNUSED(path)
-    Q_UNUSED(newName)
-    // TODO: 实现重命名文件
+    if (path.isEmpty() || newName.isEmpty()) {
+        qWarning() << "Cannot rename file with empty path or name";
+        return;
+    }
+    
+    QFileInfo fileInfo(path);
+    if (!fileInfo.exists()) {
+        qWarning() << "File does not exist:" << path;
+        return;
+    }
+    
+    // 检查是否为系统文件（需要特殊权限）
+    bool isSystemFile = path.startsWith(FileUtils::getSystemConfigDir());
+    if (isSystemFile) {
+        qWarning() << "Cannot rename system file without proper permissions:" << path;
+        return;
+    }
+    
+    // 构建新文件名
+    QString newFileName = newName;
+    if (!newFileName.endsWith(".conf")) {
+        newFileName += ".conf";
+    }
+    
+    // 构建新文件路径
+    QString newPath = fileInfo.absolutePath() + "/" + newFileName;
+    
+    // 检查目标文件是否已存在
+    if (QFile::exists(newPath) && newPath != path) {
+        qWarning() << "Target file already exists:" << newPath;
+        return;
+    }
+    
+    // 临时停止文件监视，以便重命名操作
+    if (m_fileWatcher) {
+        m_fileWatcher->unwatchDirectory(fileInfo.absolutePath());
+    }
+    
+    // 重命名文件
+    QFile file(path);
+    if (file.rename(newPath)) {
+        qDebug() << "Successfully renamed file from" << path << "to" << newPath;
+        
+        // 重新启动文件监视
+        QTimer::singleShot(50, this, [this]() {
+            setupFileWatcher();
+        });
+        
+        // 刷新模型以更新显示
+        QTimer::singleShot(100, this, [this]() {
+            refresh();
+        });
+    } else {
+        qWarning() << "Failed to rename file from" << path << "to" << newPath;
+        // 即使失败也要重新启动监视
+        QTimer::singleShot(50, this, [this]() {
+            setupFileWatcher();
+        });
+    }
 }
 
 QString MenuFileModel::copyFile(const QString &sourcePath, bool toSystem) {
@@ -264,5 +410,34 @@ void MenuFileModel::openContainingFolder(const QString &path) {
         qDebug() << "Successfully opened folder with Qt:" << folderPath;
     } else {
         qWarning() << "Failed to open folder with Qt:" << folderPath;
+    }
+}
+
+void MenuFileModel::startNewFile() {
+    beginInsertRows(QModelIndex(), 0, 0);
+    
+    FileInfo newFileInfo;
+    newFileInfo.name = "";
+    newFileInfo.path = "";
+    newFileInfo.isSystem = false;
+    newFileInfo.isModified = false;
+    newFileInfo.comment = "";
+    
+    m_files.prepend(newFileInfo);
+    m_allFiles.prepend(newFileInfo);
+    
+    endInsertRows();
+    
+    qDebug() << "Started creating new file, inserted placeholder at position 0";
+}
+
+void MenuFileModel::cancelNewFile() {
+    if (!m_files.isEmpty() && m_files.first().path.isEmpty()) {
+        beginRemoveRows(QModelIndex(), 0, 0);
+        m_files.removeFirst();
+        m_allFiles.removeFirst();
+        endRemoveRows();
+        
+        qDebug() << "Cancelled new file creation, removed placeholder";
     }
 }
