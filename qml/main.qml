@@ -28,6 +28,20 @@ ApplicationWindow {
             
             readonly property real indent: 20
             readonly property real padding: 5
+            property bool isEditing: false
+            
+            // 当 isEditing 改变时，更新全局 editingDelegate
+            onIsEditingChanged: {
+                if (isEditing) {
+                    // 如果有其他项目正在编辑，先结束它
+                    if (root.editingDelegate && root.editingDelegate !== delegateItem && root.editingDelegate.isEditing) {
+                        root.editingDelegate.isEditing = false
+                    }
+                    root.editingDelegate = delegateItem
+                } else if (root.editingDelegate === delegateItem) {
+                    root.editingDelegate = null
+                }
+            }
             
             required property TreeView treeView
             required property bool isTreeNode
@@ -40,6 +54,80 @@ ApplicationWindow {
             border.color: "transparent"
             border.width: 1
             radius: 4
+            
+            // 获取当前项的索引（使用ID）
+            function getCurrentIndex() {
+                return menuTreeView.model.getIndex(model.id || "")
+            }
+            
+            // 右键菜单
+            Menu {
+                id: contextMenu
+                
+                Menu {
+                    title: qsTr("Add")
+                    
+                    MenuItem {
+                        text: qsTr("Add Sibling Menu")
+                        onTriggered: {
+                            console.log("Add sibling menu for:", model.name)
+                            var index = getCurrentIndex()
+                            menuTreeView.model.addSiblingItem(index, qsTr("New Menu"))
+                            // 自动进入编辑模式
+                            editTimer.start()
+                        }
+                    }
+                    
+                    MenuItem {
+                        text: qsTr("Add Child Menu")
+                        enabled: model.level < 3
+                        onTriggered: {
+                            console.log("Add child menu for:", model.name)
+                            var index = getCurrentIndex()
+                            menuTreeView.model.addChildItem(index, qsTr("New Menu"))
+                            // 展开节点
+                            treeView.expand(row)
+                            // 自动进入编辑模式
+                            editTimer.start()
+                        }
+                    }
+                }
+                
+                MenuItem {
+                    text: qsTr("Rename")
+                    onTriggered: {
+                        console.log("Rename menu:", model.name)
+                        delegateItem.isEditing = true
+                        editTextField.forceActiveFocus()
+                        editTextField.selectAll()
+                    }
+                }
+                
+                MenuSeparator {}
+                
+                MenuItem {
+                    text: qsTr("Delete")
+                    enabled: !model.isSystem
+                    onTriggered: {
+                        console.log("Delete menu:", model.name)
+                        var index = getCurrentIndex()
+                        menuTreeView.model.removeItem(index)
+                        // 保存到文件
+                        menuManager.saveCurrentModel()
+                    }
+                }
+            }
+            
+            // 定时器，用于延迟进入编辑模式（等待模型更新）
+            Timer {
+                id: editTimer
+                interval: 100
+                onTriggered: {
+                    delegateItem.isEditing = true
+                    editTextField.forceActiveFocus()
+                    editTextField.selectAll()
+                }
+            }
             
             Rectangle {
                 width: delegateItem.padding
@@ -64,15 +152,25 @@ ApplicationWindow {
                 
                 TapHandler {
                     onTapped: {
+                        // 如果有其他项目正在编辑，先结束编辑
+                        if (root.editingDelegate && root.editingDelegate !== delegateItem && root.editingDelegate.isEditing) {
+                            if (root.editingDelegate.editTextField && root.editingDelegate.editTextField.text.trim() !== "") {
+                                var editingIndex = root.editingDelegate.getCurrentIndex()
+                                menuTreeView.model.renameItem(editingIndex, root.editingDelegate.editTextField.text.trim())
+                                menuManager.saveCurrentModel()
+                            }
+                            root.editingDelegate.isEditing = false
+                        }
                         treeView.toggleExpanded(row)
                         console.log("Toggle expand:", model.name, "expanded:", !delegateItem.expanded, "hasChildren:", delegateItem.hasChildren)
                     }
                 }
             }
             
-            // 文本内容
+            // 文本内容（非编辑模式）
             Text {
                 id: label
+                visible: !delegateItem.isEditing
                 x: delegateItem.padding + (delegateItem.isTreeNode ? (delegateItem.depth + 1) * delegateItem.indent : delegateItem.depth * delegateItem.indent)
                 width: delegateItem.width - delegateItem.padding - x
                 height: delegateItem.height
@@ -85,9 +183,112 @@ ApplicationWindow {
                 TapHandler {
                     onTapped: {
                         console.log("Clicked item:", model.name, "nameLocal:", model.nameLocal, "depth:", delegateItem.depth, "hasChildren:", delegateItem.hasChildren)
+                        // 如果有其他项目正在编辑，先结束编辑
+                        if (root.editingDelegate && root.editingDelegate !== delegateItem && root.editingDelegate.isEditing) {
+                            if (root.editingDelegate.editTextField && root.editingDelegate.editTextField.text.trim() !== "") {
+                                var editingIndex = root.editingDelegate.getCurrentIndex()
+                                menuTreeView.model.renameItem(editingIndex, root.editingDelegate.editTextField.text.trim())
+                                menuManager.saveCurrentModel()
+                            }
+                            root.editingDelegate.isEditing = false
+                        }
                         // 更新当前选中的菜单项
                         currentItem = model
                     }
+                    
+                    onDoubleTapped: {
+                        console.log("Double clicked item:", model.name)
+                        if (!model.isSystem) {
+                            delegateItem.isEditing = true
+                            editTextField.forceActiveFocus()
+                            editTextField.selectAll()
+                        }
+                    }
+                }
+            }
+            
+            // 编辑模式下的TextField
+            TextField {
+                id: editTextField
+                visible: delegateItem.isEditing
+                x: delegateItem.padding + (delegateItem.isTreeNode ? (delegateItem.depth + 1) * delegateItem.indent : delegateItem.depth * delegateItem.indent)
+                width: delegateItem.width - delegateItem.padding - x - 10
+                height: delegateItem.height - 4
+                anchors.verticalCenter: parent.verticalCenter
+                text: model.nameLocal || model.name || ""
+                font: Styles.Style.bodyFont
+                
+                background: Rectangle {
+                    color: Styles.Style.backgroundColor
+                    border.color: Styles.Style.primaryColor
+                    border.width: 1
+                    radius: Styles.Style.borderRadius
+                }
+                
+                onAccepted: {
+                    console.log("Edit accepted, new name:", text)
+                    if (text.trim() !== "") {
+                        var index = getCurrentIndex()
+                        menuTreeView.model.renameItem(index, text.trim())
+                        // 保存到文件
+                        menuManager.saveCurrentModel()
+                    }
+                    delegateItem.isEditing = false
+                }
+                
+                Keys.onPressed: function(event) {
+                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                        console.log("Enter pressed, new name:", text)
+                        if (text.trim() !== "") {
+                            var index = getCurrentIndex()
+                            menuTreeView.model.renameItem(index, text.trim())
+                            // 保存到文件
+                            menuManager.saveCurrentModel()
+                        }
+                        delegateItem.isEditing = false
+                        event.accepted = true
+                    } else if (event.key === Qt.Key_Escape) {
+                        console.log("Escape pressed, cancel edit")
+                        delegateItem.isEditing = false
+                        event.accepted = true
+                    }
+                }
+                
+                onFocusChanged: {
+                    if (!focus && delegateItem.isEditing) {
+                        console.log("Focus lost, save edit")
+                        if (text.trim() !== "") {
+                            var index = getCurrentIndex()
+                            menuTreeView.model.renameItem(index, text.trim())
+                            // 保存到文件
+                            menuManager.saveCurrentModel()
+                        }
+                        delegateItem.isEditing = false
+                    }
+                }
+            }
+            
+            // 右键菜单触发器
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.RightButton
+                propagateComposedEvents: true
+                
+                onClicked: function(mouse) {
+                    // 如果有其他项目正在编辑，先结束编辑
+                    if (root.editingDelegate && root.editingDelegate !== delegateItem && root.editingDelegate.isEditing) {
+                        if (root.editingDelegate.editTextField && root.editingDelegate.editTextField.text.trim() !== "") {
+                            var editingIndex = root.editingDelegate.getCurrentIndex()
+                            menuTreeView.model.renameItem(editingIndex, root.editingDelegate.editTextField.text.trim())
+                            menuManager.saveCurrentModel()
+                        }
+                        root.editingDelegate.isEditing = false
+                    }
+                    // 更新当前选中的菜单项
+                    currentItem = model
+                    // 显示右键菜单
+                    contextMenu.popup(mouse)
+                    mouse.accepted = true
                 }
             }
         }
@@ -392,14 +593,44 @@ ApplicationWindow {
                     height: parent.height - Styles.Style.toolbarHeight
                     color: Styles.Style.backgroundColor
                     
+                    // 空配置文件提示
+                    Text {
+                        anchors.centerIn: parent
+                        text: currentMenuModel === null ? qsTr("Please select a configuration file") : 
+                               currentMenuModel.rowCount() === 0 ? qsTr("Right-click to add menu items") : ""
+                            font: Styles.Style.bodyFont
+                        color: Styles.Style.secondaryTextColor
+                        visible: currentMenuModel === null || (currentMenuModel !== null && currentMenuModel.rowCount() === 0)
+                        z: 1
+                    }
+                    
+                    // 背景区域右键菜单（用于空配置文件）
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.RightButton
+                        propagateComposedEvents: true
+                        z: 2
+                        
+                        onClicked: function(mouse) {
+                            if (currentMenuModel !== null && currentMenuModel.rowCount() > 0) {
+                                // 如果有菜单项，让事件传递给delegate处理
+                                mouse.accepted = false
+                            } else if (currentMenuModel !== null) {
+                                // 空配置文件，显示添加菜单
+                                emptyContextMenu.popup(mouse)
+                                mouse.accepted = true
+                            }
+                        }
+                    }
+                    
                     ScrollView {
                         id: menuScrollView
                         anchors.fill: parent
-                        visible: currentMenuModel !== null
                         
                         TreeView {
                             id: menuTreeView
-                            anchors.fill: parent
+                            width: menuScrollView.width
+                            height: menuScrollView.height
                             model: currentMenuModel
                             delegate: treeViewDelegate
                             clip: true
@@ -410,15 +641,25 @@ ApplicationWindow {
                             }
                         }
                     }
+                    
+                    // 空配置文件的右键菜单
+                    Menu {
+                        id: emptyContextMenu
+                        
+                        MenuItem {
+                            text: qsTr("Add Menu")
+                            onTriggered: {
+                                console.log("Add menu for empty config")
+                                if (currentMenuModel !== null) {
+                                    var rootIndex = currentMenuModel.index(0, 0)
+                                    currentMenuModel.addChildItem(rootIndex, qsTr("New Menu"))
+                                    // 保存到文件
+                                    menuManager.saveCurrentModel()
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-
-            Text {
-                anchors.centerIn: parent
-                text: currentMenuModel === null ? qsTr("Please select a configuration file") : ""
-                font: Styles.Style.bodyFont
-                color: Styles.Style.secondaryTextColor
-                visible: currentMenuModel === null
             }
             
             onWidthChanged: {
@@ -845,8 +1086,13 @@ ApplicationWindow {
                     }
                     
                     onEditingFinished: {
-                        if (!isNewFile && editingFilePath === model.filePath) {
-                            finishEditing(text)
+                        // 修改逻辑：如果不是新建文件，并且（editingFilePath 匹配或为空），则保存
+                        // 这样可以处理点击其他文件时 editingFilePath 被清空的情况
+                        if (!isNewFile && (editingFilePath === model.filePath || editingFilePath === "")) {
+                            // 只有当文本不为空时才保存
+                            if (text.trim() !== "") {
+                                finishEditing(text)
+                            }
                         }
                     }
                     
@@ -857,6 +1103,13 @@ ApplicationWindow {
                         } else if (event.key === Qt.Key_Escape) {
                             event.accepted = true
                             cancelEditing()
+                        }
+                    }
+                    
+                    onFocusChanged: {
+                        if (!focus && (fileNameLoader.shouldShowEdit)) {
+                            console.log("TextInput focus lost, finishing edit")
+                            finishEditing(text)
                         }
                     }
                     
@@ -901,10 +1154,27 @@ ApplicationWindow {
                 
                 onClicked: function(mouse) {
                     if (mouse.button === Qt.LeftButton) {
+                        // 如果有其他文件正在编辑，先结束编辑
+                        if (editingFilePath !== "" && editingFilePath !== model.filePath) {
+                            console.log("Another file is being edited, ending edit first")
+                            // 清空编辑状态，这会导致 Loader 切换回 textComponent
+                            // TextInput 的 onEditingFinished 会被触发，但由于 editingFilePath 已被清空
+                            // 我们需要修改 onEditingFinished 的逻辑来处理这种情况
+                            editingFilePath = ""
+                            isNewFile = false
+                            editingModelRef = null
+                        }
                         selectedFilePath = model.filePath || ""
                         menuManager.setCurrentConfig(model.filePath || "")
                         contextMenu.filePath = model.filePath || ""
                     } else if (mouse.button === Qt.RightButton) {
+                        // 如果有其他文件正在编辑，先结束编辑
+                        if (editingFilePath !== "" && editingFilePath !== model.filePath) {
+                            console.log("Another file is being edited, ending edit first for right-click")
+                            editingFilePath = ""
+                            isNewFile = false
+                            editingModelRef = null
+                        }
                         contextMenu.filePath = model.filePath || ""
                         contextMenu.modelRef = currentModel
                         console.log("Right-click: setting contextMenu.modelRef to", currentModel, "typeof:", typeof currentModel)
@@ -1067,6 +1337,8 @@ ApplicationWindow {
     
     // 当前选中的菜单项
     property var currentItem: null
+    // 当前正在编辑的 delegate
+    property var editingDelegate: null
     
     // 保存列宽
     property real filePanelWidth: 350

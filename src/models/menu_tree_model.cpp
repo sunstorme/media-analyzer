@@ -270,6 +270,114 @@ void MenuTreeModel::updateItem(const QModelIndex &index, const QString &role,
     emit dataChanged(index, index);
 }
 
+void MenuTreeModel::addSiblingItem(const QModelIndex &index, const QString &name) {
+    if (!index.isValid()) {
+        emit errorOccurred("无效的索引");
+        return;
+    }
+    
+    TreeItem *item = getItem(index);
+    if (!item || item->isRoot) {
+        emit errorOccurred("根节点不能添加同级菜单");
+        return;
+    }
+    
+    QModelIndex parentIndex = index.parent();
+    TreeItem *parentItem = item->parentItem;
+    
+    if (!parentItem) {
+        emit errorOccurred("找不到父节点");
+        return;
+    }
+    
+    int newRow = index.row() + 1;
+    
+    beginInsertRows(parentIndex, newRow, newRow);
+    
+    // 创建新菜单项
+    TreeItem *newItem = new TreeItem();
+    newItem->id = generateUniqueId();
+    newItem->name = name;
+    newItem->nameLocal = name;
+    newItem->level = parentItem->level + 1;
+    newItem->positionNumber = newRow + 1;
+    newItem->configFile = parentItem->configFile;
+    newItem->isSystem = parentItem->isSystem;
+    newItem->parentItem = parentItem;
+    newItem->row = newRow;
+    
+    parentItem->subItems.insert(newRow, newItem);
+    m_allItems.append(newItem);
+    
+    // 更新后续节点的row
+    for (int i = newRow + 1; i < parentItem->subItems.size(); ++i) {
+        parentItem->subItems[i]->row = i;
+    }
+    
+    endInsertRows();
+}
+
+void MenuTreeModel::addChildItem(const QModelIndex &index, const QString &name) {
+    if (!index.isValid()) {
+        emit errorOccurred("无效的索引");
+        return;
+    }
+    
+    TreeItem *parentItem = getItem(index);
+    if (!parentItem) {
+        emit errorOccurred("找不到节点");
+        return;
+    }
+    
+    // 检查层级限制
+    if (parentItem->level >= 3) {
+        emit errorOccurred("最多支持3级菜单");
+        return;
+    }
+    
+    beginInsertRows(index, parentItem->subItems.size(), parentItem->subItems.size());
+    
+    // 创建新菜单项
+    TreeItem *newItem = new TreeItem();
+    newItem->id = generateUniqueId();
+    newItem->name = name;
+    newItem->nameLocal = name;
+    newItem->level = parentItem->level + 1;
+    newItem->positionNumber = parentItem->subItems.size() + 1;
+    newItem->configFile = parentItem->configFile;
+    newItem->isSystem = parentItem->isSystem;
+    newItem->parentItem = parentItem;
+    newItem->row = parentItem->subItems.size();
+    
+    parentItem->subItems.append(newItem);
+    m_allItems.append(newItem);
+    
+    endInsertRows();
+}
+
+void MenuTreeModel::renameItem(const QModelIndex &index, const QString &name) {
+    if (!index.isValid()) {
+        emit errorOccurred("无效的索引");
+        return;
+    }
+    
+    TreeItem *item = getItem(index);
+    if (!item) {
+        emit errorOccurred("找不到节点");
+        return;
+    }
+    
+    if (item->isSystem) {
+        emit errorOccurred("系统配置不能修改");
+        return;
+    }
+    
+    item->name = name;
+    item->nameLocal = name;
+    
+    emit dataChanged(index, index);
+}
+
 void MenuTreeModel::buildTree(const ConfigParser::ConfigData &data) {
     // 使用 BFS 从根节点开始构建树
     QSet<QString> visited;
@@ -398,22 +506,64 @@ QVariantList MenuTreeModel::getAllItems() const {
         itemMap["nameLocal"] = item->nameLocal.isEmpty() ? item->name : item->nameLocal;
         itemMap["level"] = item->level;
         itemMap["hasChildren"] = !item->subItems.isEmpty();
-        itemMap["isEditable"] = !item->isSystem;
-        itemMap["isSystem"] = item->isSystem;
-        itemMap["execCommand"] = item->execCommand;
-        itemMap["menuTypes"] = item->menuTypes;
-        itemMap["supportSuffix"] = item->supportSuffix;
-        itemMap["positionNumber"] = item->positionNumber;
         
         result.append(itemMap);
         
-        for (TreeItem *child : item->subItems) {
+        for (TreeItem* child : item->subItems) {
             queue.append(child);
         }
     }
     
-    qDebug() << "MenuTreeModel::getAllItems() returned" << result.size() << "items";
     return result;
+}
+
+ConfigParser::ConfigData MenuTreeModel::getConfigData() const {
+    ConfigParser::ConfigData data;
+    
+    if (!m_rootItem) {
+        return data;
+    }
+    
+    // 设置根节点属性
+    data.version = m_rootItem->version;
+    data.comment = m_rootItem->comment;
+    data.commentLocal = m_rootItem->commentLocal;
+    data.rootActionId = m_rootItem->id;
+    
+    // 使用 BFS 遍历所有节点
+    QList<TreeItem*> queue;
+    queue.append(m_rootItem);
+    
+    while (!queue.isEmpty()) {
+        TreeItem* item = queue.takeFirst();
+        
+        // 创建 MenuActionItem
+        MenuActionItem* actionItem = new MenuActionItem();
+        actionItem->id = item->id;
+        actionItem->name = item->name;
+        actionItem->nameLocal = item->nameLocal;
+        actionItem->comment = item->comment;
+        actionItem->commentLocal = item->commentLocal;
+        actionItem->level = item->level;
+        actionItem->isRoot = item->isRoot;
+        actionItem->configFile = item->configFile;
+        actionItem->isSystem = item->isSystem;
+        actionItem->positionNumber = item->positionNumber;
+        actionItem->execCommand = item->execCommand;
+        actionItem->menuTypes = item->menuTypes;
+        actionItem->supportSuffix = item->supportSuffix;
+        
+        // 收集子节点ID
+        for (TreeItem* child : item->subItems) {
+            actionItem->childActions.append(child->id);
+            queue.append(child);
+        }
+        
+        data.actions.append(*actionItem);
+        data.actionMap[item->id] = actionItem;
+    }
+    
+    return data;
 }
 
 QString MenuTreeModel::generateUniqueId() {

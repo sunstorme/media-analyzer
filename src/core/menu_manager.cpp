@@ -40,9 +40,24 @@ bool MenuManager::saveConfiguration(const QString &filePath) {
         return false;
     }
     
-    // TODO: 从模型获取配置数据并保存
+    // 从模型获取配置数据并保存
+    ConfigParser::ConfigData data = model->getConfigData();
+    if (!m_writer.writeToFile(filePath, data)) {
+        emit errorOccurred("保存配置文件失败");
+        return false;
+    }
+    
     emit configSaved(filePath);
     return true;
+}
+
+bool MenuManager::saveCurrentModel() {
+    if (m_currentConfig.isEmpty()) {
+        emit errorOccurred("没有选中的配置文件");
+        return false;
+    }
+    
+    return saveConfiguration(m_currentConfig);
 }
 
 bool MenuManager::createNewConfig(const QString &name, bool isSystem) {

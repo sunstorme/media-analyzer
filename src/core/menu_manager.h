@@ -32,6 +32,7 @@ public:
     Q_INVOKABLE MenuTreeModel* getMenuModel(const QString &configFile);
     Q_INVOKABLE void setCurrentConfig(const QString &configFile);
     Q_INVOKABLE QString getCurrentConfig() const;
+    Q_INVOKABLE bool saveCurrentModel();
     
     // 验证
     Q_INVOKABLE bool validateConfig(const QString &filePath);

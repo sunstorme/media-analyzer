@@ -53,10 +53,14 @@ public:
     Q_INVOKABLE void moveItem(const QModelIndex &index, int direction);
     Q_INVOKABLE void updateItem(const QModelIndex &index, const QString &role, 
                                const QVariant &value);
+    Q_INVOKABLE void addSiblingItem(const QModelIndex &index, const QString &name);
+    Q_INVOKABLE void addChildItem(const QModelIndex &index, const QString &name);
+    Q_INVOKABLE void renameItem(const QModelIndex &index, const QString &name);
     
     // 模型数据
     void setConfigData(const ConfigParser::ConfigData &data);
-    QModelIndex getIndex(const QString &id);
+    Q_INVOKABLE QModelIndex getIndex(const QString &id);
+    ConfigParser::ConfigData getConfigData() const;
     
     // 获取所有菜单项（扁平化，用于显示）
     Q_INVOKABLE QVariantList getAllItems() const;
