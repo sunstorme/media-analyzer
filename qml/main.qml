@@ -198,7 +198,9 @@ ApplicationWindow {
                 height: delegateItem.height
                 verticalAlignment: Text.AlignVCenter
                 text: model.nameLocal || model.name || ""
-                font: Styles.Style.bodyFont
+                font.pixelSize: Styles.Style.bodyFont.pixelSize
+                font.family: Styles.Style.bodyFont.family
+                font.bold: delegateItem.treeView.currentRow === row
                 color: Styles.Style.textColor
                 elide: Text.ElideRight
                 
