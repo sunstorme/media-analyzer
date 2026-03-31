@@ -15,6 +15,9 @@ ApplicationWindow {
     minimumWidth: 1000
     minimumHeight: 600
     title: qsTr("DFM Context Menu Manager")
+
+    // 调试日志开关（生产环境应设置为 false）
+    property bool debugLogging: false
     
     // TreeView delegate
     Component {
@@ -23,7 +26,7 @@ ApplicationWindow {
         Rectangle {
             id: delegateItem
             
-            implicitWidth: userHeader.width
+            implicitWidth: treeView.width
             implicitHeight: label.implicitHeight * 2
             
             readonly property real indent: 20
@@ -227,7 +230,7 @@ ApplicationWindow {
             }
             
             // 编辑模式下的TextField
-            TextField {
+            Components.DTextField {
                 id: editTextField
                 visible: delegateItem.isEditing
                 x: delegateItem.padding + (delegateItem.isTreeNode ? (delegateItem.depth + 1) * delegateItem.indent : delegateItem.depth * delegateItem.indent)
@@ -235,14 +238,6 @@ ApplicationWindow {
                 height: delegateItem.height - 4
                 anchors.verticalCenter: parent.verticalCenter
                 text: model.nameLocal || model.name || ""
-                font: Styles.Style.bodyFont
-                
-                background: Rectangle {
-                    color: Styles.Style.backgroundColor
-                    border.color: Styles.Style.primaryColor
-                    border.width: 1
-                    radius: Styles.Style.borderRadius
-                }
                 
                 onAccepted: {
                     console.log("Edit accepted, new name:", text)
@@ -323,9 +318,26 @@ ApplicationWindow {
     Component.onDestruction: {
         WindowManager.saveState(root, filePanelWidth, menuEditorWidth, propertyPanelWidth)
     }
-    
+
+    // 窗口关闭时保存正在编辑的内容
+    onClosing: function(close) {
+        // 强制保存 suffixTextArea 的编辑内容
+        if (suffixTextArea && suffixTextArea.focus && currentItem && currentMenuModel) {
+            var suffixes = suffixTextArea.text.split(":").filter(function(s) { return s.trim() !== "" })
+            var index = currentMenuModel.getIndex(currentItem.id)
+            currentMenuModel.updateItem(index, "supportSuffix", suffixes)
+            menuManager.saveCurrentModel()
+        }
+        // 强制保存 execCommandField 的编辑内容
+        if (execCommandField && execCommandField.focus && currentItem && currentMenuModel) {
+            var index = currentMenuModel.getIndex(currentItem.id)
+            currentMenuModel.updateItem(index, "execCommand", execCommandField.text)
+            menuManager.saveCurrentModel()
+        }
+    }
+
     // 主布局 - 使用SplitView实现可拖动分隔器
-    SplitView {
+    Components.DSplitView {
         anchors.fill: parent
         orientation: Qt.Horizontal
         
@@ -342,23 +354,15 @@ ApplicationWindow {
                 spacing: Styles.Style.spacing
                 
                 // 搜索框
-                TextField {
+                Components.DTextField {
                     id: searchBox
                     width: parent.width
                     height: Styles.Style.itemHeight
                     placeholderText: qsTr("Search configuration files...")
-                    font: Styles.Style.bodyFont
                     
                     onTextChanged: {
                         userFileModel.searchFilter = text
                         systemFileModel.searchFilter = text
-                    }
-                    
-                    background: Rectangle {
-                        color: Styles.Style.backgroundColor
-                        border.color: Styles.Style.borderColor
-                        border.width: 1
-                        radius: Styles.Style.borderRadius
                     }
                 }
                 
@@ -733,35 +737,19 @@ ApplicationWindow {
                                 color: Styles.Style.secondaryTextColor
                             }
                             
-                            TextField {
+                            Components.DTextField {
                                 id: rootCommentField
                                 width: parent.width
                                 height: Styles.Style.itemHeight
-                                font: Styles.Style.bodyFont
                                 text: currentItem ? currentItem.comment || "" : ""
                                 
-                                background: Rectangle {
-                                    color: Styles.Style.backgroundColor
-                                    border.color: Styles.Style.borderColor
-                                    border.width: 1
-                                    radius: Styles.Style.borderRadius
-                                }
-                                
                                 onEditingFinished: {
-                                    if (currentItem && currentMenuModel) {
-                                        var index = currentMenuModel.getIndex(currentItem.id)
-                                        currentMenuModel.updateItem(index, "comment", text)
-                                        menuManager.saveCurrentModel()
-                                    }
+                                    updateProperty("comment", text)
                                 }
                                 
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                        if (currentItem && currentMenuModel) {
-                                            var index = currentMenuModel.getIndex(currentItem.id)
-                                            currentMenuModel.updateItem(index, "comment", text)
-                                            menuManager.saveCurrentModel()
-                                        }
+                                        updateProperty("comment", text)
                                         event.accepted = true
                                     }
                                 }
@@ -779,35 +767,19 @@ ApplicationWindow {
                                 color: Styles.Style.secondaryTextColor
                             }
                             
-                            TextField {
+                            Components.DTextField {
                                 id: rootCommentLocalField
                                 width: parent.width
                                 height: Styles.Style.itemHeight
-                                font: Styles.Style.bodyFont
                                 text: currentItem ? currentItem.commentLocal || "" : ""
                                 
-                                background: Rectangle {
-                                    color: Styles.Style.backgroundColor
-                                    border.color: Styles.Style.borderColor
-                                    border.width: 1
-                                    radius: Styles.Style.borderRadius
-                                }
-                                
                                 onEditingFinished: {
-                                    if (currentItem && currentMenuModel) {
-                                        var index = currentMenuModel.getIndex(currentItem.id)
-                                        currentMenuModel.updateItem(index, "commentLocal", text)
-                                        menuManager.saveCurrentModel()
-                                    }
+                                    updateProperty("commentLocal", text)
                                 }
                                 
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                        if (currentItem && currentMenuModel) {
-                                            var index = currentMenuModel.getIndex(currentItem.id)
-                                            currentMenuModel.updateItem(index, "commentLocal", text)
-                                            menuManager.saveCurrentModel()
-                                        }
+                                        updateProperty("commentLocal", text)
                                         event.accepted = true
                                     }
                                 }
@@ -825,35 +797,19 @@ ApplicationWindow {
                                 color: Styles.Style.secondaryTextColor
                             }
                             
-                            TextField {
+                            Components.DTextField {
                                 id: rootVersionField
                                 width: parent.width
                                 height: Styles.Style.itemHeight
-                                font: Styles.Style.bodyFont
                                 text: currentItem ? currentItem.version || "" : ""
                                 
-                                background: Rectangle {
-                                    color: Styles.Style.backgroundColor
-                                    border.color: Styles.Style.borderColor
-                                    border.width: 1
-                                    radius: Styles.Style.borderRadius
-                                }
-                                
                                 onEditingFinished: {
-                                    if (currentItem && currentMenuModel) {
-                                        var index = currentMenuModel.getIndex(currentItem.id)
-                                        currentMenuModel.updateItem(index, "version", text)
-                                        menuManager.saveCurrentModel()
-                                    }
+                                    updateProperty("version", text)
                                 }
                                 
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                        if (currentItem && currentMenuModel) {
-                                            var index = currentMenuModel.getIndex(currentItem.id)
-                                            currentMenuModel.updateItem(index, "version", text)
-                                            menuManager.saveCurrentModel()
-                                        }
+                                        updateProperty("version", text)
                                         event.accepted = true
                                     }
                                 }
@@ -878,35 +834,19 @@ ApplicationWindow {
                                 color: Styles.Style.secondaryTextColor
                             }
                             
-                            TextField {
+                            Components.DTextField {
                                 id: menuNameField
                                 width: parent.width
                                 height: Styles.Style.itemHeight
-                                font: Styles.Style.bodyFont
                                 text: currentItem ? currentItem.name || "" : ""
                                 
-                                background: Rectangle {
-                                    color: Styles.Style.backgroundColor
-                                    border.color: Styles.Style.borderColor
-                                    border.width: 1
-                                    radius: Styles.Style.borderRadius
-                                }
-                                
                                 onEditingFinished: {
-                                    if (currentItem && currentMenuModel) {
-                                        var index = currentMenuModel.getIndex(currentItem.id)
-                                        currentMenuModel.updateItem(index, "name", text)
-                                        menuManager.saveCurrentModel()
-                                    }
+                                    updateProperty("name", text)
                                 }
                                 
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                        if (currentItem && currentMenuModel) {
-                                            var index = currentMenuModel.getIndex(currentItem.id)
-                                            currentMenuModel.updateItem(index, "name", text)
-                                            menuManager.saveCurrentModel()
-                                        }
+                                        updateProperty("name", text)
                                         event.accepted = true
                                     }
                                 }
@@ -924,35 +864,19 @@ ApplicationWindow {
                                 color: Styles.Style.secondaryTextColor
                             }
                             
-                            TextField {
+                            Components.DTextField {
                                 id: menuNameLocalField
                                 width: parent.width
                                 height: Styles.Style.itemHeight
-                                font: Styles.Style.bodyFont
                                 text: currentItem ? currentItem.nameLocal || "" : ""
                                 
-                                background: Rectangle {
-                                    color: Styles.Style.backgroundColor
-                                    border.color: Styles.Style.borderColor
-                                    border.width: 1
-                                    radius: Styles.Style.borderRadius
-                                }
-                                
                                 onEditingFinished: {
-                                    if (currentItem && currentMenuModel) {
-                                        var index = currentMenuModel.getIndex(currentItem.id)
-                                        currentMenuModel.updateItem(index, "nameLocal", text)
-                                        menuManager.saveCurrentModel()
-                                    }
+                                    updateProperty("nameLocal", text)
                                 }
                                 
                                 Keys.onPressed: function(event) {
                                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                        if (currentItem && currentMenuModel) {
-                                            var index = currentMenuModel.getIndex(currentItem.id)
-                                            currentMenuModel.updateItem(index, "nameLocal", text)
-                                            menuManager.saveCurrentModel()
-                                        }
+                                        updateProperty("nameLocal", text)
                                         event.accepted = true
                                     }
                                 }
@@ -976,125 +900,40 @@ ApplicationWindow {
                                 rowSpacing: 5
                                 columnSpacing: 10
                                 
-                                CheckBox {
+                                Components.DCheckBox {
                                     id: singleFileCheckBox
                                     text: "SingleFile"
                                     checked: currentItem && currentItem.menuTypes ? currentItem.menuTypes.indexOf("SingleFile") >= 0 : false
-                                    
-                                    onClicked: {
-                                        if (currentItem && currentMenuModel) {
-                                            var types = currentItem.menuTypes ? currentItem.menuTypes.slice() : []
-                                            if (checked) {
-                                                if (types.indexOf("SingleFile") < 0) {
-                                                    types.push("SingleFile")
-                                                }
-                                            } else {
-                                                var idx = types.indexOf("SingleFile")
-                                                if (idx >= 0) {
-                                                    types.splice(idx, 1)
-                                                }
-                                            }
-                                            var index = currentMenuModel.getIndex(currentItem.id)
-                                            currentMenuModel.updateItem(index, "menuTypes", types)
-                                            menuManager.saveCurrentModel()
-                                        }
-                                    }
+
+                                    onClicked: toggleMenuType("SingleFile", checked)
                                 }
-                                CheckBox {
+                                Components.DCheckBox {
                                     id: multiFilesCheckBox
                                     text: "MultiFiles"
                                     checked: currentItem && currentItem.menuTypes ? currentItem.menuTypes.indexOf("MultiFiles") >= 0 : false
-                                    
-                                    onClicked: {
-                                        if (currentItem && currentMenuModel) {
-                                            var types = currentItem.menuTypes ? currentItem.menuTypes.slice() : []
-                                            if (checked) {
-                                                if (types.indexOf("MultiFiles") < 0) {
-                                                    types.push("MultiFiles")
-                                                }
-                                            } else {
-                                                var idx = types.indexOf("MultiFiles")
-                                                if (idx >= 0) {
-                                                    types.splice(idx, 1)
-                                                }
-                                            }
-                                            var index = currentMenuModel.getIndex(currentItem.id)
-                                            currentMenuModel.updateItem(index, "menuTypes", types)
-                                            menuManager.saveCurrentModel()
-                                        }
-                                    }
+
+                                    onClicked: toggleMenuType("MultiFiles", checked)
                                 }
-                                CheckBox {
+                                Components.DCheckBox {
                                     id: filemanagerCheckBox
                                     text: "Filemanager"
                                     checked: currentItem && currentItem.menuTypes ? currentItem.menuTypes.indexOf("Filemanager") >= 0 : false
-                                    
-                                    onClicked: {
-                                        if (currentItem && currentMenuModel) {
-                                            var types = currentItem.menuTypes ? currentItem.menuTypes.slice() : []
-                                            if (checked) {
-                                                if (types.indexOf("Filemanager") < 0) {
-                                                    types.push("Filemanager")
-                                                }
-                                            } else {
-                                                var idx = types.indexOf("Filemanager")
-                                                if (idx >= 0) {
-                                                    types.splice(idx, 1)
-                                                }
-                                            }
-                                            var index = currentMenuModel.getIndex(currentItem.id)
-                                            currentMenuModel.updateItem(index, "menuTypes", types)
-                                            menuManager.saveCurrentModel()
-                                        }
-                                    }
+
+                                    onClicked: toggleMenuType("Filemanager", checked)
                                 }
-                                CheckBox {
+                                Components.DCheckBox {
                                     id: singleDirCheckBox
                                     text: "SingleDir"
                                     checked: currentItem && currentItem.menuTypes ? currentItem.menuTypes.indexOf("SingleDir") >= 0 : false
-                                    
-                                    onClicked: {
-                                        if (currentItem && currentMenuModel) {
-                                            var types = currentItem.menuTypes ? currentItem.menuTypes.slice() : []
-                                            if (checked) {
-                                                if (types.indexOf("SingleDir") < 0) {
-                                                    types.push("SingleDir")
-                                                }
-                                            } else {
-                                                var idx = types.indexOf("SingleDir")
-                                                if (idx >= 0) {
-                                                    types.splice(idx, 1)
-                                                }
-                                            }
-                                            var index = currentMenuModel.getIndex(currentItem.id)
-                                            currentMenuModel.updateItem(index, "menuTypes", types)
-                                            menuManager.saveCurrentModel()
-                                        }
-                                    }
+
+                                    onClicked: toggleMenuType("SingleDir", checked)
                                 }
-                                CheckBox {
+                                Components.DCheckBox {
                                     id: blankSpaceCheckBox
                                     text: "BlankSpace"
                                     checked: currentItem && currentItem.menuTypes ? currentItem.menuTypes.indexOf("BlankSpace") >= 0 : false
-                                    
-                                    onClicked: {
-                                        if (currentItem && currentMenuModel) {
-                                            var types = currentItem.menuTypes ? currentItem.menuTypes.slice() : []
-                                            if (checked) {
-                                                if (types.indexOf("BlankSpace") < 0) {
-                                                    types.push("BlankSpace")
-                                                }
-                                            } else {
-                                                var idx = types.indexOf("BlankSpace")
-                                                if (idx >= 0) {
-                                                    types.splice(idx, 1)
-                                                }
-                                            }
-                                            var index = currentMenuModel.getIndex(currentItem.id)
-                                            currentMenuModel.updateItem(index, "menuTypes", types)
-                                            menuManager.saveCurrentModel()
-                                        }
-                                    }
+
+                                    onClicked: toggleMenuType("BlankSpace", checked)
                                 }
                             }
                         }
@@ -1110,20 +949,38 @@ ApplicationWindow {
                                 color: Styles.Style.secondaryTextColor
                             }
                             
-                            SpinBox {
+                            Components.DSpinBox {
                                 id: positionSpinBox
                                 width: parent.width
                                 height: Styles.Style.itemHeight
                                 from: 1
                                 to: 100
                                 value: currentItem ? currentItem.positionNumber || 1 : 1
-                                font: Styles.Style.bodyFont
-                                
-                                onValueModified: {
-                                    if (currentItem && currentMenuModel) {
+
+                                // 监听 currentItem 变化，恢复绑定
+                                Connections {
+                                    target: root
+                                    function onCurrentItemChanged() {
+                                        // 恢复 value 绑定
+                                        positionSpinBox.value = Qt.binding(function() {
+                                            return currentItem ? currentItem.positionNumber || 1 : 1
+                                        })
+                                    }
+                                }
+
+                                onUserModified: {
+                                    if (currentItem && currentMenuModel && originalItemValues) {
+                                        // 直接更新模型并保存
                                         var index = currentMenuModel.getIndex(currentItem.id)
                                         currentMenuModel.updateItem(index, "positionNumber", value)
+                                        // 更新原始值以避免重复保存
+                                        originalItemValues.positionNumber = value
+                                        // 保存到文件
                                         menuManager.saveCurrentModel()
+                                        // 恢复绑定，确保切换项时值能正确更新
+                                        positionSpinBox.value = Qt.binding(function() {
+                                            return currentItem ? currentItem.positionNumber || 1 : 1
+                                        })
                                     }
                                 }
                             }
@@ -1150,12 +1007,11 @@ ApplicationWindow {
                                     height: parent.height
                                     clip: true
                                     
-                                    TextArea {
+                                    Components.DTextArea {
                                         id: suffixTextArea
                                         width: parent.width
                                         height: parent.height
                                         wrapMode: TextArea.Wrap
-                                        font: Styles.Style.bodyFont
                                         placeholderText: qsTr("Enter supported suffixes, separated by colons, e.g.: mp4:avi:mkv")
                                         text: {
                                             if (currentItem && currentItem.supportSuffix) {
@@ -1163,21 +1019,16 @@ ApplicationWindow {
                                             }
                                             return ""
                                         }
-                                        
-                                        background: Rectangle {
-                                            color: Styles.Style.backgroundColor
-                                            border.color: Styles.Style.borderColor
-                                            border.width: 1
-                                            radius: Styles.Style.borderRadius
-                                        }
-                                        
-                                        onTextChanged: {
-                                            // 更新当前项的后缀列表
-                                            if (currentItem && currentMenuModel) {
+
+                                        onFocusChanged: {
+                                            if (!focus && currentItem && currentMenuModel && originalItemValues) {
                                                 var suffixes = text.split(":").filter(function(s) { return s.trim() !== "" })
-                                                currentItem.supportSuffix = suffixes
+                                                // 直接更新模型并保存
                                                 var index = currentMenuModel.getIndex(currentItem.id)
                                                 currentMenuModel.updateItem(index, "supportSuffix", suffixes)
+                                                // 更新原始值
+                                                originalItemValues.supportSuffix = suffixes.slice()
+                                                // 保存到文件
                                                 menuManager.saveCurrentModel()
                                             }
                                         }
@@ -1214,25 +1065,21 @@ ApplicationWindow {
                                 height: Styles.Style.itemHeight * 3
                                 clip: true
                                 
-                                TextArea {
+                                Components.DTextArea {
                                     id: execCommandField
                                     width: parent.width
                                     height: parent.height
                                     wrapMode: TextArea.Wrap
-                                    font: Styles.Style.bodyFont
                                     text: currentItem ? currentItem.execCommand || "" : ""
-                                    
-                                    background: Rectangle {
-                                        color: Styles.Style.backgroundColor
-                                        border.color: Styles.Style.borderColor
-                                        border.width: 1
-                                        radius: Styles.Style.borderRadius
-                                    }
-                                    
-                                    onEditingFinished: {
-                                        if (currentItem && currentMenuModel) {
+
+                                    onFocusChanged: {
+                                        if (!focus && currentItem && currentMenuModel && originalItemValues) {
+                                            // 直接更新模型并保存
                                             var index = currentMenuModel.getIndex(currentItem.id)
                                             currentMenuModel.updateItem(index, "execCommand", text)
+                                            // 更新原始值
+                                            originalItemValues.execCommand = text
+                                            // 保存到文件
                                             menuManager.saveCurrentModel()
                                         }
                                     }
@@ -1477,7 +1324,7 @@ ApplicationWindow {
     
     // 折叠状态
     property bool userExpanded: true
-    property bool systemExpanded: false
+    property bool systemExpanded: true
     
     // 当前选中的文件路径
     property string selectedFilePath: ""
@@ -1592,6 +1439,82 @@ ApplicationWindow {
     // 当前正在编辑的 delegate
     property var editingDelegate: null
     
+    // 保存当前选中项的原始值，用于脏检查
+    property var originalItemValues: null
+    
+    // 监听 currentItem 变化，保存原始值
+    onCurrentItemChanged: {
+        if (currentItem) {
+            // 深拷贝当前项的值
+            originalItemValues = {
+                comment: currentItem.comment || "",
+                commentLocal: currentItem.commentLocal || "",
+                version: currentItem.version || "",
+                name: currentItem.name || "",
+                nameLocal: currentItem.nameLocal || "",
+                menuTypes: currentItem.menuTypes ? currentItem.menuTypes.slice() : [],
+                positionNumber: currentItem.positionNumber || 1,
+                supportSuffix: currentItem.supportSuffix ? currentItem.supportSuffix.slice() : [],
+                execCommand: currentItem.execCommand || ""
+            }
+            if (debugLogging) console.log("Saved original values for item:", currentItem.name)
+        } else {
+            originalItemValues = null
+        }
+    }
+    
+    // 辅助函数：更新属性并保存（带脏检查）
+    function updateProperty(propertyName, newValue) {
+        if (!currentItem || !currentMenuModel || !originalItemValues) {
+            return
+        }
+
+        var oldValue = originalItemValues[propertyName]
+        var isChanged = false
+
+        // 比较新旧值
+        if (Array.isArray(newValue)) {
+            // 数组比较
+            if (newValue.length !== oldValue.length) {
+                isChanged = true
+            } else {
+                for (var i = 0; i < newValue.length; i++) {
+                    if (newValue[i] !== oldValue[i]) {
+                        isChanged = true
+                        break
+                    }
+                }
+            }
+        } else {
+            // 普通值比较
+            isChanged = (newValue !== oldValue)
+        }
+
+        if (isChanged) {
+            if (debugLogging) console.log("Property", propertyName, "changed from", oldValue, "to", newValue)
+            var index = currentMenuModel.getIndex(currentItem.id)
+            currentMenuModel.updateItem(index, propertyName, newValue)
+            // 更新原始值
+            originalItemValues[propertyName] = Array.isArray(newValue) ? newValue.slice() : newValue
+            // 保存到文件
+            menuManager.saveCurrentModel()
+        } else {
+            if (debugLogging) console.log("Property", propertyName, "not changed, skipping save")
+        }
+    }
+
+    // 辅助函数：切换菜单类型
+    function toggleMenuType(typeName, isChecked) {
+        var types = currentItem.menuTypes ? currentItem.menuTypes.slice() : []
+        if (isChecked) {
+            if (types.indexOf(typeName) < 0) types.push(typeName)
+        } else {
+            var idx = types.indexOf(typeName)
+            if (idx >= 0) types.splice(idx, 1)
+        }
+        updateProperty("menuTypes", types)
+    }
+
     // 视图状态保存
     property string savedSelectedItemId: ""
     property var savedExpandedItemIds: []  // 展开的节点ID列表
@@ -1766,13 +1689,9 @@ ApplicationWindow {
         onAccepted: {
             // 确认选择，更新后缀列表
             if (currentItem && currentMenuModel) {
-                currentItem.supportSuffix = selectedSuffixes.slice()  // 复制数组
-                // 更新模型和保存到文件
-                var index = currentMenuModel.getIndex(currentItem.id)
-                currentMenuModel.updateItem(index, "supportSuffix", selectedSuffixes)
-                menuManager.saveCurrentModel()
-                // 更新文本框显示
-                suffixTextArea.text = selectedSuffixes.join(":")
+                // 使用 updateProperty 进行脏检查和保存
+                updateProperty("supportSuffix", selectedSuffixes.slice())
+                // 不再显式设置 suffixTextArea.text，让绑定自动更新
                 console.log("Suffixes updated:", selectedSuffixes.join(":"))
             }
         }

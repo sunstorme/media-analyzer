@@ -138,7 +138,7 @@ Rectangle {
                     anchors.rightMargin: Styles.Style.padding / 2
                     spacing: Styles.Style.spacing
                     
-                    CheckBox {
+                    DCheckBox {
                         id: checkBox
                         anchors.verticalCenter: parent.verticalCenter
                         checked: parent.parent.isSelected

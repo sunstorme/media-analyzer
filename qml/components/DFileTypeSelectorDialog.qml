@@ -83,22 +83,14 @@ Dialog {
             spacing: Styles.Style.spacing
             
             // 搜索框
-            TextField {
+            DTextField {
                 id: searchField
                 width: parent.width - toggleAddButton.width - parent.spacing
                 height: parent.height
                 placeholderText: qsTr("Search file types...")
-                font: Styles.Style.bodyFont
                 
                 onTextChanged: {
                     searchText = text
-                }
-                
-                background: Rectangle {
-                    color: Styles.Style.backgroundColor
-                    border.color: Styles.Style.borderColor
-                    border.width: 1
-                    radius: Styles.Style.borderRadius
                 }
             }
             
@@ -148,34 +140,18 @@ Dialog {
                     height: Styles.Style.itemHeight
                     spacing: Styles.Style.spacing
                     
-                    TextField {
+                    DTextField {
                         id: newSuffixField
                         width: 150
                         height: parent.height
                         placeholderText: qsTr("Suffix (e.g.: xyz)")
-                        font: Styles.Style.bodyFont
-                        
-                        background: Rectangle {
-                            color: Styles.Style.backgroundColor
-                            border.color: Styles.Style.borderColor
-                            border.width: 1
-                            radius: Styles.Style.borderRadius
-                        }
                     }
                     
-                    TextField {
+                    DTextField {
                         id: newNameField
                         width: 200
                         height: parent.height
                         placeholderText: qsTr("Type name (e.g.: XYZ File)")
-                        font: Styles.Style.bodyFont
-                        
-                        background: Rectangle {
-                            color: Styles.Style.backgroundColor
-                            border.color: Styles.Style.borderColor
-                            border.width: 1
-                            radius: Styles.Style.borderRadius
-                        }
                     }
                     
                     ComboBox {
@@ -342,7 +318,7 @@ Dialog {
                             spacing: Styles.Style.spacing
                             
                             // 选择checkbox
-                            CheckBox {
+                            DCheckBox {
                                 id: selectCheckBox
                                 anchors.verticalCenter: parent.verticalCenter
                                 checked: selectedSuffixes.indexOf(model.suffix) >= 0

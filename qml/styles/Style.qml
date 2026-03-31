@@ -5,7 +5,7 @@ import QtQuick
 
 QtObject {
     // 颜色
-    readonly property color primaryColor: "#0081FF"
+    readonly property color primaryColor: "#005FB8"
     readonly property color backgroundColor: "#FFFFFF"
     readonly property color borderColor: "#E5E5E5"
     readonly property color textColor: "#000000"
@@ -63,7 +63,10 @@ QtObject {
     readonly property int borderRadius: 4
     readonly property int itemHeight: 40
     readonly property int toolbarHeight: 50
-    
+    readonly property int borderWidth: 1
+    readonly property int activeBorderWidth: 2
+    readonly property int iconSize: 16
+    readonly property int smallBorderRadius: 3
     
     // 动画
     readonly property int animationDuration: 150
