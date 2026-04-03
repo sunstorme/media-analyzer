@@ -267,12 +267,15 @@ void translateConfig(const QApplication& app) {
     static QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     
+    // Priority order for translation search paths:
+    // 1. Development environment (build directory)
+    // 2. System installation paths
     QStringList searchPaths;
-    searchPaths << QApplication::applicationDirPath() + "/translations";
-    searchPaths << QApplication::applicationDirPath() + "/../share/media-analyzer/translations";
-    searchPaths << "/usr/local/share/media-analyzer/translations";
-    searchPaths << "/usr/share/media-analyzer/translations";
-    searchPaths << ":/translations";
+    searchPaths << QApplication::applicationDirPath() + "/translations";  // Development: build/bin/translations
+    searchPaths << QApplication::applicationDirPath() + "/../share/media-analyzer/translations";  // Relative to bin
+    searchPaths << "/usr/local/share/media-analyzer/translations";  // Local installation
+    searchPaths << "/usr/share/media-analyzer/translations";  // System installation
+    searchPaths << ":/translations";  // Resource file (embedded)
     
     for (const QString &locale : uiLanguages) {
         const QString baseName = "media-analyzer_" + QLocale(locale).name();

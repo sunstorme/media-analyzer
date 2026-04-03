@@ -185,6 +185,7 @@ install(FILES
     translations/media-analyzer_zh_CN.qm
     translations/media-analyzer_en_US.qm
     DESTINATION ${CMAKE_INSTALL_DATADIR}/media-analyzer/translations
+    COMPONENT Runtime
 )
 
 # Print configuration information

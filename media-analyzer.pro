@@ -139,16 +139,19 @@ isEmpty(ICONDIR): ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 isEmpty(APPDIR): APPDIR = $$PREFIX/share/applications
 isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc/media-analyzer
 # isEmpty(CONTEXTMENUDIR): CONTEXTMENUDIR = $$PREFIX/share/applications/context-menus
+isEmpty(TRANSLATIONDIR): TRANSLATIONDIR = $$PREFIX/share/media-analyzer/translations
 
 target.path = $$BINDIR
 icon.path = $$ICONDIR
 desktop.path = $$APPDIR
 doc.path = $$DOCDIR
+translations.path = $$TRANSLATIONDIR
 # contextmenu.path = $$CONTEXTMENUDIR
 
 icon.files = assets/128x128/media-analyzer-logo.svg
 desktop.files = assets/media-analyzer.desktop
 doc.files = README.md LICENSE
+translations.files = translations/media-analyzer_zh_CN.qm translations/media-analyzer_en_US.qm
 # contextmenu.files = assets/media-analyzer.conf
 
 # Install different desktop file for Qt6 version
@@ -156,4 +159,4 @@ equals(QT_MAJOR_VERSION, 6) {
     desktop.files = assets/media-analyzer6.desktop
 }
 
-INSTALLS += target icon desktop doc
+INSTALLS += target icon desktop doc translations
