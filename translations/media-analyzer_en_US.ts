@@ -2,6 +2,69 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>ConfigureBuildTool</name>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="27"/>
+        <source>Project:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="44"/>
+        <source>Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="56"/>
+        <source>Complie Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="83"/>
+        <source>Select Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="91"/>
+        <source>Show Cmd</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="111"/>
+        <source>Configure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="118"/>
+        <source>Build</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="125"/>
+        <source>Install</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="132"/>
+        <source>Clean</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.ui" line="172"/>
+        <source>Complie Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/configurebuildtool.cpp" line="201"/>
+        <source>Select configure source folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ExportWG</name>
     <message>
         <location filename="../src/widgets/exportwg.ui" line="16"/>
@@ -209,132 +272,54 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/exportwg.cpp" line="210"/>
+        <location filename="../src/widgets/exportwg.cpp" line="215"/>
         <source>not exists! will use default:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/exportwg.cpp" line="442"/>
+        <location filename="../src/widgets/exportwg.cpp" line="447"/>
         <source>Export Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/exportwg.cpp" line="465"/>
+        <location filename="../src/widgets/exportwg.cpp" line="470"/>
         <source>Started: %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/exportwg.cpp" line="488"/>
+        <location filename="../src/widgets/exportwg.cpp" line="493"/>
         <source>All commands completed successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/exportwg.cpp" line="490"/>
+        <location filename="../src/widgets/exportwg.cpp" line="495"/>
         <source>Some commands failed or were stopped</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/exportwg.cpp" line="508"/>
+        <location filename="../src/widgets/exportwg.cpp" line="513"/>
         <source>Output from index %1 %2: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/exportwg.cpp" line="514"/>
+        <location filename="../src/widgets/exportwg.cpp" line="519"/>
         <source>Error from index %1 %2: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/exportwg.cpp" line="524"/>
-        <location filename="../src/widgets/exportwg.cpp" line="555"/>
+        <location filename="../src/widgets/exportwg.cpp" line="529"/>
+        <location filename="../src/widgets/exportwg.cpp" line="560"/>
         <source>Select Save Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/exportwg.cpp" line="542"/>
+        <location filename="../src/widgets/exportwg.cpp" line="547"/>
         <source>Cannot create directory: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/exportwg.cpp" line="556"/>
+        <location filename="../src/widgets/exportwg.cpp" line="561"/>
         <source>Open Save Directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>FFmpegBuildTool</name>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="16"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="30"/>
-        <source>FFmepg Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="43"/>
-        <source>Local FFmpeg:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="50"/>
-        <source>Remote FFmpeg:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="77"/>
-        <source>Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="87"/>
-        <source>Download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="108"/>
-        <source>Select Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="127"/>
-        <source>Build</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="134"/>
-        <source>Install</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="141"/>
-        <source>Show Cmd</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="158"/>
-        <source>Configure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="165"/>
-        <source>Clean</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="182"/>
-        <source>Complie Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.ui" line="204"/>
-        <source>Complie Outputs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/ffmpegbuildtool.cpp" line="201"/>
-        <source>Select FFmpeg source folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -346,28 +331,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/fileswg.cpp" line="134"/>
+        <location filename="../src/widgets/fileswg.cpp" line="139"/>
         <source>Remove Record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/fileswg.cpp" line="141"/>
+        <location filename="../src/widgets/fileswg.cpp" line="146"/>
         <source>Delete File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/fileswg.cpp" line="154"/>
+        <location filename="../src/widgets/fileswg.cpp" line="159"/>
         <source>Open File Location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/fileswg.cpp" line="161"/>
+        <location filename="../src/widgets/fileswg.cpp" line="166"/>
         <source>Copy File Path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/fileswg.cpp" line="170"/>
-        <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -382,13 +362,18 @@
 <context>
     <name>GlobalConfingWG</name>
     <message>
-        <location filename="../src/widgets/globalconfingwg.ui" line="16"/>
+        <location filename="../src/widgets/globalconfingwg.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/globalconfingwg.ui" line="22"/>
+        <location filename="../src/widgets/globalconfingwg.ui" line="20"/>
         <source>Category</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/globalconfingwg.ui" line="45"/>
+        <source>Detail</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -410,175 +395,107 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/helpquerywg.cpp" line="17"/>
-        <source>Detail Search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/helpquerywg.cpp" line="79"/>
+        <location filename="../src/widgets/helpquerywg.cpp" line="38"/>
         <source>No help information available for %1=%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/helpquerywg.cpp" line="143"/>
+        <location filename="../src/widgets/helpquerywg.cpp" line="102"/>
         <source>Failed to load %1 parameters</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/helpquerywg.cpp" line="151"/>
-        <source>Search text is empty</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/helpquerywg.cpp" line="157"/>
-        <source>No content to search</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>InfoWidgets</name>
-    <message>
-        <location filename="../src/widgets/infotablewg.ui" line="16"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.ui" line="54"/>
-        <source>Input seach Text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="332"/>
-        <source>Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="341"/>
-        <source>Config</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="343"/>
-        <source>Version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="344"/>
-        <source>Build</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="405"/>
-        <location filename="../src/widgets/infotablewg.cpp" line="520"/>
-        <source>name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="407"/>
-        <source>NB_COMPONENTS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="408"/>
-        <source>BITS_PER_PIXEL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="410"/>
-        <source>direct</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="412"/>
-        <source>detail</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="458"/>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="480"/>
-        <source>Input</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="556"/>
-        <location filename="../src/widgets/infotablewg.cpp" line="577"/>
-        <source>Detail Search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="557"/>
-        <source>Open advanced search dialog with more options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/infotablewg.cpp" line="754"/>
-        <source>Help Query %1=%2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>JsonFormatWG</name>
     <message>
-        <location filename="../src/widgets/jsonfmtwg.ui" line="16"/>
+        <location filename="../src/widgets/jsonfmtwg.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="24"/>
-        <source>Copy Value</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="25"/>
-        <source>Copy Key-Value</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="26"/>
-        <source>Copy Key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="27"/>
-        <source>Copy All Data</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="29"/>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="72"/>
         <source>Expand All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="30"/>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="77"/>
         <source>Collapse All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="38"/>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="36"/>
         <source>JSON Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="209"/>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="52"/>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="53"/>
+        <source>Switch View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="58"/>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="59"/>
+        <source>Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="60"/>
+        <source>Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="61"/>
+        <source>Key-Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="63"/>
+        <source>All Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="65"/>
+        <source>Cmd</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="70"/>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="71"/>
+        <source>Expand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="75"/>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="76"/>
+        <source>Collapse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="338"/>
         <source>Search text is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="215"/>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="344"/>
         <source>No content to search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="252"/>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="381"/>
         <source>Found %1 of %2 items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/jsonfmtwg.cpp" line="255"/>
+        <location filename="../src/widgets/jsonfmtwg.cpp" line="384"/>
         <source>No items found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -596,27 +513,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/logwg.cpp" line="84"/>
+        <location filename="../src/widgets/logwg.cpp" line="85"/>
         <source>Toggle Search Detail (Ctrl+F)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/logwg.cpp" line="88"/>
+        <location filename="../src/widgets/logwg.cpp" line="89"/>
         <source>Toggle View (Ctrl+T)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/logwg.cpp" line="94"/>
+        <location filename="../src/widgets/logwg.cpp" line="95"/>
         <source>Clear Logs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/logwg.cpp" line="122"/>
+        <location filename="../src/widgets/logwg.cpp" line="123"/>
         <source>Search text is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/logwg.cpp" line="128"/>
+        <location filename="../src/widgets/logwg.cpp" line="129"/>
         <source>No content to search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -624,419 +541,473 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/mainwindow.ui" line="16"/>
+        <location filename="../src/mainwindow.ui" line="14"/>
         <source>MainWindow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="30"/>
+        <location filename="../src/mainwindow.ui" line="28"/>
         <source>Basic Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="62"/>
+        <location filename="../src/mainwindow.ui" line="60"/>
         <source>Media Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="66"/>
+        <location filename="../src/mainwindow.ui" line="64"/>
         <source>Frames</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="73"/>
+        <location filename="../src/mainwindow.ui" line="81"/>
         <source>Packets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="100"/>
-        <source>Config</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.ui" line="105"/>
+        <location filename="../src/mainwindow.ui" line="118"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="110"/>
+        <location filename="../src/mainwindow.ui" line="133"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="120"/>
-        <location filename="../src/mainwindow.ui" line="444"/>
+        <location filename="../src/mainwindow.ui" line="143"/>
+        <location filename="../src/mainwindow.ui" line="452"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="135"/>
+        <location filename="../src/mainwindow.ui" line="147"/>
+        <source>Setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="165"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="156"/>
+        <location filename="../src/mainwindow.ui" line="184"/>
         <source>Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="161"/>
+        <location filename="../src/mainwindow.ui" line="189"/>
         <source>Buildconf</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="166"/>
+        <location filename="../src/mainwindow.ui" line="194"/>
         <source>Formats</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="171"/>
+        <location filename="../src/mainwindow.ui" line="199"/>
         <source>Muxers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="176"/>
+        <location filename="../src/mainwindow.ui" line="204"/>
         <source>Demuxers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="181"/>
+        <location filename="../src/mainwindow.ui" line="209"/>
         <source>Devices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="186"/>
+        <location filename="../src/mainwindow.ui" line="214"/>
         <source>Codecs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="191"/>
+        <location filename="../src/mainwindow.ui" line="219"/>
         <source>Decoders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="196"/>
+        <location filename="../src/mainwindow.ui" line="224"/>
         <source>Encoders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="201"/>
+        <location filename="../src/mainwindow.ui" line="229"/>
         <source>Bsfs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="206"/>
+        <location filename="../src/mainwindow.ui" line="234"/>
         <source>Protocols</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="211"/>
+        <location filename="../src/mainwindow.ui" line="239"/>
         <source>Filters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="216"/>
+        <location filename="../src/mainwindow.ui" line="244"/>
         <source>Pixfmts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="221"/>
+        <location filename="../src/mainwindow.ui" line="249"/>
         <source>Layouts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="226"/>
+        <location filename="../src/mainwindow.ui" line="254"/>
         <source>SampleFmts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="231"/>
+        <location filename="../src/mainwindow.ui" line="259"/>
         <source>Colors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="236"/>
+        <location filename="../src/mainwindow.ui" line="264"/>
         <source>ProgramVersion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="241"/>
+        <location filename="../src/mainwindow.ui" line="269"/>
         <source>LibraryVersions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="246"/>
+        <location filename="../src/mainwindow.ui" line="274"/>
         <source>Video Frame</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="254"/>
+        <location filename="../src/mainwindow.ui" line="282"/>
         <source>Chapters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="262"/>
-        <location filename="../src/mainwindow.cpp" line="291"/>
+        <location filename="../src/mainwindow.ui" line="290"/>
         <source>Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="270"/>
+        <location filename="../src/mainwindow.ui" line="298"/>
         <source>Count Frames</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="278"/>
+        <location filename="../src/mainwindow.ui" line="306"/>
         <source>Count Packets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="286"/>
+        <location filename="../src/mainwindow.ui" line="314"/>
         <source>Entries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="291"/>
+        <location filename="../src/mainwindow.ui" line="319"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="296"/>
+        <location filename="../src/mainwindow.ui" line="324"/>
         <source>Open Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="301"/>
+        <location filename="../src/mainwindow.ui" line="329"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="306"/>
+        <location filename="../src/mainwindow.ui" line="334"/>
         <source>Open Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="314"/>
-        <location filename="../src/mainwindow.cpp" line="296"/>
+        <location filename="../src/mainwindow.ui" line="342"/>
         <source>Streams</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="322"/>
+        <location filename="../src/mainwindow.ui" line="350"/>
         <source>Program Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="330"/>
+        <location filename="../src/mainwindow.ui" line="358"/>
         <source>Library Versions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="338"/>
+        <location filename="../src/mainwindow.ui" line="366"/>
         <source>Versions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="346"/>
+        <location filename="../src/mainwindow.ui" line="374"/>
         <source>Pixel Formats</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="351"/>
-        <location filename="../src/mainwindow.ui" line="391"/>
+        <location filename="../src/mainwindow.ui" line="379"/>
+        <location filename="../src/mainwindow.ui" line="399"/>
         <source>Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="356"/>
+        <location filename="../src/mainwindow.ui" line="384"/>
         <source>Mainwindow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="361"/>
+        <location filename="../src/mainwindow.ui" line="389"/>
         <source>Window Head</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="366"/>
+        <location filename="../src/mainwindow.ui" line="394"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="371"/>
-        <location filename="../src/mainwindow.ui" line="381"/>
+        <location filename="../src/mainwindow.ui" line="462"/>
+        <source>Configure Builder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="497"/>
+        <source>VLC Media Player</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="502"/>
+        <source>MPV Player</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="507"/>
+        <source>FFplay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="512"/>
+        <source>SMPlayer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="517"/>
+        <source>Totem (GNOME Videos)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="522"/>
+        <source>GNOME MPlayer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="527"/>
+        <source>KMPlayer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="532"/>
+        <source>Xine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="537"/>
+        <source>Install Players...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="562"/>
+        <location filename="../src/mainwindow.ui" line="567"/>
+        <source>22</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="572"/>
+        <location filename="../src/mainwindow.ui" line="577"/>
+        <source>1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="68"/>
+        <location filename="../src/mainwindow.ui" line="85"/>
+        <location filename="../src/mainwindow.ui" line="542"/>
+        <location filename="../src/mainwindow.ui" line="552"/>
         <source>Video</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="376"/>
-        <location filename="../src/mainwindow.ui" line="386"/>
+        <location filename="../src/mainwindow.ui" line="73"/>
+        <location filename="../src/mainwindow.ui" line="90"/>
+        <location filename="../src/mainwindow.ui" line="547"/>
+        <location filename="../src/mainwindow.ui" line="557"/>
         <source>Audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="396"/>
+        <location filename="../src/mainwindow.ui" line="404"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="401"/>
-        <location filename="../src/mainwindow.cpp" line="305"/>
+        <location filename="../src/mainwindow.ui" line="409"/>
         <source>Player</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="406"/>
-        <location filename="../src/mainwindow.cpp" line="299"/>
+        <location filename="../src/mainwindow.ui" line="414"/>
+        <location filename="../src/mainwindow.cpp" line="308"/>
         <source>Media Properties</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="414"/>
-        <location filename="../src/mainwindow.cpp" line="257"/>
+        <location filename="../src/mainwindow.ui" line="422"/>
+        <location filename="../src/mainwindow.cpp" line="277"/>
         <source>Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="419"/>
-        <location filename="../src/mainwindow.cpp" line="269"/>
+        <location filename="../src/mainwindow.ui" line="427"/>
+        <location filename="../src/mainwindow.cpp" line="289"/>
         <source>Folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="424"/>
+        <location filename="../src/mainwindow.ui" line="432"/>
         <source>App Dir</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="429"/>
+        <location filename="../src/mainwindow.ui" line="437"/>
         <source>Setting Dir</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="434"/>
+        <location filename="../src/mainwindow.ui" line="442"/>
         <source>Setting File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="439"/>
+        <location filename="../src/mainwindow.ui" line="447"/>
         <source>License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="449"/>
+        <location filename="../src/mainwindow.ui" line="457"/>
         <source>Build</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="454"/>
-        <source>FFmpeg Builder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.ui" line="459"/>
+        <location filename="../src/mainwindow.ui" line="467"/>
         <source>Docs Viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="464"/>
+        <location filename="../src/mainwindow.ui" line="472"/>
         <source>Programs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="469"/>
+        <location filename="../src/mainwindow.ui" line="477"/>
         <source>VideoRate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="474"/>
+        <location filename="../src/mainwindow.ui" line="482"/>
         <source>VideoSize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="479"/>
+        <location filename="../src/mainwindow.ui" line="487"/>
         <source>Sources</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="484"/>
+        <location filename="../src/mainwindow.ui" line="492"/>
         <source>Sinks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="113"/>
+        <location filename="../src/mainwindow.cpp" line="119"/>
         <source>Basic info get error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="124"/>
+        <location filename="../src/mainwindow.cpp" line="134"/>
         <source>Parse Media: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="222"/>
+        <location filename="../src/mainwindow.cpp" line="236"/>
         <source>%1 - Media Properties: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="236"/>
+        <location filename="../src/mainwindow.cpp" line="250"/>
+        <location filename="../src/mainwindow.cpp" line="267"/>
         <source>Properties: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="263"/>
+        <location filename="../src/mainwindow.cpp" line="283"/>
         <source>Logs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="428"/>
-        <source> %1 a:0</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cpp" line="432"/>
-        <source> %1 v:0</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cpp" line="480"/>
+        <location filename="../src/mainwindow.cpp" line="469"/>
         <source>Open File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="482"/>
+        <location filename="../src/mainwindow.cpp" line="471"/>
         <source>All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="497"/>
+        <location filename="../src/mainwindow.cpp" line="486"/>
         <source>Select Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="499"/>
+        <location filename="../src/mainwindow.cpp" line="488"/>
         <source>All Files (*.*);;Media Files (*.mp4 *.mkv *.webm *.mp3);;Image Files (*.png *.jpg *.bmp)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="515"/>
+        <location filename="../src/mainwindow.cpp" line="504"/>
         <source>Export Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="519"/>
+        <location filename="../src/mainwindow.cpp" line="508"/>
         <source>No input file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="567"/>
+        <location filename="../src/mainwindow.cpp" line="556"/>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="559"/>
         <source>About MediaAnalyzer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="568"/>
+        <location filename="../src/mainwindow.cpp" line="560"/>
         <source>MediaAnalyzer
-
+Version: %1
 A powerful media file analysis tool that provides:
 - Detailed media information display
 - Multiple format views (JSON, Table)
@@ -1044,7 +1015,84 @@ A powerful media file analysis tool that provides:
 - Customizable layout
 - FFmpeg compilation tool
 
-Version 1.0</source>
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="635"/>
+        <location filename="../src/mainwindow.cpp" line="641"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="635"/>
+        <source>Please select a media file first!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="641"/>
+        <source>Selected file does not exist:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="740"/>
+        <source>Player Not Installed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="741"/>
+        <source>%1 is not installed.
+
+Install now?
+
+Description: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="757"/>
+        <source>Playback Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="758"/>
+        <source>Cannot play file with %1:
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="782"/>
+        <source>Player Installation Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="788"/>
+        <source>Player Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="788"/>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="788"/>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="796"/>
+        <source>Installed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="796"/>
+        <source>Not Installed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="896"/>
+        <source>Stream %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1057,32 +1105,30 @@ Version 1.0</source>
     </message>
 </context>
 <context>
-    <name>PlayerWG</name>
+    <name>MediaPropsWG</name>
     <message>
-        <location filename="../src/widgets/playerwg.ui" line="16"/>
-        <source>Media Player</source>
+        <location filename="../src/widgets/mediapropswg.ui" line="14"/>
+        <source>Media Properties</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/playerwg.ui" line="74"/>
-        <location filename="../src/widgets/playerwg.cpp" line="136"/>
-        <location filename="../src/widgets/playerwg.cpp" line="145"/>
-        <location filename="../src/widgets/playerwg.cpp" line="212"/>
-        <location filename="../src/widgets/playerwg.cpp" line="509"/>
-        <location filename="../src/widgets/playerwg.cpp" line="543"/>
-        <source>Play</source>
+        <location filename="../src/widgets/mediapropswg.ui" line="39"/>
+        <source>Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/playerwg.ui" line="87"/>
-        <source>Stop</source>
+        <location filename="../src/widgets/mediapropswg.ui" line="61"/>
+        <source>Stream</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/playerwg.cpp" line="124"/>
-        <location filename="../src/widgets/playerwg.cpp" line="258"/>
-        <location filename="../src/widgets/playerwg.cpp" line="515"/>
-        <source>Pause</source>
+        <location filename="../src/widgets/mediapropswg.cpp" line="85"/>
+        <source>Loading Media Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/mediapropswg.cpp" line="87"/>
+        <source>Loading media properties...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1118,88 +1164,88 @@ Version 1.0</source>
 <context>
     <name>SearchWG</name>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="16"/>
+        <location filename="../src/widgets/searchwg.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="22"/>
+        <location filename="../src/widgets/searchwg.ui" line="20"/>
         <source>Search Range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="29"/>
+        <location filename="../src/widgets/searchwg.ui" line="27"/>
         <source>Match Control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="35"/>
+        <location filename="../src/widgets/searchwg.ui" line="33"/>
         <source>Case Sensitive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="42"/>
+        <location filename="../src/widgets/searchwg.ui" line="40"/>
         <source>Match Whole words</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="49"/>
+        <location filename="../src/widgets/searchwg.ui" line="47"/>
         <source>Use Regular Expression</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="72"/>
+        <location filename="../src/widgets/searchwg.ui" line="70"/>
         <source>Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="100"/>
+        <location filename="../src/widgets/searchwg.ui" line="98"/>
         <source>Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="116"/>
-        <location filename="../src/widgets/searchwg.ui" line="140"/>
+        <location filename="../src/widgets/searchwg.ui" line="114"/>
+        <location filename="../src/widgets/searchwg.ui" line="138"/>
         <source>yyyy-MM-dd HH:mm:ss zzz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="123"/>
+        <location filename="../src/widgets/searchwg.ui" line="121"/>
         <source>&lt;&lt; - &gt;&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="163"/>
+        <location filename="../src/widgets/searchwg.ui" line="161"/>
         <source>Operation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="182"/>
+        <location filename="../src/widgets/searchwg.ui" line="180"/>
         <source>Previous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="189"/>
+        <location filename="../src/widgets/searchwg.ui" line="187"/>
         <source>Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="196"/>
+        <location filename="../src/widgets/searchwg.ui" line="194"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.ui" line="217"/>
+        <location filename="../src/widgets/searchwg.ui" line="215"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.cpp" line="73"/>
+        <location filename="../src/widgets/searchwg.cpp" line="76"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/searchwg.cpp" line="74"/>
+        <location filename="../src/widgets/searchwg.cpp" line="77"/>
         <source>Select None</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1207,21 +1253,225 @@ Version 1.0</source>
 <context>
     <name>TabConfigWg</name>
     <message>
-        <location filename="../src/widgets/tabconfigwg.ui" line="16"/>
+        <location filename="../src/widgets/tabconfigwg.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/widgets/tabconfigwg.ui" line="22"/>
+        <location filename="../src/widgets/tabconfigwg.ui" line="20"/>
         <source>Category</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>TabelFormatWG</name>
+    <name>TableFormatWG</name>
     <message>
-        <location filename="../src/widgets/tabelfmtwg.ui" line="16"/>
+        <location filename="../src/widgets/tablefmtwg.ui" line="14"/>
         <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="41"/>
+        <source>Table Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="70"/>
+        <source>Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="71"/>
+        <source>Preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="72"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="115"/>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="120"/>
+        <source>Switch View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="436"/>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="445"/>
+        <source>Config</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="447"/>
+        <source>Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="448"/>
+        <source>Build</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="509"/>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="624"/>
+        <source>name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="511"/>
+        <source>NB_COMPONENTS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="512"/>
+        <source>BITS_PER_PIXEL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="514"/>
+        <source>direct</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="516"/>
+        <source>detail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="562"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="584"/>
+        <source>Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="758"/>
+        <source>Search text is empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="790"/>
+        <source>Found %1 of %2 items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="792"/>
+        <source>No items found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="863"/>
+        <source>Preparing to copy selected text...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="866"/>
+        <source>Preparing to copy selected text with header...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="869"/>
+        <source>Preparing to copy selected rows...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="872"/>
+        <source>Preparing to copy selected rows with headers...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="875"/>
+        <source>Preparing to copy selected columns...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="878"/>
+        <source>Preparing to copy selected columns with headers...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="881"/>
+        <source>Preparing to copy all data...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="884"/>
+        <source>Preparing to copy all data with headers...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="890"/>
+        <source>Copying Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="909"/>
+        <source>Copy completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="1207"/>
+        <source>Help Query %1=%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="1381"/>
+        <source>Extracting Images for Preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="1402"/>
+        <source>Extracting frame %1 of %2 for preview...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="1463"/>
+        <source>Completed. Extracted %1 of %2 images for preview.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="1499"/>
+        <source>Select Directory to Save Images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="1510"/>
+        <source>Saving Images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="1545"/>
+        <source>Saving frame %1 of %2...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="1575"/>
+        <source>Completed. Saved %1 of %2 images.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="1580"/>
+        <source>Save Complete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="1581"/>
+        <source>Successfully saved %1 of %2 images to:
+%3
+
+Do you want to open the folder?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1264,6 +1514,70 @@ Version 1.0</source>
     </message>
 </context>
 <context>
+    <name>ZMediaPlayerManager</name>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="73"/>
+        <source>Player Already Installed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="74"/>
+        <source>%1 is already installed, no need to reinstall.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="115"/>
+        <source>Failed to start installation process</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="217"/>
+        <source>%1 installation successful!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="220"/>
+        <source>%1 installation failed, please check logs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="245"/>
+        <source>Installation output: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="261"/>
+        <source>Error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="272"/>
+        <source>Confirm Installation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="273"/>
+        <source>Install %1?
+
+Description: %2
+
+This will use pkexec to request administrator privileges for software installation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="290"/>
+        <source>Installing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/zmediaplayermanager.cpp" line="291"/>
+        <source>Installing %1, please wait...
+
+Installation log:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ZTableHeaderManager</name>
     <message>
         <location filename="../src/common/ztableheadermanager.cpp" line="90"/>
@@ -1300,6 +1614,60 @@ Version 1.0</source>
     <message>
         <location filename="../src/common/ztableheadermanager.cpp" line="139"/>
         <source>Column %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ZTextEditor</name>
+    <message>
+        <location filename="../src/common/ztexteditor.cpp" line="165"/>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/ztexteditor.cpp" line="171"/>
+        <source>Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/ztexteditor.cpp" line="179"/>
+        <source>Cut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/ztexteditor.cpp" line="185"/>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/ztexteditor.cpp" line="191"/>
+        <source>Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/ztexteditor.cpp" line="197"/>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/ztexteditor.cpp" line="205"/>
+        <source>Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/ztexteditor.cpp" line="213"/>
+        <location filename="../src/common/ztexteditor.cpp" line="304"/>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/ztexteditor.cpp" line="394"/>
+        <source>Search text is empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/common/ztexteditor.cpp" line="400"/>
+        <source>No content to search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

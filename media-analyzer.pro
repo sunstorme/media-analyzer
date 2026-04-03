@@ -5,9 +5,9 @@ QT += core gui concurrent
 
 # Set different TARGET names based on Qt version
 equals(QT_MAJOR_VERSION, 5) {
-    TARGET = media-analyzer
+    TARGET = media-analyzer5
 } else {
-    TARGET = media-analyzer6
+    TARGET = media-analyzer
 }
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -111,15 +111,7 @@ FORMS += \
 
 TRANSLATIONS += \
     translations/media-analyzer_zh_CN.ts \
-    translations/media-analyzer_en_US.ts \
-    translations/media-analyzer_ja_JP.ts \
-    translations/media-analyzer_ko_KR.ts \
-    translations/media-analyzer_fr_FR.ts \
-    translations/media-analyzer_de_DE.ts \
-    translations/media-analyzer_es_ES.ts \
-    translations/media-analyzer_ru_RU.ts \
-    translations/media-analyzer_ar_SA.ts \
-    translations/media-analyzer_pt_BR.ts
+    translations/media-analyzer_en_US.ts
 
 
 # Qt6 doesn't have lrelease tool, disable translations for now

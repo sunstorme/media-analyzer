@@ -15,6 +15,7 @@ build/
 # Debug files
 debug/
 release/
+build*
 
 # OS generated files
 .DS_Store

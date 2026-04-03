@@ -29,7 +29,8 @@ endif()
 if(QT_MAJOR_VERSION EQUAL 6)
     # Qt6 configuration
     if(NOT Qt6_FOUND)
-        find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Concurrent LinguistTools)
+        find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Concurrent)
+        find_package(Qt6LinguistTools REQUIRED)
     endif()
     
     set(QT_TARGET_PREFIX Qt6)

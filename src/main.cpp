@@ -264,13 +264,29 @@ int commandConfig(const QApplication& app) {
 }
 
 void translateConfig(const QApplication& app) {
-    QTranslator translator;
+    static QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
+    
+    QStringList searchPaths;
+    searchPaths << QApplication::applicationDirPath() + "/translations";
+    searchPaths << QApplication::applicationDirPath() + "/../share/media-analyzer/translations";
+    searchPaths << "/usr/local/share/media-analyzer/translations";
+    searchPaths << "/usr/share/media-analyzer/translations";
+    searchPaths << ":/translations";
+    
     for (const QString &locale : uiLanguages) {
         const QString baseName = "media-analyzer_" + QLocale(locale).name();
-        if (translator.load("./translations/" + baseName)) {
-            app.installTranslator(&translator);
-            break;
+        
+        for (const QString &path : searchPaths) {
+            QString fullPath = path + "/" + baseName + ".qm";
+            qDebug() << "Trying to load translation:" << fullPath;
+            if (translator.load(fullPath)) {
+                const_cast<QApplication&>(app).installTranslator(&translator);
+                qDebug() << "Loaded translation:" << fullPath;
+                return;
+            }
         }
     }
+    
+    qDebug() << "No translation loaded for locale:" << QLocale::system().name();
 }

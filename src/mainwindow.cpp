@@ -893,7 +893,7 @@ void MainWindow::updateSubMenu(QMenu* subMenu, const QList<ZFfprobe::StreamInfo>
     // Add stream actions
     if (!streams.isEmpty()) {
         for (const ZFfprobe::StreamInfo& stream : streams) {
-            QString actionText = QString("Stream %1").arg(stream.index);
+            QString actionText = tr("Stream %1").arg(stream.index);
             if (!stream.title.isEmpty()) {
                 actionText += QString(" - %1").arg(stream.title);
             }

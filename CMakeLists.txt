@@ -55,8 +55,8 @@ set(RESOURCES_FILES
 
 # Translation files
 set(TRANSLATION_FILES
-    translations/media-analyzer_en_US.ts
     translations/media-analyzer_zh_CN.ts
+    translations/media-analyzer_en_US.ts
 )
 
 # Add QJsonModel subdirectory
@@ -64,9 +64,9 @@ add_subdirectory(third_part/QJsonModel)
 
 # Create executable
 if(QT_MAJOR_VERSION EQUAL 6)
-    set(EXECUTABLE_NAME media-analyzer-qt6)
+    set(EXECUTABLE_NAME media-analyzer)
 else()
-    set(EXECUTABLE_NAME media-analyzer-qt5)
+    set(EXECUTABLE_NAME media-analyzer5)
 endif()
 
 add_executable(${EXECUTABLE_NAME}
@@ -91,16 +91,53 @@ target_compile_definitions(${EXECUTABLE_NAME} PRIVATE
     ${QT_COMPAT_DEFINES}
 )
 
-# Temporarily skip translation file processing to avoid Qt5/Qt6 compatibility issues
-# TODO: Re-enable after fixing translation functionality
-# if(QT_MAJOR_VERSION EQUAL 6)
-#     qt_compat_add_lupdate(${EXECUTABLE_NAME} ${SOURCES} ${UI_FILES} ${TRANSLATION_FILES})
-#     qt_compat_add_lrelease(${EXECUTABLE_NAME} ${TRANSLATION_FILES})
-# else()
-#     # Qt5 uses different function signatures
-#     qt_compat_add_lupdate(QM_FILES ${SOURCES} ${UI_FILES} ${TRANSLATION_FILES})
-#     qt_compat_add_lrelease(QM_FILES ${TRANSLATION_FILES})
-# endif()
+# Process translation files
+# Note: Translation files are handled manually using lupdate/lrelease tools
+# To update translations: QT_SELECT=qt5 lupdate media-analyzer.pro -no-obsolete
+# To generate .qm files: QT_SELECT=qt5 lrelease translations/*.ts
+
+if(QT_MAJOR_VERSION EQUAL 5)
+    # Qt5: Use QT5_ADD_TRANSLATION to create .qm files from .ts files
+    QT5_ADD_TRANSLATION(QM_FILES ${TRANSLATION_FILES})
+    
+    # Add .qm files to the executable
+    target_sources(${EXECUTABLE_NAME} PRIVATE ${QM_FILES})
+else()
+    # Qt6: Create custom target to generate .qm files
+    set(QM_FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/translations/media-analyzer_zh_CN.qm
+        ${CMAKE_CURRENT_SOURCE_DIR}/translations/media-analyzer_en_US.qm
+    )
+    
+    # Use the actual Qt6 lrelease path directly
+    set(LRELEASE_EXECUTABLE "/usr/lib/qt6/bin/lrelease")
+    
+    if(EXISTS "${LRELEASE_EXECUTABLE}")
+        message(STATUS "Found lrelease: ${LRELEASE_EXECUTABLE}")
+        add_custom_target(lrelease ALL
+            COMMAND ${LRELEASE_EXECUTABLE} ${TRANSLATION_FILES}
+            COMMENT "Releasing translation files"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            BYPRODUCTS ${QM_FILES}
+        )
+        
+        # Make the executable depend on the lrelease target
+        add_dependencies(${EXECUTABLE_NAME} lrelease)
+    else()
+        message(WARNING "lrelease not found at ${LRELEASE_EXECUTABLE}. Skipping automatic translation generation.")
+        message(WARNING "Please generate .qm files manually: /usr/lib/qt6/bin/lrelease translations/*.ts")
+    endif()
+endif()
+
+# Copy translation files to build directory for development
+add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/bin/translations
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        ${CMAKE_SOURCE_DIR}/translations/media-analyzer_zh_CN.qm
+        ${CMAKE_SOURCE_DIR}/translations/media-analyzer_en_US.qm
+        ${CMAKE_BINARY_DIR}/bin/translations/
+    COMMENT "Copying translation files to build directory"
+)
 
 # Installation configuration
 include(GNUInstallDirs)
@@ -125,31 +162,30 @@ install(FILES assets/128x128/media-analyzer-logo.svg
     RENAME media-analyzer.svg
 )
 
-# Install desktop file
-install(FILES assets/media-analyzer.desktop
-    DESTINATION ${APPDIR}
-)
+# Install desktop file (different file for Qt5 and Qt6)
+if(QT_MAJOR_VERSION EQUAL 6)
+    install(FILES assets/media-analyzer6.desktop
+        DESTINATION ${APPDIR}
+        RENAME media-analyzer.desktop
+    )
+else()
+    install(FILES assets/media-analyzer.desktop
+        DESTINATION ${APPDIR}
+    )
+endif()
 
 # Install documentation
 install(FILES README.md LICENSE
     DESTINATION ${DOCDIR}
 )
 
-# Temporarily skip translation file installation to avoid Qt5/Qt6 compatibility issues
-# TODO: Re-enable after fixing translation functionality
-# if(QT_MAJOR_VERSION EQUAL 6)
-#     qt_install_translations(
-#         ${EXECUTABLE_NAME}
-#         ${TRANSLATION_FILES}
-#         DESTINATION ${CMAKE_INSTALL_DATADIR}/media-analyzer/translations
-#     )
-# else()
-#     qt5_install_translations(
-#         ${EXECUTABLE_NAME}
-#         ${TRANSLATION_FILES}
-#         DESTINATION ${CMAKE_INSTALL_DATADIR}/media-analyzer/translations
-#     )
-# endif()
+# Install translation files
+# Manually install .qm files for both Qt5 and Qt6
+install(FILES 
+    translations/media-analyzer_zh_CN.qm
+    translations/media-analyzer_en_US.qm
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/media-analyzer/translations
+)
 
 # Print configuration information
 message(STATUS "")
