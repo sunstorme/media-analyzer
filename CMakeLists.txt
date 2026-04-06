@@ -63,11 +63,8 @@ set(TRANSLATION_FILES
 add_subdirectory(third_part/QJsonModel)
 
 # Create executable
-if(QT_MAJOR_VERSION EQUAL 6)
-    set(EXECUTABLE_NAME media-analyzer)
-else()
-    set(EXECUTABLE_NAME media-analyzer5)
-endif()
+# Use the same executable name for both Qt5 and Qt6
+set(EXECUTABLE_NAME media-analyzer)
 
 add_executable(${EXECUTABLE_NAME}
     ${SOURCES}
@@ -140,11 +137,17 @@ add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
 )
 
 # Installation configuration
-include(GNUInstallDirs)
-
+# Set these BEFORE including GNUInstallDirs to override defaults
 if(NOT CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX /usr)
 endif()
+
+# Force consistent installation directories for both Qt5 and Qt6
+set(CMAKE_INSTALL_BINDIR bin CACHE PATH "User executables")
+set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Object code libraries")
+set(CMAKE_INSTALL_INCLUDEDIR include CACHE PATH "C header files")
+
+include(GNUInstallDirs)
 
 set(BINDIR ${CMAKE_INSTALL_BINDIR})
 set(ICONDIR ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
@@ -153,7 +156,7 @@ set(DOCDIR ${CMAKE_INSTALL_DOCDIR})
 
 # Install executable
 install(TARGETS ${EXECUTABLE_NAME}
-    RUNTIME DESTINATION ${BINDIR}
+    RUNTIME DESTINATION bin
 )
 
 # Install icon

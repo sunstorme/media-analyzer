@@ -2,65 +2,65 @@
 include /usr/share/dpkg/default.mk
 
 # Detect available Qt versions
-QT5_AVAILABLE := $(shell QT_SELECT=5 qmake --version 2>/dev/null && echo yes)
-QT6_AVAILABLE := $(shell qmake6 --version 2>/dev/null && echo yes)
+QT5_AVAILABLE := $(shell pkg-config --exists Qt5Core && echo yes)
+QT6_AVAILABLE := $(shell pkg-config --exists Qt6Core && echo yes)
 
-# Build available Qt versions
 %:
-	dh $@ --buildsystem=qmake
+	dh $@ --buildsystem=cmake
 
 override_dh_auto_configure:
 	# Build Qt5 version if available
-ifneq ($(QT5_AVAILABLE),)
-	mkdir -p build-qt5
-	cd build-qt5 && QT_SELECT=5 qmake PREFIX=/usr ../media-analyzer.pro
-endif
+	if [ -n "$(QT5_AVAILABLE)" ]; then \
+		mkdir -p build-qt5; \
+		cmake -S . -B build-qt5 \
+			-DCMAKE_INSTALL_PREFIX=/usr \
+			-DCMAKE_BUILD_TYPE=Release \
+			-DQT_MAJOR_VERSION=5 \
+			-DCMAKE_INSTALL_BINDIR=bin \
+			-DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu \
+			-DCMAKE_INSTALL_INCLUDEDIR=include; \
+	fi
 	# Build Qt6 version if available
-ifneq ($(QT6_AVAILABLE),)
-	mkdir -p build-qt6
-	cd build-qt6 && qmake6 PREFIX=/usr ../media-analyzer.pro
-endif
+	if [ -n "$(QT6_AVAILABLE)" ]; then \
+		mkdir -p build-qt6; \
+		cmake -S . -B build-qt6 \
+			-DCMAKE_INSTALL_PREFIX=/usr \
+			-DCMAKE_BUILD_TYPE=Release \
+			-DQT_MAJOR_VERSION=6 \
+			-DCMAKE_INSTALL_BINDIR=bin \
+			-DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu \
+			-DCMAKE_INSTALL_INCLUDEDIR=include; \
+	fi
 
 override_dh_auto_build:
 	# Build Qt5 version if available
-ifneq ($(QT5_AVAILABLE),)
-	cd build-qt5 && $(MAKE)
-endif
+	if [ -n "$(QT5_AVAILABLE)" ]; then \
+		cmake --build build-qt5 --parallel 16; \
+	fi
 	# Build Qt6 version if available
-ifneq ($(QT6_AVAILABLE),)
-	cd build-qt6 && $(MAKE)
-endif
+	if [ -n "$(QT6_AVAILABLE)" ]; then \
+		cmake --build build-qt6 --parallel 16; \
+	fi
 
 override_dh_auto_install:
 	# Install Qt5 version if available
-ifneq ($(QT5_AVAILABLE),)
-	cd build-qt5 && $(MAKE) INSTALL_ROOT=../debian/media-analyzer install
-endif
+	if [ -n "$(QT5_AVAILABLE)" ]; then \
+		DESTDIR=debian/media-analyzer cmake --install build-qt5; \
+	fi
 	# Install Qt6 version if available
-ifneq ($(QT6_AVAILABLE),)
-	cd build-qt6 && $(MAKE) INSTALL_ROOT=../debian/media-analyzer6 install
-endif
+	if [ -n "$(QT6_AVAILABLE)" ]; then \
+		DESTDIR=debian/media-analyzer6 cmake --install build-qt6; \
+	fi
 
 override_dh_clean:
 	dh_clean
 	rm -rf build-qt5 build-qt6
 
-override_dh_install:
+override_dh_auto_test:
+	# Skip tests as there are no test targets defined
+
 	dh_install
 	
-	# Change mode for Qt5 version if available
-ifneq ($(QT5_AVAILABLE),)
-	chmod 644 debian/dfm-xmenu-media-analyzer/usr/share/applications/context-menus/dfm-xmenu-media-analyzer.conf
-	chmod 755 debian/nautilus-xmenu-media-analyzer/usr/share/nautilus-python/extensions/nautilus-contextmenu.py
-endif
-	
-	# Change mode for Qt6 version if available
-ifneq ($(QT6_AVAILABLE),)
-	chmod 644 debian/dfm-xmenu-media-analyzer6/usr/share/applications/context-menus/dfm-xmenu-media-analyzer6.conf
-	chmod 755 debian/nautilus-xmenu-media-analyzer6/usr/share/nautilus-python/extensions/nautilus-contextmenu6.py
-endif
-
-# Print available Qt versions for debugging
 print-qt-versions:
 	@echo "Qt5 available: $(QT5_AVAILABLE)"
 	@echo "Qt6 available: $(QT6_AVAILABLE)"
