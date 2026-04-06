@@ -62,7 +62,7 @@ constexpr auto ENABLED_FUNCTION = "enable_function";
 // Default values
 constexpr bool DEFAULT_ENABLED = true;
 constexpr int DEFAULT_LOG_LEVEL = 1; // INFO level
-constexpr auto DEFAULT_DIRECTORY = "logs";
+constexpr auto DEFAULT_DIRECTORY = ""; // Will be set to user's cache directory at runtime
 constexpr int DEFAULT_MAX_FILE_SIZE = 10; // MB
 constexpr int DEFAULT_MAX_FILES = 7;
 constexpr bool DEFAULT_CAPTURE_QT_MESSAGES = true;

@@ -67,7 +67,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_actionWidgetMap = {
         {ui->actionLog, m_logWGDock},
         {ui->actionFiles, m_filesWGDock},
-        {ui->actionFolders, m_foldersWGDock},
         {ui->actionMedia_Properties, m_mediaPropsWGDock}
     };
 }
@@ -285,15 +284,6 @@ void MainWindow::createDockWidgets()
     m_logWGDock->setWidget(&m_logWG);
     addDockWidget(Qt::BottomDockWidgetArea, m_logWGDock);
 
-    // Create FoldersWG DockWidget (under FilesWG)
-    m_foldersWGDock = new QDockWidget(tr("Folders"), this);
-    m_foldersWGDock->setObjectName("FoldersDock");
-    m_foldersWGDock->setWidget(&m_foldersWG);
-    addDockWidget(Qt::LeftDockWidgetArea, m_foldersWGDock);
-
-    // Position FoldersWG under FilesWG
-    splitDockWidget(m_filesWGDock, m_foldersWGDock, Qt::Vertical);
-
     // Create Media Properties as central widget (center area)
     m_mediaPropsWidget.setObjectName("MediaPropsWidget");
     
@@ -312,7 +302,6 @@ void MainWindow::createDockWidgets()
 
     // Set dock widget sizes
     m_filesWGDock->setMinimumWidth(200);
-    m_foldersWGDock->setMinimumWidth(200);
     m_logWGDock->setMinimumHeight(150);
     m_mediaPropsWGDock->setMinimumWidth(300);
 }

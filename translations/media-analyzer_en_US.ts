@@ -352,14 +352,6 @@
     </message>
 </context>
 <context>
-    <name>FoldersWG</name>
-    <message>
-        <location filename="../src/widgets/folderswg.ui" line="16"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>GlobalConfingWG</name>
     <message>
         <location filename="../src/widgets/globalconfingwg.ui" line="14"/>

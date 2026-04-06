@@ -160,7 +160,7 @@ install(TARGETS ${EXECUTABLE_NAME}
 )
 
 # Install icon
-install(FILES assets/128x128/media-analyzer-logo.svg
+install(FILES assets/128x128/media-analyzer.svg
     DESTINATION ${ICONDIR}
     RENAME media-analyzer.svg
 )

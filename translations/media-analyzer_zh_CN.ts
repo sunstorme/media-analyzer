@@ -352,14 +352,6 @@
     </message>
 </context>
 <context>
-    <name>FoldersWG</name>
-    <message>
-        <location filename="../src/widgets/folderswg.ui" line="16"/>
-        <source>Form</source>
-        <translation>表单</translation>
-    </message>
-</context>
-<context>
     <name>GlobalConfingWG</name>
     <message>
         <location filename="../src/widgets/globalconfingwg.ui" line="14"/>
@@ -465,7 +457,7 @@
     <message>
         <location filename="../src/widgets/jsonfmtwg.cpp" line="65"/>
         <source>Cmd</source>
-        <translation>Cmd</translation>
+        <translation>命令</translation>
     </message>
     <message>
         <location filename="../src/widgets/jsonfmtwg.cpp" line="70"/>

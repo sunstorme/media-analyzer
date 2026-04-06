@@ -9,6 +9,7 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QDebug>
+#include <QStandardPaths>
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QTextCodec>
 #endif
@@ -56,7 +57,16 @@ int main(int argc, char *argv[])
 void logConfig(const QApplication &app) {
     QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
     ZLogger::instance()->loadConfig(settings);
-    ZLogger::instance()->setConfigValue(LoggerConfig::DIRECTORY_KEY, "app_logs");
+    
+    // Only set default log directory if user hasn't configured a custom one
+    QString currentLogDir = ZLogger::instance()->getConfigValue(LoggerConfig::DIRECTORY_KEY).toString();
+    if (currentLogDir.isEmpty() || currentLogDir == "app_logs" || currentLogDir == "logs") {
+        // Use user's cache directory: ~/.cache/media-analyzer
+        QString logDir = QDir(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
+                            .absoluteFilePath("media-analyzer");
+        ZLogger::instance()->setConfigValue(LoggerConfig::DIRECTORY_KEY, logDir);
+    }
+    
     ZLogger::instance()->setConfigValue(LoggerConfig::MAX_FILE_SIZE_KEY, 5);
     ZLogger::instance()->setConfigValue(LoggerConfig::MAX_FILES_KEY, 10);
     ZLogger::instance()->setConfigValue(LoggerConfig::LEVEL_KEY, static_cast<int>(LogLevel::LOG_INFO));

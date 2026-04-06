@@ -44,7 +44,6 @@ SOURCES += \
     src/widgets/configurebuildtool.cpp \
     src/widgets/exportwg.cpp \
     src/widgets/fileswg.cpp \
-    src/widgets/folderswg.cpp \
     src/widgets/globalconfingwg.cpp \
     src/widgets/helpquerywg.cpp \
     src/main.cpp \
@@ -82,7 +81,6 @@ HEADERS += \
     src/widgets/configurebuildtool.h \
     src/widgets/exportwg.h \
     src/widgets/fileswg.h \
-    src/widgets/folderswg.h \
     src/widgets/globalconfingwg.h \
     src/widgets/helpquerywg.h \
     src/mainwindow.h \
@@ -98,7 +96,6 @@ FORMS += \
     src/widgets/configurebuildtool.ui \
     src/widgets/exportwg.ui \
     src/widgets/fileswg.ui \
-    src/widgets/folderswg.ui \
     src/widgets/globalconfingwg.ui \
     src/widgets/helpquerywg.ui \
     src/mainwindow.ui \
@@ -148,7 +145,7 @@ doc.path = $$DOCDIR
 translations.path = $$TRANSLATIONDIR
 # contextmenu.path = $$CONTEXTMENUDIR
 
-icon.files = assets/128x128/media-analyzer-logo.svg
+icon.files = assets/128x128/media-analyzer.svg
 desktop.files = assets/media-analyzer.desktop
 doc.files = README.md LICENSE
 translations.files = translations/media-analyzer_zh_CN.qm translations/media-analyzer_en_US.qm

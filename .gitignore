@@ -8,6 +8,7 @@ build/
 *.moc
 *.moc_*
 *.obj
+*.qm
 
 # Qt Creator files
 *.autosave

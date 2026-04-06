@@ -26,7 +26,6 @@
 #include "widgets/logwg.h"
 #include "widgets/fileswg.h"
 #include "widgets/progressdlg.h"
-#include "widgets/folderswg.h"
 #include "widgets/exportwg.h"
 #include "widgets/helpquerywg.h"
 #include "widgets/configurebuildtool.h"
@@ -122,12 +121,10 @@ private:
 
     FilesWG &m_filesWG = FilesWG::instance();
     LogWG &m_logWG = LogWG::instance();
-    FoldersWG &m_foldersWG = FoldersWG::instance();
     MediaPropsWG &m_mediaPropsWidget = MediaPropsWG::instance();
 
     QDockWidget *m_filesWGDock = nullptr;
     QDockWidget *m_logWGDock = nullptr;
-    QDockWidget *m_foldersWGDock = nullptr;
     QDockWidget *m_mediaPropsWGDock = nullptr;
 
     QMap<QAction*, QWidget*> m_actionWidgetMap;
