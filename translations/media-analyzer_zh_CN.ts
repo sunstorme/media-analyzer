@@ -544,6 +544,7 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="60"/>
+        <location filename="../src/mainwindow.cpp" line="43"/>
         <source>Media Info</source>
         <translation>媒体信息</translation>
     </message>
@@ -941,6 +942,11 @@
         <translation>解析媒体: %1</translation>
     </message>
     <message>
+        <location filename="../src/mainwindow.cpp" line="135"/>
+        <source>Parsing...</source>
+        <translation>解析中...</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="236"/>
         <source>%1 - Media Properties: %2</source>
         <translation>%1 - 媒体属性: %2</translation>
@@ -989,7 +995,7 @@
     <message>
         <location filename="../src/mainwindow.cpp" line="556"/>
         <source>Unknown</source>
-        <translation>Unknown</translation>
+        <translation>未知</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="559"/>
@@ -1009,13 +1015,13 @@ A powerful media file analysis tool that provides:
 
 </source>
         <translation>MediaAnalyzer
-Version: %1
-A powerful media file analysis tool that provides:
-- Detailed media information display
-- Multiple format views (JSON, Table)
-- Real-time logging
-- Customizable layout
-- FFmpeg compilation tool
+版本: %1
+一款功能强大的媒体文件分析工具，提供：
+- 详细的媒体信息展示
+- 多种格式视图（JSON、表格）
+- 实时日志
+- 可自定义布局
+- FFmpeg 编译工具
 
 </translation>
     </message>
@@ -1028,19 +1034,19 @@ A powerful media file analysis tool that provides:
     <message>
         <location filename="../src/mainwindow.cpp" line="635"/>
         <source>Please select a media file first!</source>
-        <translation>Please select a media file first!</translation>
+        <translation>请先选择一个媒体文件！</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="641"/>
         <source>Selected file does not exist:
 %1</source>
-        <translation>Selected file does not exist:
+        <translation>选择的文件不存在:
 %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="740"/>
         <source>Player Not Installed</source>
-        <translation>Player Not Installed</translation>
+        <translation>播放器未安装</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="741"/>
@@ -1049,33 +1055,33 @@ A powerful media file analysis tool that provides:
 Install now?
 
 Description: %2</source>
-        <translation>%1 is not installed.
+        <translation>%1 未安装.
 
-Install now?
+现在安装吗?
 
-Description: %2</translation>
+描述: %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="757"/>
         <source>Playback Failed</source>
-        <translation>Playback Failed</translation>
+        <translation>播放失败</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="758"/>
         <source>Cannot play file with %1:
 %2</source>
-        <translation>Cannot play file with %1:
+        <translation>不能播放 %1:
 %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="782"/>
         <source>Player Installation Status</source>
-        <translation>Player Installation Status</translation>
+        <translation>播放器安装状态</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="788"/>
         <source>Player Name</source>
-        <translation>Player Name</translation>
+        <translation>播放器名称</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="788"/>
@@ -1085,17 +1091,17 @@ Description: %2</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="788"/>
         <source>Description</source>
-        <translation>Description</translation>
+        <translation>描述</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="796"/>
         <source>Installed</source>
-        <translation>Installed</translation>
+        <translation>已安装</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="796"/>
         <source>Not Installed</source>
-        <translation>Not Installed</translation>
+        <translation>未安装</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="896"/>
@@ -1131,12 +1137,12 @@ Description: %2</translation>
     <message>
         <location filename="../src/widgets/mediapropswg.cpp" line="85"/>
         <source>Loading Media Properties</source>
-        <translation>Loading Media Properties</translation>
+        <translation>正在加载媒体属性</translation>
     </message>
     <message>
         <location filename="../src/widgets/mediapropswg.cpp" line="87"/>
         <source>Loading media properties...</source>
-        <translation>Loading media properties...</translation>
+        <translation>正在加载媒体属性...</translation>
     </message>
 </context>
 <context>
@@ -1280,12 +1286,12 @@ Description: %2</translation>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="41"/>
         <source>Table Search</source>
-        <translation>Table Search</translation>
+        <translation>表格搜索</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="70"/>
         <source>Image</source>
-        <translation>Image</translation>
+        <translation>图片</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="71"/>
@@ -1381,52 +1387,52 @@ Description: %2</translation>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="863"/>
         <source>Preparing to copy selected text...</source>
-        <translation>Preparing to copy selected text...</translation>
+        <translation>准备复制选中的文本...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="866"/>
         <source>Preparing to copy selected text with header...</source>
-        <translation>Preparing to copy selected text with header...</translation>
+        <translation>准备复制带标题的选定文本...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="869"/>
         <source>Preparing to copy selected rows...</source>
-        <translation>Preparing to copy selected rows...</translation>
+        <translation>准备复制选定的行...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="872"/>
         <source>Preparing to copy selected rows with headers...</source>
-        <translation>Preparing to copy selected rows with headers...</translation>
+        <translation>准备复制带标题的选定行...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="875"/>
         <source>Preparing to copy selected columns...</source>
-        <translation>Preparing to copy selected columns...</translation>
+        <translation>准备复制选定的列...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="878"/>
         <source>Preparing to copy selected columns with headers...</source>
-        <translation>Preparing to copy selected columns with headers...</translation>
+        <translation>准备复制带标题的选定列...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="881"/>
         <source>Preparing to copy all data...</source>
-        <translation>Preparing to copy all data...</translation>
+        <translation>准备复制所有数据...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="884"/>
         <source>Preparing to copy all data with headers...</source>
-        <translation>Preparing to copy all data with headers...</translation>
+        <translation>准备复制带标题的所有数据...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="890"/>
         <source>Copying Data</source>
-        <translation>Copying Data</translation>
+        <translation>拷贝数据</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="909"/>
         <source>Copy completed</source>
-        <translation>Copy completed</translation>
+        <translation>拷贝完成</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="1207"/>
@@ -1436,42 +1442,42 @@ Description: %2</translation>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="1381"/>
         <source>Extracting Images for Preview</source>
-        <translation>Extracting Images for Preview</translation>
+        <translation>正在提取图片以预览</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="1402"/>
         <source>Extracting frame %1 of %2 for preview...</source>
-        <translation>Extracting frame %1 of %2 for preview...</translation>
+        <translation>正在提取 %2 帧中的第 %1 帧以预览...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="1463"/>
         <source>Completed. Extracted %1 of %2 images for preview.</source>
-        <translation>Completed. Extracted %1 of %2 images for preview.</translation>
+        <translation>完成。已提取 %2 张图片中的 %1 张以预览。</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="1499"/>
         <source>Select Directory to Save Images</source>
-        <translation>Select Directory to Save Images</translation>
+        <translation>选择保存图片的目录</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="1510"/>
         <source>Saving Images</source>
-        <translation>Saving Images</translation>
+        <translation>正在保存图片</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="1545"/>
         <source>Saving frame %1 of %2...</source>
-        <translation>Saving frame %1 of %2...</translation>
+        <translation>正在保存 %2 帧中的第 %1 帧...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="1575"/>
         <source>Completed. Saved %1 of %2 images.</source>
-        <translation>Completed. Saved %1 of %2 images.</translation>
+        <translation>完成。已保存 %2 张图片中的 %1 张。</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="1580"/>
         <source>Save Complete</source>
-        <translation>Save Complete</translation>
+        <translation>保存完成</translation>
     </message>
     <message>
         <location filename="../src/widgets/tablefmtwg.cpp" line="1581"/>
@@ -1479,10 +1485,50 @@ Description: %2</translation>
 %3
 
 Do you want to open the folder?</source>
-        <translation>Successfully saved %1 of %2 images to:
+        <translation>已成功保存 %2 张图片中的 %1 张到：
 %3
 
-Do you want to open the folder?</translation>
+是否打开该文件夹？</translation>
+    </message>
+    <message>
+        <source>Detail Info</source>
+        <translation>详情信息</translation>
+    </message>
+    <message>
+        <source>Restore Order</source>
+        <translation>恢复排序</translation>
+    </message>
+    <message>
+        <source>Fit Column Width</source>
+        <translation>适应列宽</translation>
+    </message>
+    <message>
+        <source>Select Text</source>
+        <translation>选择文本</translation>
+    </message>
+    <message>
+        <source>Select Text With Header</source>
+        <translation>选择带标题文本</translation>
+    </message>
+    <message>
+        <source>Selected Rows</source>
+        <translation>选中行</translation>
+    </message>
+    <message>
+        <source>Selected Rows With Header</source>
+        <translation>选中行（含标题）</translation>
+    </message>
+    <message>
+        <source>Selected Columns</source>
+        <translation>选中列</translation>
+    </message>
+    <message>
+        <source>Selected Columns With Header</source>
+        <translation>选中列（含标题）</translation>
+    </message>
+    <message>
+        <source>All Data With Header</source>
+        <translation>所有数据（含标题）</translation>
     </message>
 </context>
 <context>
@@ -1528,42 +1574,42 @@ Do you want to open the folder?</translation>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="73"/>
         <source>Player Already Installed</source>
-        <translation>Player Already Installed</translation>
+        <translation>播放器已安装</translation>
     </message>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="74"/>
         <source>%1 is already installed, no need to reinstall.</source>
-        <translation>%1 is already installed, no need to reinstall.</translation>
+        <translation>%1 已经安装，无需重新安装。</translation>
     </message>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="115"/>
         <source>Failed to start installation process</source>
-        <translation>Failed to start installation process</translation>
+        <translation>启动安装进程失败</translation>
     </message>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="217"/>
         <source>%1 installation successful!</source>
-        <translation>%1 installation successful!</translation>
+        <translation>%1 安装成功！</translation>
     </message>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="220"/>
         <source>%1 installation failed, please check logs.</source>
-        <translation>%1 installation failed, please check logs.</translation>
+        <translation>%1 安装失败，请检查日志。</translation>
     </message>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="245"/>
         <source>Installation output: %1</source>
-        <translation>Installation output: %1</translation>
+        <translation>安装输出: %1</translation>
     </message>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="261"/>
         <source>Error: %1</source>
-        <translation>Error: %1</translation>
+        <translation>错误: %1</translation>
     </message>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="272"/>
         <source>Confirm Installation</source>
-        <translation>Confirm Installation</translation>
+        <translation>确认安装</translation>
     </message>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="273"/>
@@ -1572,25 +1618,25 @@ Do you want to open the folder?</translation>
 Description: %2
 
 This will use pkexec to request administrator privileges for software installation.</source>
-        <translation>Install %1?
+        <translation>安装 %1?
 
-Description: %2
+描述: %2
 
-This will use pkexec to request administrator privileges for software installation.</translation>
+这将使用pkexec请求管理员权限以进行软件安装。</translation>
     </message>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="290"/>
         <source>Installing</source>
-        <translation>Installing</translation>
+        <translation>正在安装</translation>
     </message>
     <message>
         <location filename="../src/common/zmediaplayermanager.cpp" line="291"/>
         <source>Installing %1, please wait...
 
 Installation log:</source>
-        <translation>Installing %1, please wait...
+        <translation>安装中 %1, 请等待...
 
-Installation log:</translation>
+安装日志:</translation>
     </message>
 </context>
 <context>
@@ -1638,17 +1684,17 @@ Installation log:</translation>
     <message>
         <location filename="../src/common/ztexteditor.cpp" line="165"/>
         <source>Undo</source>
-        <translation>Undo</translation>
+        <translation>撤销</translation>
     </message>
     <message>
         <location filename="../src/common/ztexteditor.cpp" line="171"/>
         <source>Redo</source>
-        <translation>Redo</translation>
+        <translation>恢复</translation>
     </message>
     <message>
         <location filename="../src/common/ztexteditor.cpp" line="179"/>
         <source>Cut</source>
-        <translation>Cut</translation>
+        <translation>剪切</translation>
     </message>
     <message>
         <location filename="../src/common/ztexteditor.cpp" line="185"/>
@@ -1658,7 +1704,7 @@ Installation log:</translation>
     <message>
         <location filename="../src/common/ztexteditor.cpp" line="191"/>
         <source>Paste</source>
-        <translation>Paste</translation>
+        <translation>粘贴</translation>
     </message>
     <message>
         <location filename="../src/common/ztexteditor.cpp" line="197"/>

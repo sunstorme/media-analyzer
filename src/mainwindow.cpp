@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Set window title
     setWindowTitle(APPLICATION_NAME);
 
-    m_filesWG.addSubActions("Media Info", getMediaInfoAvailableActions());
+    m_filesWG.addSubActions(tr("Media Info"), getMediaInfoAvailableActions());
     m_filesWG.addMenus(getMediaInfoAvailableMenus());
     m_filesWG.addSeparator();
 
@@ -132,7 +132,7 @@ void MainWindow::showMediaInfo(const QString filePath, const QString &function, 
     ProgressDialog *progressDlg = new ProgressDialog;
     progressDlg->setWindowTitle(tr("Parse Media: %1").arg(filePath));
     progressDlg->setProgressMode(ProgressDialog::Indeterminate);
-    progressDlg->setMessage("Parsing...");
+    progressDlg->setMessage(tr("Parsing..."));
     progressDlg->setAutoClose(true);
 
     progressDlg->start();

@@ -55,15 +55,15 @@ void TableFormatWG::initUI()
 void TableFormatWG::initMenu()
 {
     // detail info action
-    m_detailAction = new QAction("Detail Info", this);
+    m_detailAction = new QAction(tr("Detail Info"), this);
 
     // restore order action
-    m_restoreOrderAction = new QAction("Restore Order", this);
+    m_restoreOrderAction = new QAction(tr("Restore Order"), this);
     m_contextMenu->addAction(m_restoreOrderAction);
     m_contextMenu->addSeparator();
 
     // fit column width action
-    m_fitTableColumnAction = new QAction("Fit Column Width", this);
+    m_fitTableColumnAction = new QAction(tr("Fit Column Width"), this);
     m_contextMenu->addAction(m_fitTableColumnAction);
 
     // Add image menu to context menu
@@ -76,35 +76,35 @@ void TableFormatWG::initMenu()
     m_contextMenu->addSeparator();
 
     // copy selected text action
-    m_copyMenu = new QMenu("Copy", this);
-    m_copySelectedTextAction = new QAction("Select Text", this);
-    m_copySelectedTextWithHeaderAction = new QAction("Select Text With Header", this);
+    m_copyMenu = new QMenu(tr("Copy"), this);
+    m_copySelectedTextAction = new QAction(tr("Select Text"), this);
+    m_copySelectedTextWithHeaderAction = new QAction(tr("Select Text With Header"), this);
      m_copyMenu->addAction(m_copySelectedTextAction);
      m_copyMenu->addAction(m_copySelectedTextWithHeaderAction);
     m_copyMenu->addSeparator();
 
     // copy selected rows action
-    m_copySelectedRowsAction = new QAction("Selected Rows", this);
-    m_copySelectedRowsWithHeaderAction = new QAction("Selected Rows With Header", this);
+    m_copySelectedRowsAction = new QAction(tr("Selected Rows"), this);
+    m_copySelectedRowsWithHeaderAction = new QAction(tr("Selected Rows With Header"), this);
     m_copyMenu->addAction(m_copySelectedRowsAction);
     m_copyMenu->addAction(m_copySelectedRowsWithHeaderAction);
     m_copyMenu->addSeparator();
 
     // copy selected columns action
-    m_copySelectedColumnsAction = new QAction("Selected Columns", this);
-    m_copySelectedColumnsWithHeaderAction = new QAction("Selected Columns With Header", this);
+    m_copySelectedColumnsAction = new QAction(tr("Selected Columns"), this);
+    m_copySelectedColumnsWithHeaderAction = new QAction(tr("Selected Columns With Header"), this);
     m_copyMenu->addAction(m_copySelectedColumnsAction);
     m_copyMenu->addAction(m_copySelectedColumnsWithHeaderAction);
     m_copyMenu->addSeparator();
 
     // copy all data action
-    m_copyAllDataAction = new QAction("All Data", this);
-    m_copyAllDataWithHeaderAction = new QAction("All Data With Header", this);
+    m_copyAllDataAction = new QAction(tr("All Data"), this);
+    m_copyAllDataWithHeaderAction = new QAction(tr("All Data With Header"), this);
     m_copyMenu->addAction(m_copyAllDataAction);
     m_copyMenu->addAction(m_copyAllDataWithHeaderAction);
     m_copyMenu->addSeparator();
 
-    m_copyCmdAction = new QAction("Cmd", this);
+    m_copyCmdAction = new QAction(tr("Cmd"), this);
     m_copyMenu->addAction(m_copyCmdAction);
 
     // Add copy menu to context menu

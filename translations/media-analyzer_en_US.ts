@@ -108,6 +108,7 @@
     </message>
     <message>
         <location filename="../src/widgets/exportwg.ui" line="79"/>
+        <location filename="../src/mainwindow.cpp" line="43"/>
         <source>Media Info Fileds</source>
         <translation type="unfinished"></translation>
     </message>
@@ -939,6 +940,11 @@
         <location filename="../src/mainwindow.cpp" line="134"/>
         <source>Parse Media: %1</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="135"/>
+        <source>Parsing...</source>
+        <translation>Parsing...</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="236"/>
