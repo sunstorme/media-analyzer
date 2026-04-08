@@ -2,6 +2,7 @@
 build/
 *.pro.user
 *.qmake.stash
+CMakeLists.txt.user
 
 # Compiled files
 *.o

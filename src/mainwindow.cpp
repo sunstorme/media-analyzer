@@ -933,16 +933,19 @@ void MainWindow::updateFramesMenu()
 {
     QString fileName = m_filesWG.getCurrentSelectFileName();
     if (fileName.isEmpty()) {
+        ui->menuFramesOfVideo->menuAction()->setVisible(false);
+        ui->menuFramesOfAudio->menuAction()->setVisible(false);
+        ui->menuFrames->menuAction()->setVisible(false);
         return;
     }
-    
+
     // Get stream information
     QList<ZFfprobe::StreamInfo> streams = m_probe.getMediaStreams(fileName);
-    
+
     // Group streams by type
     QList<ZFfprobe::StreamInfo> videoStreams;
     QList<ZFfprobe::StreamInfo> audioStreams;
-    
+
     for (const ZFfprobe::StreamInfo& stream : streams) {
         if (stream.codecType == "video") {
             videoStreams.append(stream);
@@ -951,28 +954,35 @@ void MainWindow::updateFramesMenu()
         }
     }
 
-
     // Update Video sub-menu
+    ui->menuFramesOfVideo->menuAction()->setVisible(!videoStreams.isEmpty());
     updateSubMenu(ui->menuFramesOfVideo, videoStreams, "Frames", "Video");
-    
-    // // Update Audio sub-menu
+
+    // Update Audio sub-menu
+    ui->menuFramesOfAudio->menuAction()->setVisible(!audioStreams.isEmpty());
     updateSubMenu(ui->menuFramesOfAudio, audioStreams, "Frames", "Audio");
+
+    // Hide parent menu if no streams at all
+    ui->menuFrames->menuAction()->setVisible(!videoStreams.isEmpty() || !audioStreams.isEmpty());
 }
 
 void MainWindow::updatePacketsMenu()
 {
     QString fileName = m_filesWG.getCurrentSelectFileName();
     if (fileName.isEmpty()) {
+        ui->menuPacketsOfVideo->menuAction()->setVisible(false);
+        ui->menuPacketsOfAudio->menuAction()->setVisible(false);
+        ui->menuPackets->menuAction()->setVisible(false);
         return;
     }
-    
+
     // Get stream information
     QList<ZFfprobe::StreamInfo> streams = m_probe.getMediaStreams(fileName);
-    
+
     // Group streams by type
     QList<ZFfprobe::StreamInfo> videoStreams;
     QList<ZFfprobe::StreamInfo> audioStreams;
-    
+
     for (const ZFfprobe::StreamInfo& stream : streams) {
         if (stream.codecType == "video") {
             videoStreams.append(stream);
@@ -980,10 +990,15 @@ void MainWindow::updatePacketsMenu()
             audioStreams.append(stream);
         }
     }
-    
+
     // Update Video sub-menu
+    ui->menuPacketsOfVideo->menuAction()->setVisible(!videoStreams.isEmpty());
     updateSubMenu(ui->menuPacketsOfVideo, videoStreams, "Packets", "Video");
-    
+
     // Update Audio sub-menu
+    ui->menuPacketsOfAudio->menuAction()->setVisible(!audioStreams.isEmpty());
     updateSubMenu(ui->menuPacketsOfAudio, audioStreams, "Packets", "Audio");
+
+    // Hide parent menu if no streams at all
+    ui->menuPackets->menuAction()->setVisible(!videoStreams.isEmpty() || !audioStreams.isEmpty());
 }
