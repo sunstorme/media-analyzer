@@ -115,6 +115,29 @@ void MediaInfoTabelModel::setTableData(QList<QStringList> *data)
     endResetModel();
 }
 
+void MediaInfoTabelModel::appendRow(const QStringList &rowData)
+{
+    if (!m_data) return;
+    int firstRow = row;
+    beginInsertRows(QModelIndex(), firstRow, firstRow);
+    m_data->append(rowData);
+    row++;
+    endInsertRows();
+}
+
+void MediaInfoTabelModel::appendRows(const QList<QStringList> &rows)
+{
+    if (!m_data || rows.isEmpty()) return;
+    int firstRow = row;
+    int lastRow = row + rows.size() - 1;
+    beginInsertRows(QModelIndex(), firstRow, lastRow);
+    for (const QStringList &rowData : rows) {
+        m_data->append(rowData);
+    }
+    row += rows.size();
+    endInsertRows();
+}
+
 void MediaInfoTabelModel::SlotUpdateTable()
 {
     emit dataChanged(createIndex(0, 0), createIndex(row, column), {Qt::DisplayRole});

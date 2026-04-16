@@ -35,6 +35,12 @@ public:
 
     void setTableData(QList<QStringList> *data);
 
+    // Efficiently append a single row without full model reset
+    void appendRow(const QStringList &rowData);
+
+    // Efficiently append multiple rows without full model reset
+    void appendRows(const QList<QStringList> &rows);
+
 signals:
     void editCompleted(const QString &);
 

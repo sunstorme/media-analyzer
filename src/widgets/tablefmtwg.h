@@ -17,6 +17,10 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QFileDialog>
+#include <QProcess>
+#include <QProgressBar>
+#include <QLabel>
+#include <QElapsedTimer>
 
 #include "common/common.h"
 #include "common/ztableheadermanager.h"
@@ -61,6 +65,24 @@ public:
 
     void setSearchTitleVisiable(const bool& visiable);
 
+    /**
+     * @brief Start streaming JSON loading from a command
+     * @param program The program to execute (e.g., "ffprobe")
+     * @param args The arguments for the program
+     * @param arrayKey The JSON array key to parse ("frames" or "packets")
+     */
+    void startStreamingLoad(const QString &program, const QStringList &args, const QString &arrayKey = "frames");
+
+    /**
+     * @brief Check if streaming loading is active
+     */
+    bool isStreaming() const;
+
+    /**
+     * @brief Stop the streaming loading
+     */
+    void stopStreaming();
+
     QList <QStringList> getSelectLines();
 
     QList <int> getSelectRows();
@@ -70,6 +92,7 @@ public:
 signals:
     void dataChanged(QStringList line);
     void contextMenuAboutToShow();
+    void streamingFinished(int totalRows);
 
 public slots:
     void initDetailTb(const QString& data, const QString &format_key);
@@ -123,6 +146,9 @@ private slots:
     void previewImage();
     void saveImage();
     void onContextMenuAboutToShow();
+    void onStreamingDataReady();
+    void onStreamingFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void onStreamingError(QProcess::ProcessError error);
 
 private:
     void updateCurrentModel(); // Helper method to update the current active model
@@ -191,6 +217,36 @@ private:
     
     // Copy operations
     ProgressDialog *m_copyProgressDialog;
+    
+    // Streaming JSON loading state
+    QProcess *m_streamingProcess = nullptr;
+    QByteArray m_streamingBuffer;
+    bool m_streamingActive = false;
+    bool m_streamingArrayFound = false;
+    int m_streamingRowCount = 0;
+    QString m_streamingArrayKey;
+    QElapsedTimer m_streamingTimer;
+    
+    // Streaming JSON field classification (same as in loadJson)
+    struct StreamingFieldCategory {
+        QStringList common;
+        QStringList video;
+        QStringList audio;
+        QSet<QString> allFields;
+    };
+    StreamingFieldCategory m_streamingCategories;
+    QHash<QString, QStringList> m_streamingHeaderTemplates;
+    QString m_streamingCurrentMediaType;
+    bool m_streamingHeadersInitialized = false;
+    
+    // Streaming helpers
+    void processStreamingBuffer();
+    void processStreamingObject(const QJsonObject &obj);
+    void initStreamingHeaders();
+    void finalizeStreaming();
+    void showStreamingProgress();
+    void hideStreamingProgress();
+    void updateStreamingProgress();
     
     void setupColumnWidthManagement();
     void saveColumnWidthRatios();

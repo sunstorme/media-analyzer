@@ -129,27 +129,56 @@ void MainWindow::showMediaInfo(const QString filePath, const QString &function, 
         Common::instance()->setConfigValue(CURRENTFILE, filePath);
     }
 
-    ProgressDialog *progressDlg = new ProgressDialog;
-    progressDlg->setWindowTitle(tr("Parse Media: %1").arg(filePath));
-    progressDlg->setProgressMode(ProgressDialog::Indeterminate);
-    progressDlg->setMessage(tr("Parsing..."));
-    progressDlg->setAutoClose(true);
+    // Determine if this is a streaming-compatible query (frames/packets with table format)
+    bool isStreamingCompatible = (extrainfo.formatKey == FORMAT_TABLE) &&
+                                  (function.contains("show_frames") || function.contains("show_packets"));
 
-    progressDlg->start();
-    QtConcurrent::run([=](){
-        QString formats = m_probe.getMediaInfoJsonFormat(function, filePath);
-        bool ok = QMetaObject::invokeMethod(this, "popMediaInfoWindow",
-                                  Qt::QueuedConnection,
-                                  Q_ARG(QString, windwowTitle),
-                                  Q_ARG(QString, formats),
-                                  Q_ARG(ZExtraInfo, extrainfo)
-                                  );
-        qDebug() << "Media info query: " << ok;
-        emit progressDlg->messageChanged("Finsh parse");
-        emit progressDlg->toFinish();
-        progressDlg->deleteLater();
-    });
-    progressDlg->exec();
+    if (isStreamingCompatible) {
+        // Use streaming loading for frames/packets data
+        TableFormatWG *tableWindow = new TableFormatWG;
+        tableWindow->setAttribute(Qt::WA_DeleteOnClose);
+        tableWindow->setWindowTitle(windwowTitle);
+        tableWindow->setExtraInfo(extrainfo);
+        tableWindow->show();
+        ZWindowHelper::centerToParent(tableWindow);
+
+        // Determine the array key
+        QString arrayKey = function.contains("show_packets") ? "packets" : "frames";
+
+        // Build the ffprobe arguments
+        QStringList args;
+        args << ffmpegCommandList
+             << function.split(" ", QT_SKIP_EMPTY_PARTS)
+             << OF << JSON << FI << filePath;
+
+        // Start streaming
+        tableWindow->startStreamingLoad(FFPROBE, args, arrayKey);
+
+        qDebug() << "Streaming media info:" << FFPROBE << args.join(" ");
+    } else {
+        // Use the original non-streaming approach
+        ProgressDialog *progressDlg = new ProgressDialog;
+        progressDlg->setWindowTitle(tr("Parse Media: %1").arg(filePath));
+        progressDlg->setProgressMode(ProgressDialog::Indeterminate);
+        progressDlg->setMessage(tr("Parsing..."));
+        progressDlg->setAutoClose(true);
+
+        progressDlg->start();
+        QtConcurrent::run([=](){
+            QString formats = m_probe.getMediaInfoJsonFormat(function, filePath);
+            bool ok = QMetaObject::invokeMethod(this, "popMediaInfoWindow",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(QString, windwowTitle),
+                                      Q_ARG(QString, formats),
+                                      Q_ARG(ZExtraInfo, extrainfo)
+                                      );
+            qDebug() << "Media info query: " << ok;
+            emit progressDlg->messageChanged("Finsh parse");
+            emit progressDlg->toFinish();
+            progressDlg->deleteLater();
+        });
+        progressDlg->exec();
+    }
 }
 
 void MainWindow::InitConnectation()
@@ -349,7 +378,6 @@ void MainWindow::restoreLayoutSettings()
     }
     settings.endGroup();
 }
-
 
 void MainWindow::slotMenuBasic_InfoTriggered(QAction *action)
 {

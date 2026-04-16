@@ -179,8 +179,23 @@ QString ZFfprobe::getMediaInfoJsonFormat(const QString& command, const QString& 
                                FI  << fileName);
 
     qDebug() << process.arguments().join(" ").prepend(" ").prepend(FFPROBE);
-    process.waitForFinished(-1);
-    return process.readAll();
+
+    QString output;
+    while (process.waitForReadyRead(-1)) {
+        QByteArray newData = process.readAllStandardOutput();
+        if (!newData.isEmpty()) {
+            qDebug().noquote() << QString::fromUtf8(newData);
+            output += QString::fromUtf8(newData);
+        }
+    }
+    // Read any remaining data after the process finishes
+    QByteArray remaining = process.readAllStandardOutput();
+    if (!remaining.isEmpty()) {
+        qDebug().noquote() << QString::fromUtf8(remaining);
+        output += QString::fromUtf8(remaining);
+    }
+
+    return output;
 }
 
 QList<ZFfprobe::StreamInfo> ZFfprobe::getMediaStreams(const QString& fileName)

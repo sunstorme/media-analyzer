@@ -25,13 +25,8 @@
     #define QT_SET_TEXT_STREAM_CODEC(stream, codec) /* UTF-8 is default in Qt6 */
 #endif
 
-// qSetMessagePattern was removed in Qt6, use QLoggingCategory::setFilterRules instead
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    #define QT_SET_MESSAGE_PATTERN(pattern) qSetMessagePattern(pattern)
-#else
-    #include <QLoggingCategory>
-    #define QT_SET_MESSAGE_PATTERN(pattern) QLoggingCategory::setFilterRules(QStringLiteral("*.debug=false\n*.info=false") + pattern)
-#endif
+// qSetMessagePattern is available in both Qt5 and Qt6
+#define QT_SET_MESSAGE_PATTERN(pattern) qSetMessagePattern(pattern)
 
 // QSortFilterProxyModel::setFilterRegExp was replaced with setFilterRegularExpression in Qt6
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
