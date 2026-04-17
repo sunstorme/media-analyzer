@@ -1472,6 +1472,21 @@ Description: %2</source>
 Do you want to open the folder?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="79"/>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="101"/>
+        <source>All Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="107"/>
+        <source>Cmd</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ZCommandExecutor</name>

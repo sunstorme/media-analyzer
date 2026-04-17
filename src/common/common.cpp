@@ -5,25 +5,23 @@
 #include <QProcess>
 #include <QStandardPaths>
 
-QList<QStringList> Common::logLevels = {
-    {"quiet", "-8", "Show nothing at all; be silent."},
-    {"panic", "0", "Only show fatal errors which could lead the process to crash, such as an assertion failure. This is not currently used for anything."},
-    {"fatal", "8", "Only show fatal errors. These are errors after which the process absolutely cannot continue."},
-    {"error", "16", "Show all errors, including ones which can be recovered from."},
-    {"warning", "24", "Show all warnings and errors. Any message related to possibly incorrect or unexpected events will be shown."},
-    {"info", "32", "Show informative messages during processing. This is in addition to warnings and errors. This is the default value."},
-    {"verbose", "40", "Same as info, except more verbose."},
-    {"debug", "48", "Show everything, including debugging information."},
-    {"trace", "56", "shows extremely detailed, low-level tracing information about the internal execution flow of the code, allowing for deep technical debugging and analysis."}
-};
+QList<QStringList> Common::logLevels = QList<QStringList>()
+    << (QStringList() << "quiet" << "-8" << "Show nothing at all; be silent.")
+    << (QStringList() << "panic" << "0" << "Only show fatal errors which could lead the process to crash, such as an assertion failure. This is not currently used for anything.")
+    << (QStringList() << "fatal" << "8" << "Only show fatal errors. These are errors after which the process absolutely cannot continue.")
+    << (QStringList() << "error" << "16" << "Show all errors, including ones which can be recovered from.")
+    << (QStringList() << "warning" << "24" << "Show all warnings and errors. Any message related to possibly incorrect or unexpected events will be shown.")
+    << (QStringList() << "info" << "32" << "Show informative messages during processing. This is in addition to warnings and errors. This is the default value.")
+    << (QStringList() << "verbose" << "40" << "Same as info, except more verbose.")
+    << (QStringList() << "debug" << "48" << "Show everything, including debugging information.")
+    << (QStringList() << "trace" << "56" << "shows extremely detailed, low-level tracing information about the internal execution flow of the code, allowing for deep technical debugging and analysis.");
 
-const QStringList CONFIG_GROUPS = {
-    LOG_SETTINGS_GROUP,
-    GENERAL_SETTINGS_GROUP,
-    MAINWINDOW_SETTINGS_GROUP,
-    WINDOWHEAD_SETTINGS_GROUP,
-    RECENTFILES_SETTINGS_GROUP
-};
+const QStringList CONFIG_GROUPS = QStringList()
+    << LOG_SETTINGS_GROUP
+    << GENERAL_SETTINGS_GROUP
+    << MAINWINDOW_SETTINGS_GROUP
+    << WINDOWHEAD_SETTINGS_GROUP
+    << RECENTFILES_SETTINGS_GROUP;
 
 QMutex Common::m_mutex;
 Common* Common::m_instance = nullptr;

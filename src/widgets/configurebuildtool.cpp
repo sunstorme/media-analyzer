@@ -262,7 +262,8 @@ void ConfigureBuildTool::on_build_btn_clicked()
     qDebug() << m_process->workingDirectory();
 
     QString cmd = "make";
-    QStringList arguments = {"-j", QString::number(std::thread::hardware_concurrency())};
+    QStringList arguments;
+    arguments << "-j" << QString::number(std::thread::hardware_concurrency());
 
     for (auto &it : arguments) {
         it = it.trimmed();
@@ -305,7 +306,8 @@ void ConfigureBuildTool::on_install_btn_clicked()
     qDebug() << m_process->workingDirectory();
 
     QString cmd = "make";
-    QStringList arguments = {"install"};
+    QStringList arguments;
+    arguments << "install";
 
     for (auto &it : arguments) {
         it = it.trimmed();
@@ -327,7 +329,8 @@ void ConfigureBuildTool::on_clean_btn_clicked()
     qDebug() << m_process->workingDirectory();
 
     QString cmd = "make";
-    QStringList arguments = {"clean"};
+    QStringList arguments;
+    arguments << "clean";
 
     for (auto &it : arguments) {
         it = it.trimmed();

@@ -1530,6 +1530,21 @@ Do you want to open the folder?</source>
         <source>All Data With Header</source>
         <translation>所有数据（含标题）</translation>
     </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="79"/>
+        <source>Copy</source>
+        <translation>复制</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="101"/>
+        <source>All Data</source>
+        <translation>全部数据</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tablefmtwg.cpp" line="107"/>
+        <source>Cmd</source>
+        <translation>命令</translation>
+    </message>
 </context>
 <context>
     <name>ZCommandExecutor</name>

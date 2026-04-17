@@ -479,7 +479,8 @@ void TableFormatWG::formatData(const QString &data, QList<QStringList> &data_tb,
 
     // -formats -muxers -demuxers -devices -codecs -decoders -encoders -filters -pix_fmts
     if (QStringList{"formats", "muxers", "demuxers", "devices", "codecs", "decoders", "filters", "encoders", "pixfmts"}.contains(format_key, Qt::CaseInsensitive)) {
-        QStringList parts{QString(""), QString("")};
+        QStringList parts;
+        parts << QString("") << QString("");
         if (format_key.contains("filters")) {
             for (auto it : rawStringLines) {
                 if (it.contains("=")) {
@@ -572,7 +573,8 @@ void TableFormatWG::formatData(const QString &data, QList<QStringList> &data_tb,
             }
             QStringList tmp = rawStringLines.at(i).split(" ", QT_SKIP_EMPTY_PARTS);
             if (tmp.size() >= 2) {
-                QStringList tb_of_line{tmp.at(0).trimmed()};
+                QStringList tb_of_line;
+                tb_of_line << tmp.at(0).trimmed();
                 tmp.removeFirst();
                 tb_of_line.append(tmp.join(" "));
                 data_tb.append(tb_of_line);
@@ -1642,7 +1644,8 @@ bool TableFormatWG::loadJson(const QByteArray &json)
 
     QJsonObject rootObject = doc.object();
 
-    QStringList availableKeys{"frames", "packets"};
+    QStringList availableKeys;
+    availableKeys << "frames" << "packets";
 
     QString key;
     for (auto it : availableKeys) {
@@ -1670,26 +1673,17 @@ bool TableFormatWG::loadJson(const QByteArray &json)
         QSet<QString> allFields;
     };
 
-    FieldCategory categories = {
-        // Common fields
-        {
-            "media_type", "stream_index", "key_frame", "pkt_pts", "pkt_pts_time",
-            "pkt_dts", "pkt_dts_time", "best_effort_timestamp", "best_effort_timestamp_time",
-            "pkt_duration", "pkt_duration_time", "pkt_pos", "pkt_size"
-        },
-        // Video-specific fields
-        {
-            "width", "height", "pix_fmt", "sample_aspect_ratio", "pict_type",
-            "coded_picture_number", "display_picture_number", "interlaced_frame",
-            "top_field_first", "repeat_pict", "chroma_location"
-        },
-        // Audio-specific fields
-        {
-            "sample_fmt", "nb_samples", "channels", "channel_layout"
-        },
-        // All fields set
-        {}
-    };
+    FieldCategory categories;
+    categories.common = QStringList()
+        << "media_type" << "stream_index" << "key_frame" << "pkt_pts" << "pkt_pts_time"
+        << "pkt_dts" << "pkt_dts_time" << "best_effort_timestamp" << "best_effort_timestamp_time"
+        << "pkt_duration" << "pkt_duration_time" << "pkt_pos" << "pkt_size";
+    categories.video = QStringList()
+        << "width" << "height" << "pix_fmt" << "sample_aspect_ratio" << "pict_type"
+        << "coded_picture_number" << "display_picture_number" << "interlaced_frame"
+        << "top_field_first" << "repeat_pict" << "chroma_location";
+    categories.audio = QStringList()
+        << "sample_fmt" << "nb_samples" << "channels" << "channel_layout";
 
     // Collect all fields
     for (const QJsonValue &frameValue : framesArray) {
@@ -1879,19 +1873,16 @@ void TableFormatWG::startStreamingLoad(const QString &program, const QStringList
     m_streamingHeaderTemplates.clear();
 
     // Initialize field categories
-    m_streamingCategories.common = {
-        "media_type", "stream_index", "key_frame", "pkt_pts", "pkt_pts_time",
-        "pkt_dts", "pkt_dts_time", "best_effort_timestamp", "best_effort_timestamp_time",
-        "pkt_duration", "pkt_duration_time", "pkt_pos", "pkt_size"
-    };
-    m_streamingCategories.video = {
-        "width", "height", "pix_fmt", "sample_aspect_ratio", "pict_type",
-        "coded_picture_number", "display_picture_number", "interlaced_frame",
-        "top_field_first", "repeat_pict", "chroma_location"
-    };
-    m_streamingCategories.audio = {
-        "sample_fmt", "nb_samples", "channels", "channel_layout"
-    };
+    m_streamingCategories.common = QStringList()
+        << "media_type" << "stream_index" << "key_frame" << "pkt_pts" << "pkt_pts_time"
+        << "pkt_dts" << "pkt_dts_time" << "best_effort_timestamp" << "best_effort_timestamp_time"
+        << "pkt_duration" << "pkt_duration_time" << "pkt_pos" << "pkt_size";
+    m_streamingCategories.video = QStringList()
+        << "width" << "height" << "pix_fmt" << "sample_aspect_ratio" << "pict_type"
+        << "coded_picture_number" << "display_picture_number" << "interlaced_frame"
+        << "top_field_first" << "repeat_pict" << "chroma_location";
+    m_streamingCategories.audio = QStringList()
+        << "sample_fmt" << "nb_samples" << "channels" << "channel_layout";
 
     // Clear existing model data
     m_model->setRow(0);

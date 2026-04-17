@@ -181,7 +181,7 @@ void ProgressDialog::updateAnimation()
         m_progressBar->setValue(m_animationStep);
     } else if (m_mode == Busy) {
         // Busy mode animation
-        static const QStringList busyIcons = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" };
+        static const QStringList busyIcons = QStringList() << QString::fromUtf8("⣾") << QString::fromUtf8("⣽") << QString::fromUtf8("⣻") << QString::fromUtf8("⢿") << QString::fromUtf8("⡿") << QString::fromUtf8("⣟") << QString::fromUtf8("⣯") << QString::fromUtf8("⣷");
         m_animationStep = (m_animationStep + 1) % busyIcons.size();
         QString message = m_messageLabel->text();
         // Remove previous animation icon
