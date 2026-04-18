@@ -198,6 +198,10 @@ public:
  */
     Q_INVOKABLE QString getMediaInfoJsonFormat(const QString& command, const QString& fileName);           // show format/container info
     
+    // Packet/Frame count methods
+    int getPacketCount(const QString& fileName, int streamIndex = 0);
+    int getFrameCount(const QString& fileName, int streamIndex = 0);
+
     // Stream info methods
     struct StreamInfo {
         int index;

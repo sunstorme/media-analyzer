@@ -183,6 +183,97 @@ QString ZFfprobe::getMediaInfoJsonFormat(const QString& command, const QString& 
     return process.readAll();
 }
 
+int ZFfprobe::getPacketCount(const QString& fileName, int streamIndex)
+{
+    if (fileName.isEmpty()) {
+        return -1;
+    }
+
+    // Fast approach: read nb_frames from stream metadata (no decoding needed).
+    // For packets, nb_frames is a reasonable approximation and returns instantly.
+    QProcess process;
+    process.start(FFPROBE, QStringList()
+                  << HIDEBANNER << LOGLEVEL << QUIET
+                  << SELECT_STREAMS << QString::number(streamIndex)
+                  << SHOW_ENTRIES << "stream=nb_frames"
+                  << OF << JSON
+                  << FI << fileName);
+
+    qDebug() << process.arguments().join(" ").prepend(" ").prepend(FFPROBE);
+    process.waitForFinished(-1);
+    QByteArray output = process.readAll();
+
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(output, &error);
+    if (error.error != QJsonParseError::NoError || !doc.isObject()) {
+        qWarning() << "Failed to parse packet count JSON:" << error.errorString();
+        return -1;
+    }
+
+    QJsonObject rootObj = doc.object();
+    QJsonArray streamsArray = rootObj.value("streams").toArray();
+    if (streamsArray.isEmpty()) {
+        return -1;
+    }
+
+    QJsonObject streamObj = streamsArray.first().toObject();
+    // ffprobe returns nb_frames as a string in JSON (e.g., "24000"), not a number.
+    // Must use toString() + QString::toInt() instead of QJsonValue::toInt().
+    bool ok = false;
+    int count = streamObj.value("nb_frames").toString().toInt(&ok);
+    if (!ok || count <= 0) {
+        qWarning() << "nb_frames not available in stream metadata, cannot estimate packet count";
+        return -1;
+    }
+    return count;
+}
+
+int ZFfprobe::getFrameCount(const QString& fileName, int streamIndex)
+{
+    if (fileName.isEmpty()) {
+        return -1;
+    }
+
+    // Fast approach: read nb_frames from stream metadata (no decoding needed).
+    // This reads the container header directly and returns instantly, unlike
+    // the old -count_frames approach which required decoding the entire file.
+    QProcess process;
+    process.start(FFPROBE, QStringList()
+                  << HIDEBANNER << LOGLEVEL << QUIET
+                  << SELECT_STREAMS << QString::number(streamIndex)
+                  << SHOW_ENTRIES << "stream=nb_frames"
+                  << OF << JSON
+                  << FI << fileName);
+
+    qDebug() << process.arguments().join(" ").prepend(" ").prepend(FFPROBE);
+    process.waitForFinished(-1);
+    QByteArray output = process.readAll();
+
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(output, &error);
+    if (error.error != QJsonParseError::NoError || !doc.isObject()) {
+        qWarning() << "Failed to parse frame count JSON:" << error.errorString();
+        return -1;
+    }
+
+    QJsonObject rootObj = doc.object();
+    QJsonArray streamsArray = rootObj.value("streams").toArray();
+    if (streamsArray.isEmpty()) {
+        return -1;
+    }
+
+    QJsonObject streamObj = streamsArray.first().toObject();
+    // ffprobe returns nb_frames as a string in JSON (e.g., "24000"), not a number.
+    // Must use toString() + QString::toInt() instead of QJsonValue::toInt().
+    bool ok = false;
+    int count = streamObj.value("nb_frames").toString().toInt(&ok);
+    if (!ok || count <= 0) {
+        qWarning() << "nb_frames not available in stream metadata for:" << fileName;
+        return -1;
+    }
+    return count;
+}
+
 QList<ZFfprobe::StreamInfo> ZFfprobe::getMediaStreams(const QString& fileName)
 {
     QList<StreamInfo> streams;

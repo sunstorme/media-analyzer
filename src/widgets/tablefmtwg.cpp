@@ -26,6 +26,9 @@ void TableFormatWG::initUI()
     // Setup UI
     ui->setupUi(this);
 
+    // Hide streaming progress widget by default - it should only be visible during streaming
+    ui->streamingProgressWidget->setVisible(false);
+
     m_isUserAdjusted = false;
     m_resizeTimer = new QTimer(this);
     m_lastTableWidth = 0;
@@ -1776,6 +1779,185 @@ bool TableFormatWG::loadJson(const QByteArray &json)
     return true;
 }
 
+bool TableFormatWG::loadJsonIncremental(const QByteArray &json)
+{
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(json, &parseError);
+
+    if (parseError.error != QJsonParseError::NoError) {
+        return false;
+    }
+
+    if (!doc.isObject()) {
+        return false;
+    }
+
+    QJsonObject rootObject = doc.object();
+
+    // Find the array key (frames or packets)
+    QString key;
+    QStringList availableKeys;
+    availableKeys << "frames" << "packets";
+    for (auto &it : availableKeys) {
+        if (rootObject.contains(it) && rootObject[it].isArray()) {
+            key = it;
+        }
+    }
+
+    if (key.isEmpty()) return false;
+
+    QJsonArray framesArray = rootObject[key].toArray();
+
+    if (framesArray.isEmpty()) return true;
+
+    int totalParsedRows = framesArray.size();
+
+    // Value converter lambda
+    auto toString = [](const QJsonValue &val) -> QString {
+        if (val.isNull()) return "null";
+        if (val.isBool()) return val.toBool() ? "true" : "false";
+        if (val.isDouble()) return QString::number(val.toDouble());
+        if (val.isString()) return val.toString();
+        if (val.isArray()) return QString("[%1 items]").arg(val.toArray().size());
+        if (val.isObject()) return "{object}";
+        return val.toString();
+    };
+
+    // ===== First load: full initialization (same as loadJson) =====
+    if (m_streamingLastParsedCount == 0) {
+        m_headers.clear();
+        m_data_tb.clear();
+
+        // Field classification
+        struct FieldCategory {
+            QStringList common;
+            QStringList video;
+            QStringList audio;
+            QSet<QString> allFields;
+        };
+
+        FieldCategory categories;
+        categories.common = QStringList()
+            << "media_type" << "stream_index" << "key_frame" << "pkt_pts" << "pkt_pts_time"
+            << "pkt_dts" << "pkt_dts_time" << "best_effort_timestamp" << "best_effort_timestamp_time"
+            << "pkt_duration" << "pkt_duration_time" << "pkt_pos" << "pkt_size";
+        categories.video = QStringList()
+            << "width" << "height" << "pix_fmt" << "sample_aspect_ratio" << "pict_type"
+            << "coded_picture_number" << "display_picture_number" << "interlaced_frame"
+            << "top_field_first" << "repeat_pict" << "chroma_location";
+        categories.audio = QStringList()
+            << "sample_fmt" << "nb_samples" << "channels" << "channel_layout";
+
+        // Collect all fields
+        for (const QJsonValue &frameValue : framesArray) {
+            if (frameValue.isObject()) {
+                QJsonObject obj = frameValue.toObject();
+                for (const QString &k : obj.keys()) {
+                    categories.allFields.insert(k);
+                }
+            }
+        }
+
+        // Build optimized column order for each media type
+        QHash<QString, QStringList> headerTemplates;
+
+        auto buildHeader = [&](const QStringList& specificFields) {
+            QStringList header;
+            for (const QString &field : categories.common) {
+                if (categories.allFields.contains(field)) {
+                    header.append(field);
+                }
+            }
+            for (const QString &field : specificFields) {
+                if (categories.allFields.contains(field)) {
+                    header.append(field);
+                }
+            }
+            QSet<QString> otherFields = categories.allFields;
+            for (const QString &field : header) {
+                otherFields.remove(field);
+            }
+            QStringList sortedOther = otherFields.values();
+            std::sort(sortedOther.begin(), sortedOther.end());
+            header.append(sortedOther);
+            return header;
+        };
+
+        headerTemplates["video"] = buildHeader(categories.video);
+        headerTemplates["audio"] = buildHeader(categories.audio);
+        headerTemplates["default"] = buildHeader({});
+
+        // Parse data
+        QString currentMediaType;
+        for (const QJsonValue &frameValue : framesArray) {
+            if (!frameValue.isObject()) continue;
+
+            QJsonObject frameObj = frameValue.toObject();
+            QString mediaType = frameObj.contains("media_type") ?
+                                    frameObj["media_type"].toString() : "default";
+
+            if (m_headers.isEmpty() || mediaType != currentMediaType) {
+                if (headerTemplates.contains(mediaType)) {
+                    m_headers = headerTemplates[mediaType];
+                } else if (headerTemplates.contains("default")) {
+                    m_headers = headerTemplates["default"];
+                } else {
+                    m_headers = categories.common + categories.allFields.values();
+                }
+                currentMediaType = mediaType;
+            }
+
+            QStringList rowData;
+            for (const QString &column : m_headers) {
+                rowData.append(frameObj.contains(column) ?
+                                   toString(frameObj[column]) : "");
+            }
+            m_data_tb.append(rowData);
+        }
+
+        qDebug() << "Initial parse:" << m_data_tb.size() << "frames with" << m_headers.size() << "columns";
+
+        // Full initialization (first time only)
+        this->initHeaderDetailTb(m_headers, ", ");
+        this->updateDataDetailTb(m_data_tb, ", ");
+
+        m_streamingLastParsedCount = totalParsedRows;
+        return true;
+    }
+
+    // ===== Incremental load: only parse new rows =====
+    if (totalParsedRows <= m_streamingLastParsedCount) {
+        return true; // No new data
+    }
+
+    QList<QStringList> newRows;
+    for (int i = m_streamingLastParsedCount; i < totalParsedRows; ++i) {
+        QJsonObject frameObj = framesArray[i].toObject();
+        QStringList rowData;
+        for (const QString &column : m_headers) {
+            rowData.append(frameObj.contains(column) ?
+                               toString(frameObj[column]) : "");
+        }
+        newRows.append(rowData);
+    }
+
+    // Efficient append: uses beginInsertRows/endInsertRows
+    // Note: appendRows() internally does m_data->append(), and m_data points to m_data_tb
+    m_model->appendRows(newRows);
+
+    // Incrementally update raw text (no clear)
+    for (auto &it : newRows) {
+        ui->detail_raw_pte->appendPlainText(it.join(", "));
+    }
+
+    updateCurrentModel();
+
+    m_streamingLastParsedCount = totalParsedRows;
+    qDebug() << "Incremental: appended" << newRows.size() << "rows, total:" << m_data_tb.size();
+
+    return true;
+}
+
 void TableFormatWG::showContextMenu(const QPoint &pos)
 {
     BaseFormatWG::showContextMenu(pos);
@@ -1852,7 +2034,7 @@ void TableFormatWG::setupTableModel()
 
 // ==================== Streaming JSON Loading ====================
 
-void TableFormatWG::startStreamingLoad(const QString &program, const QStringList &args, const QString &arrayKey)
+void TableFormatWG::startStreamingLoad(const QString &program, const QStringList &args, const QString &/*arrayKey*/)
 {
     // Clean up any existing streaming
     if (m_streamingActive) {
@@ -1860,34 +2042,11 @@ void TableFormatWG::startStreamingLoad(const QString &program, const QStringList
     }
 
     // Reset state
-    m_headers.clear();
-    m_data_tb.clear();
     m_streamingBuffer.clear();
     m_streamingActive = true;
-    m_streamingArrayFound = false;
     m_streamingRowCount = 0;
-    m_streamingArrayKey = arrayKey;
-    m_streamingCurrentMediaType.clear();
-    m_streamingHeadersInitialized = false;
-    m_streamingCategories = StreamingFieldCategory();
-    m_streamingHeaderTemplates.clear();
-
-    // Initialize field categories
-    m_streamingCategories.common = QStringList()
-        << "media_type" << "stream_index" << "key_frame" << "pkt_pts" << "pkt_pts_time"
-        << "pkt_dts" << "pkt_dts_time" << "best_effort_timestamp" << "best_effort_timestamp_time"
-        << "pkt_duration" << "pkt_duration_time" << "pkt_pos" << "pkt_size";
-    m_streamingCategories.video = QStringList()
-        << "width" << "height" << "pix_fmt" << "sample_aspect_ratio" << "pict_type"
-        << "coded_picture_number" << "display_picture_number" << "interlaced_frame"
-        << "top_field_first" << "repeat_pict" << "chroma_location";
-    m_streamingCategories.audio = QStringList()
-        << "sample_fmt" << "nb_samples" << "channels" << "channel_layout";
-
-    // Clear existing model data
-    m_model->setRow(0);
-    m_model->setColumn(0);
-    m_model->setTableData(const_cast<QList<QStringList>*>(&m_data_tb));
+    m_streamingTotalExpected = -1;
+    m_streamingLastParsedCount = 0;
 
     // Show progress
     showStreamingProgress();
@@ -1902,6 +2061,12 @@ void TableFormatWG::startStreamingLoad(const QString &program, const QStringList
             this, &TableFormatWG::onStreamingFinished);
     connect(m_streamingProcess, &QProcess::errorOccurred,
             this, &TableFormatWG::onStreamingError);
+
+    // Start 100ms refresh timer
+    m_streamingRefreshTimer = new QTimer(this);
+    connect(m_streamingRefreshTimer, &QTimer::timeout,
+            this, &TableFormatWG::onStreamingRefreshTimer);
+    m_streamingRefreshTimer->start(300);
 
     m_streamingTimer.start();
     m_streamingProcess->start(program, args);
@@ -1919,6 +2084,12 @@ void TableFormatWG::stopStreaming()
     if (!m_streamingActive) return;
 
     m_streamingActive = false;
+
+    if (m_streamingRefreshTimer) {
+        m_streamingRefreshTimer->stop();
+        m_streamingRefreshTimer->deleteLater();
+        m_streamingRefreshTimer = nullptr;
+    }
 
     if (m_streamingProcess) {
         m_streamingProcess->disconnect();
@@ -1944,258 +2115,57 @@ void TableFormatWG::onStreamingDataReady()
     if (newData.isEmpty()) return;
 
     m_streamingBuffer.append(newData);
-    processStreamingBuffer();
+    // Don't parse here - the refresh timer will handle it
 }
 
-void TableFormatWG::processStreamingBuffer()
+void TableFormatWG::onStreamingRefreshTimer()
 {
-    // State machine to extract individual JSON objects from the streaming buffer
-    // The JSON structure is: { "frames": [ {...}, {...}, ... ] }
-    // We need to find the array start, then extract each complete object
-    //
-    // m_streamingArrayFound is a member variable that persists across calls,
-    // so once we find the target array, we don't need to find it again even
-    // after the buffer is trimmed.
+    if (!m_streamingActive) return;
 
-    int braceDepth = 0;
-    int objectStart = -1;
-    bool inString = false;
-    bool escape = false;
-
-    int i = 0;
-    int len = m_streamingBuffer.length();
-    int lastProcessedEnd = -1;
-
-    while (i < len) {
-        char c = m_streamingBuffer.at(i);
-
-        if (escape) {
-            escape = false;
-            ++i;
-            continue;
-        }
-
-        if (inString) {
-            if (c == '\\') {
-                escape = true;
-            } else if (c == '"') {
-                inString = false;
-            }
-            ++i;
-            continue;
-        }
-
-        switch (c) {
-        case '"':
-            inString = true;
-            break;
-
-        case '{':
-            if (!m_streamingArrayFound) {
-                // We're in the root object, skip
-            } else {
-                if (braceDepth == 0) {
-                    objectStart = i;
-                }
-                braceDepth++;
-            }
-            break;
-
-        case '}':
-            if (m_streamingArrayFound && braceDepth > 0) {
-                braceDepth--;
-                if (braceDepth == 0 && objectStart >= 0) {
-                    // We have a complete JSON object
-                    QByteArray jsonObjData = m_streamingBuffer.mid(
-                        objectStart, i - objectStart + 1);
-
-                    // Parse the JSON object
-                    QJsonParseError parseError;
-                    QJsonDocument doc = QJsonDocument::fromJson(jsonObjData, &parseError);
-                    if (parseError.error == QJsonParseError::NoError && doc.isObject()) {
-                        processStreamingObject(doc.object());
-                    } else {
-                        qWarning() << "Streaming JSON parse error:" << parseError.errorString();
-                    }
-
-                    objectStart = -1;
-                    lastProcessedEnd = i;
-                }
-            }
-            break;
-
-        case '[':
-            if (!m_streamingArrayFound) {
-                // Check if this is the target array by looking for the key pattern
-                QByteArray beforeArray = m_streamingBuffer.left(i);
-                QByteArray keyPattern = QByteArray("\"" + m_streamingArrayKey.toUtf8() + "\"");
-                if (beforeArray.contains(keyPattern)) {
-                    m_streamingArrayFound = true;
-                }
-            }
-            break;
-
-        case ']':
-            if (m_streamingArrayFound && braceDepth == 0) {
-                // End of the array
-                m_streamingArrayFound = false;
-                lastProcessedEnd = i;
-            }
-            break;
-
-        default:
-            break;
-        }
-
-        ++i;
-    }
-
-    // Remove processed data from buffer
-    if (lastProcessedEnd >= 0) {
-        m_streamingBuffer.remove(0, lastProcessedEnd + 1);
-    }
-
-    // Prevent buffer from growing too large (only when not in the middle of an object)
-    if (m_streamingBuffer.size() > 65536 && objectStart < 0) {
-        qWarning() << "Streaming buffer too large, clearing";
-        m_streamingBuffer.clear();
-    }
-}
-
-void TableFormatWG::processStreamingObject(const QJsonObject &obj)
-{
-    // Collect all field names
-    for (const QString &key : obj.keys()) {
-        m_streamingCategories.allFields.insert(key);
-    }
-
-    // Determine media type
-    QString mediaType = obj.contains("media_type") ?
-                            obj.value("media_type").toString() : "default";
-
-    // Initialize headers on first object or media type change
-    if (!m_streamingHeadersInitialized || mediaType != m_streamingCurrentMediaType) {
-        m_streamingCurrentMediaType = mediaType;
-        initStreamingHeaders();
-    }
-
-    // Value converter
-    auto toString = [](const QJsonValue &val) -> QString {
-        if (val.isNull()) return "null";
-        if (val.isBool()) return val.toBool() ? "true" : "false";
-        if (val.isDouble()) return QString::number(val.toDouble());
-        if (val.isString()) return val.toString();
-        if (val.isArray()) return QString("[%1 items]").arg(val.toArray().size());
-        if (val.isObject()) return "{object}";
-        return val.toString();
-    };
-
-    // Extract row data
-    QStringList rowData;
-    for (const QString &column : m_headers) {
-        rowData.append(obj.contains(column) ?
-                           toString(obj.value(column)) : "");
-    }
-
-    // Add to data and model
-    m_data_tb.append(rowData);
-    m_model->appendRow(rowData);
-
-    // Also append to raw text view
-    ui->detail_raw_pte->appendPlainText(rowData.join(", "));
-
-    m_streamingRowCount++;
-
-    // Update progress every 50 rows or on first row
-    if (m_streamingRowCount == 1 || m_streamingRowCount % 50 == 0) {
+    // Always update progress animation (especially for indeterminate mode)
+    if (m_streamingBuffer.isEmpty()) {
         updateStreamingProgress();
-    }
-}
-
-void TableFormatWG::initStreamingHeaders()
-{
-    auto buildHeader = [this](const QStringList& specificFields) {
-        QStringList header;
-        for (const QString &field : m_streamingCategories.common) {
-            if (m_streamingCategories.allFields.contains(field)) {
-                header.append(field);
-            }
-        }
-        for (const QString &field : specificFields) {
-            if (m_streamingCategories.allFields.contains(field)) {
-                header.append(field);
-            }
-        }
-        QSet<QString> otherFields = m_streamingCategories.allFields;
-        for (const QString &field : header) {
-            otherFields.remove(field);
-        }
-        QStringList sortedOther = otherFields.values();
-        std::sort(sortedOther.begin(), sortedOther.end());
-        header.append(sortedOther);
-        return header;
-    };
-
-    m_streamingHeaderTemplates["video"] = buildHeader(m_streamingCategories.video);
-    m_streamingHeaderTemplates["audio"] = buildHeader(m_streamingCategories.audio);
-    m_streamingHeaderTemplates["default"] = buildHeader({});
-
-    if (m_streamingHeaderTemplates.contains(m_streamingCurrentMediaType)) {
-        m_headers = m_streamingHeaderTemplates[m_streamingCurrentMediaType];
-    } else if (m_streamingHeaderTemplates.contains("default")) {
-        m_headers = m_streamingHeaderTemplates["default"];
-    } else {
-        m_headers = m_streamingCategories.common + m_streamingCategories.allFields.values();
+        return;
     }
 
-    // Update model headers
-    m_model->setColumn(m_headers.count());
-    m_model->setTableHeader(&m_headers);
+    // The ffprobe output looks like: {"frames": [{...}, {...}, ...
+    // Just append "]}" to make it valid JSON, then parse
+    QByteArray jsonToParse = m_streamingBuffer + "]}";
 
-    if (!ui->detail_tb->model()) {
-        ui->detail_tb->setModel(multiColumnSearchModel);
+    // Use incremental loading to only append new rows
+    if (loadJsonIncremental(jsonToParse)) {
+        m_streamingRowCount = m_data_tb.size();
     }
 
-    // Update search range options
-    if (!m_headers.isEmpty()) {
-        m_searchWG->setSearchRangeOptions(m_headers);
-    }
-
-    // Clear and set raw text header
-    ui->detail_raw_pte->clear();
-    ui->detail_raw_pte->appendPlainText(m_headers.join(", "));
-
-    // If we already have data rows, we need to re-layout
-    // But since headers might change column order, existing rows may need adjustment
-    // For simplicity, if headers change with existing data, we do a full rebuild
-    if (m_streamingRowCount > 0 && m_streamingHeadersInitialized) {
-        // Headers changed mid-stream - need to rebuild
-        // This is rare (only happens when media_type changes)
-        qDebug() << "Media type changed to" << m_streamingCurrentMediaType
-                 << "rebuilding" << m_streamingRowCount << "rows";
-    }
-
-    m_streamingHeadersInitialized = true;
-
-    // Update column widths
-    if (m_headers.size() > 0) {
-        setupInitialColumnWidths();
-    }
+    // Always update progress display
+    updateStreamingProgress();
 }
 
 void TableFormatWG::onStreamingFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "Streaming process finished. Exit code:" << exitCode
-             << "Status:" << exitStatus
-             << "Total rows:" << m_streamingRowCount;
+             << "Status:" << exitStatus;
 
-    // Process any remaining data in buffer
-    if (m_streamingActive) {
+    // Read any remaining data
+    if (m_streamingActive && m_streamingProcess) {
         QByteArray remaining = m_streamingProcess->readAllStandardOutput();
         if (!remaining.isEmpty()) {
             m_streamingBuffer.append(remaining);
-            processStreamingBuffer();
         }
+    }
+
+    // Stop the refresh timer
+    if (m_streamingRefreshTimer) {
+        m_streamingRefreshTimer->stop();
+        m_streamingRefreshTimer->deleteLater();
+        m_streamingRefreshTimer = nullptr;
+    }
+
+    // Final full refresh with complete data (reset counter to force full reload)
+    if (!m_streamingBuffer.isEmpty()) {
+        m_streamingLastParsedCount = 0;
+        loadJsonIncremental(m_streamingBuffer);
+        m_streamingRowCount = m_data_tb.size();
     }
 
     finalizeStreaming();
@@ -2204,6 +2174,13 @@ void TableFormatWG::onStreamingFinished(int exitCode, QProcess::ExitStatus exitS
 void TableFormatWG::onStreamingError(QProcess::ProcessError error)
 {
     qWarning() << "Streaming process error:" << error;
+    
+    if (m_streamingRefreshTimer) {
+        m_streamingRefreshTimer->stop();
+        m_streamingRefreshTimer->deleteLater();
+        m_streamingRefreshTimer = nullptr;
+    }
+    
     finalizeStreaming();
 }
 
@@ -2241,9 +2218,19 @@ void TableFormatWG::finalizeStreaming()
 void TableFormatWG::showStreamingProgress()
 {
     ui->streamingProgressWidget->setVisible(true);
-    ui->streamingProgressBar->setMaximum(0); // Indeterminate
-    ui->streamingProgressBar->setValue(-1);
-    ui->streamingStatusLabel->setText(tr("Loading... 0 rows"));
+    if (m_streamingTotalExpected > 0) {
+        ui->streamingProgressBar->setRange(0, m_streamingTotalExpected);
+        ui->streamingProgressBar->setValue(0);
+        ui->streamingProgressBar->setTextVisible(true);
+        ui->streamingStatusLabel->setText(
+            tr("Loading... 0/%1 (0%)")
+                .arg(m_streamingTotalExpected));
+    } else {
+        // Busy mode: setRange(0,0) activates animated bar in ZProgressBar
+        ui->streamingProgressBar->setRange(0, 0);
+        ui->streamingProgressBar->setTextVisible(false);
+        ui->streamingStatusLabel->setText(tr("Loading... 0 rows"));
+    }
 }
 
 void TableFormatWG::hideStreamingProgress()
@@ -2255,9 +2242,53 @@ void TableFormatWG::updateStreamingProgress()
 {
     double elapsed = m_streamingTimer.elapsed() / 1000.0;
     QString rate = elapsed > 0 ? QString::number(m_streamingRowCount / elapsed, 'f', 0) : "0";
-    ui->streamingStatusLabel->setText(
-        tr("Loading... %1 rows (%2 rows/s)")
-            .arg(m_streamingRowCount)
-            .arg(rate));
+
+    if (m_streamingTotalExpected > 0) {
+        int percentage = qMin(100, m_streamingRowCount * 100 / m_streamingTotalExpected);
+        ui->streamingProgressBar->setRange(0, m_streamingTotalExpected);
+        ui->streamingProgressBar->setValue(qMin(m_streamingRowCount, m_streamingTotalExpected));
+        ui->streamingProgressBar->setTextVisible(true);
+        ui->streamingStatusLabel->setText(
+            tr("Loading... %1/%2 (%3%, %4 rows/s)")
+                .arg(m_streamingRowCount)
+                .arg(m_streamingTotalExpected)
+                .arg(percentage)
+                .arg(rate));
+    } else {
+        // Busy mode animation is handled internally by ZProgressBar
+        ui->streamingStatusLabel->setText(
+            tr("Loading... %1 rows (%2 rows/s)")
+                .arg(m_streamingRowCount)
+                .arg(rate));
+    }
+}
+
+void TableFormatWG::startTotalCountQuery(const QString &filePath, bool isPackets)
+{
+    if (filePath.isEmpty()) return;
+
+    qDebug() << "Starting async total count query for:" << filePath
+             << "type:" << (isPackets ? "packets" : "frames");
+
+    QtConcurrent::run([this, filePath, isPackets]() {
+        ZFfprobe probe;
+        int count = isPackets ? probe.getPacketCount(filePath) : probe.getFrameCount(filePath);
+        QMetaObject::invokeMethod(this, "onTotalCountReady",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(int, count));
+    });
+}
+
+void TableFormatWG::onTotalCountReady(int count)
+{
+    qDebug() << "Total count query result:" << count
+             << "streaming active:" << m_streamingActive
+             << "current rows:" << m_streamingRowCount;
+
+    if (count > 0 && m_streamingActive) {
+        m_streamingTotalExpected = count;
+        // updateStreamingProgress() will handle switching from indeterminate to determinate
+        updateStreamingProgress();
+    }
 }
 

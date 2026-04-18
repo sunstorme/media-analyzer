@@ -70,13 +70,12 @@
    </item>
    <item>
     <widget class="QWidget" name="streamingProgressWidget" native="true">
+     <property name="visible">
+      <bool>false</bool>
+     </property>
      <layout class="QHBoxLayout" name="streamingProgressLayout">
       <item>
-       <widget class="QProgressBar" name="streamingProgressBar">
-        <property name="value">
-         <number>0</number>
-        </property>
-       </widget>
+       <widget class="ZProgressBar" name="streamingProgressBar"/>
       </item>
       <item>
        <widget class="QLabel" name="streamingStatusLabel">
@@ -95,6 +94,11 @@
    <class>ZTextEditor</class>
    <extends>QPlainTextEdit</extends>
    <header>common/ztexteditor.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZProgressBar</class>
+   <extends>QWidget</extends>
+   <header>component/zprogressbar.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -5,8 +5,8 @@
 #define PROGRESSDLG_H
 
 #include <QDialog>
-#include <QProgressBar>
 #include <QLabel>
+#include "component/zprogressbar.h"
 #include <QPushButton>
 #include <QTimer>
 #include <QElapsedTimer>
@@ -83,7 +83,7 @@ private:
     void setupUI();
     void updateProgressStyle();
 
-    QProgressBar *m_progressBar = nullptr;
+    ZProgressBar *m_progressBar = nullptr;
     QLabel *m_messageLabel = nullptr;
     QLabel *m_timeLabel = nullptr;
     QPushButton *m_cancelButton = nullptr;

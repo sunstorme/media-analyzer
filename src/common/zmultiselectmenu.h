@@ -19,6 +19,13 @@ public:
 protected:
     void mouseReleaseEvent(QMouseEvent *event) override
     {
+        // Only respond to left-button releases to prevent accidental triggering.
+        // When right-clicking the header to open this menu, the right-button
+        // release event would otherwise toggle the checkable action under the cursor.
+        if (event->button() != Qt::LeftButton) {
+            QMenu::mouseReleaseEvent(event);
+            return;
+        }
         QAction *action = actionAt(event->pos());
         if (action && action->isCheckable()) {
             action->setChecked(!action->isChecked());

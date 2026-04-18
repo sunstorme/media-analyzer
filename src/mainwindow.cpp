@@ -151,8 +151,12 @@ void MainWindow::showMediaInfo(const QString filePath, const QString &function, 
              << function.split(" ", QT_SKIP_EMPTY_PARTS)
              << OF << JSON << FI << filePath;
 
-        // Start streaming
+        // Start streaming immediately (no blocking)
         tableWindow->startStreamingLoad(FFPROBE, args, arrayKey);
+
+        // Asynchronously query total count for progress display (non-blocking)
+        bool isPackets = function.contains("show_packets");
+        tableWindow->startTotalCountQuery(filePath, isPackets);
 
         qDebug() << "Streaming media info:" << FFPROBE << args.join(" ");
     } else {

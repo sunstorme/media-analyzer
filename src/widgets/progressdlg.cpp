@@ -47,7 +47,7 @@ void ProgressDialog::setupUI()
     mainLayout->addWidget(m_messageLabel);
 
     // Progress bar
-    m_progressBar = new QProgressBar(this);
+    m_progressBar = new ZProgressBar(this);
     m_progressBar->setRange(0, 100);
     m_progressBar->setTextVisible(true);
     mainLayout->addWidget(m_progressBar);
@@ -176,9 +176,8 @@ void ProgressDialog::updateAnimation()
     }
 
     if (m_mode == Indeterminate) {
-        // Update indeterminate progress animation
-        m_animationStep = (m_animationStep + 1) % 100;
-        m_progressBar->setValue(m_animationStep);
+        // ZProgressBar handles its own busy animation internally
+        // No manual animation needed here
     } else if (m_mode == Busy) {
         // Busy mode animation
         static const QStringList busyIcons = QStringList() << QString::fromUtf8("⣾") << QString::fromUtf8("⣽") << QString::fromUtf8("⣻") << QString::fromUtf8("⢿") << QString::fromUtf8("⡿") << QString::fromUtf8("⣟") << QString::fromUtf8("⣯") << QString::fromUtf8("⣷");
@@ -201,7 +200,7 @@ void ProgressDialog::updateProgressStyle()
         m_progressBar->setVisible(true);
         break;
     case Indeterminate:
-        m_progressBar->setRange(0, 100);
+        m_progressBar->setRange(0, 0); // ZProgressBar busy mode
         m_progressBar->setTextVisible(false);
         m_progressBar->setVisible(true);
         break;
