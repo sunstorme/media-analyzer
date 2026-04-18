@@ -157,6 +157,12 @@ enum CodecType {
     CODEC_TYPE_ENCODER = 2
 };
 
+// Structured table data result for basic info formatting
+struct FormattedTableData {
+    QStringList headers;
+    QList<QStringList> rows;
+};
+
 static QStringList ffmpegCommandList = {HIDEBANNER, LOGLEVEL, QUIET};
 
 class ZFfprobe : public QObject
@@ -217,6 +223,9 @@ public:
     QStringList getFiltersNames();
     QStringList getBsfsNames();
     QStringList getProtocolNames();
+
+    // Format raw ffprobe text output into structured table data
+    FormattedTableData formatBasicInfoToTable(const QString &data, const QString &formatKey);
 
 /*
  * Utilities Info

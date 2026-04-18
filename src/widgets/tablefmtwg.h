@@ -131,11 +131,9 @@ public slots:
 
     void copySelectedColumnsWithHeader();
 
-    void copyAllData();
+    void copyAllData() override;
 
     void copyAllDataWithHeader();
-
-    void copyCmd();
 
     void fitTableColumnToContent();
 
@@ -167,9 +165,6 @@ private:
     // Universal copy function
     void copyData(CopyOperation operation);
     QString prepareCopyData(CopyOperation operation);
-
-private:
-    void formatData(const QString& data, QList<QStringList> &data_tb, QStringList &headers, QString format_key);
 
 private:
     Ui::TableFormatWG *ui;

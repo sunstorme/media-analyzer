@@ -29,7 +29,8 @@
 #include "widgets/exportwg.h"
 #include "widgets/helpquerywg.h"
 #include "widgets/configurebuildtool.h"
-#include "widgets/mediapropswg.h"
+#include "widgets/formatwg.h"
+#include "widgets/streamswg.h"
 
 #define FORMAT_JSON "json"
 #define FORMAT_TABLE "table"
@@ -121,13 +122,17 @@ private:
 
     FilesWG &m_filesWG = FilesWG::instance();
     LogWG &m_logWG = LogWG::instance();
-    MediaPropsWG &m_mediaPropsWidget = MediaPropsWG::instance();
+    FormatWG &m_formatWG = FormatWG::instance();
+    StreamsWG &m_streamsWG = StreamsWG::instance();
 
     QDockWidget *m_filesWGDock = nullptr;
     QDockWidget *m_logWGDock = nullptr;
-    QDockWidget *m_mediaPropsWGDock = nullptr;
+    QDockWidget *m_formatWGDock = nullptr;
+    QDockWidget *m_streamsWGDock = nullptr;
 
     QMap<QAction*, QWidget*> m_actionWidgetMap;
+
+    QString m_mediaFile;
 
     QString GEOMETRY_KEY = "mainWindowGeometry";
     QString STATE_KEY = "mainWindowState";

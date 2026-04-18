@@ -60,9 +60,9 @@ void JsonFormatWG::initMenu()
     m_copyMenu->addAction(tr("Key"), this, &JsonFormatWG::copyKey);
     m_copyMenu->addAction(tr("Key-Value"), this, &JsonFormatWG::copyKeyValue);
     m_copyMenu->addSeparator();
-    m_copyMenu->addAction(tr("All Data"), this, &JsonFormatWG::copyAllData);
+    m_copyMenu->addAction(tr("All Data"), this, &BaseFormatWG::copyAllData);
     m_copyMenu->addSeparator();
-    m_copyMenu->addAction(tr("Cmd"), this, &JsonFormatWG::copyCmd);
+    m_copyMenu->addAction(tr("Cmd"), this, &BaseFormatWG::copyCmd);
     m_contextMenu->addMenu(m_copyMenu);
 
     // Tree view operation menu
@@ -206,24 +206,6 @@ void JsonFormatWG::copyKey()
 
     if (!keys.isEmpty()) {
         QApplication::clipboard()->setText(keys.join("\n"));
-    }
-}
-
-void JsonFormatWG::copyAllData()
-{
-    QString allData = getAllData();
-    if (!allData.isEmpty()) {
-        QApplication::clipboard()->setText(allData);
-    }
-}
-
-void JsonFormatWG::copyCmd()
-{
-    QString text = m_extraInfo.commandList.join(" ");
-
-    if (!text.isEmpty()) {
-        // Copy text directly
-        QApplication::clipboard()->setText(text);
     }
 }
 

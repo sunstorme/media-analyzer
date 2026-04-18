@@ -860,8 +860,12 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="414"/>
-        <location filename="../src/mainwindow.cpp" line="308"/>
-        <source>Media Properties</source>
+        <source>Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="420"/>
+        <source>Streams</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -954,12 +958,38 @@
     <message>
         <location filename="../src/mainwindow.cpp" line="250"/>
         <location filename="../src/mainwindow.cpp" line="267"/>
-        <source>Properties: %1</source>
+        <source>Format: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="251"/>
+        <location filename="../src/mainwindow.cpp" line="268"/>
+        <source>Streams: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="283"/>
         <source>Logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="295"/>
+        <source>Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="302"/>
+        <source>Streams</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="280"/>
+        <source>Loading Media Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="282"/>
+        <source>Loading media properties...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1103,30 +1133,18 @@ Description: %2</source>
     </message>
 </context>
 <context>
-    <name>MediaPropsWG</name>
+    <name>FormatWG</name>
     <message>
-        <location filename="../src/widgets/mediapropswg.ui" line="14"/>
-        <source>Media Properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/mediapropswg.ui" line="39"/>
+        <location filename="../src/widgets/formatwg.ui" line="14"/>
         <source>Format</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>StreamsWG</name>
     <message>
-        <location filename="../src/widgets/mediapropswg.ui" line="61"/>
-        <source>Stream</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/mediapropswg.cpp" line="85"/>
-        <source>Loading Media Properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/mediapropswg.cpp" line="87"/>
-        <source>Loading media properties...</source>
+        <location filename="../src/widgets/streamswg.ui" line="14"/>
+        <source>Streams</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -167,8 +167,9 @@
     <addaction name="actionFiles"/>
     <addaction name="separator"/>
     <addaction name="actionLog"/>
-    <addaction name="separator"/>
-    <addaction name="actionMedia_Properties"/>
+     <addaction name="separator"/>
+     <addaction name="actionFormat"/>
+     <addaction name="actionStreams"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuBasic_Info"/>
@@ -408,12 +409,17 @@
     <string>Player</string>
    </property>
   </action>
-  <action name="actionMedia_Properties">
-   <property name="text">
-    <string>Media Properties</string>
-   </property>
-  </action>
-  <action name="actionFiles">
+  <action name="actionFormat">
+    <property name="text">
+     <string>Format</string>
+    </property>
+   </action>
+   <action name="actionStreams">
+    <property name="text">
+     <string>Streams</string>
+    </property>
+   </action>
+   <action name="actionFiles">
    <property name="checkable">
     <bool>false</bool>
    </property>

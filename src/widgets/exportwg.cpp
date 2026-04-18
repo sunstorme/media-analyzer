@@ -5,6 +5,16 @@
 #include "ui_exportwg.h"
 #include <QDir>
 
+// Shell-escape a string for safe use in bash -c commands.
+// Wraps in single quotes and escapes any embedded single quotes.
+static QString shellEscape(const QString& str)
+{
+    // In bash, to include a single quote within a single-quoted string:
+    // end the quote, add an escaped single quote, and restart the quote.
+    QString escaped = str;
+    return "'" + escaped.replace("'", "'\\''") + "'";
+}
+
 ExportWG::ExportWG(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::ExportWG)
@@ -56,11 +66,72 @@ ExportWG::ExportWG(QWidget *parent)
     ui->save_dir_le->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->save_dir_le, &QPushButton::customContextMenuRequested,
             this, &ExportWG::showExportButtonContextMenu);
+
+    // Initialize format option controls enable/disable state
+    initFormatOptionControls();
 }
 
 ExportWG::~ExportWG()
 {
     delete ui;
+}
+
+void ExportWG::initFormatOptionControls()
+{
+    // Default format: checkbox → associated option controls
+    connect(ui->default_cbox, &QCheckBox::toggled, this, [this](bool checked) {
+        setWidgetsEnabled({ui->default_nokey_cbox, ui->default_noprint_wrappers_cbox,
+                           ui->default_suffix_le}, checked);
+    });
+    setWidgetsEnabled({ui->default_nokey_cbox, ui->default_noprint_wrappers_cbox,
+                       ui->default_suffix_le}, ui->default_cbox->isChecked());
+
+    // JSON format
+    connect(ui->json_cbox, &QCheckBox::toggled, this, [this](bool checked) {
+        setWidgetsEnabled({ui->json_compact_cbox, ui->json_suffix_le}, checked);
+    });
+    setWidgetsEnabled({ui->json_compact_cbox, ui->json_suffix_le}, ui->json_cbox->isChecked());
+
+    // INI format
+    connect(ui->ini_cbox, &QCheckBox::toggled, this, [this](bool checked) {
+        setWidgetsEnabled({ui->ini_hierarchical_cbox, ui->ini_suffix_le}, checked);
+    });
+    setWidgetsEnabled({ui->ini_hierarchical_cbox, ui->ini_suffix_le}, ui->ini_cbox->isChecked());
+
+    // Flat format
+    connect(ui->flat_cbox, &QCheckBox::toggled, this, [this](bool checked) {
+        setWidgetsEnabled({ui->flat_hierarchical_cbox, ui->flat_sep_char_le,
+                           ui->flat_suffix_le}, checked);
+    });
+    setWidgetsEnabled({ui->flat_hierarchical_cbox, ui->flat_sep_char_le,
+                       ui->flat_suffix_le}, ui->flat_cbox->isChecked());
+
+    // Compact/CSV format
+    connect(ui->compact_cbox, &QCheckBox::toggled, this, [this](bool checked) {
+        setWidgetsEnabled({ui->compact_item_sep_le, ui->compact_nokey_cbox,
+                           ui->compact_escape_combox, ui->compact_print_section_cbox,
+                           ui->compact_suffix_le}, checked);
+    });
+    setWidgetsEnabled({ui->compact_item_sep_le, ui->compact_nokey_cbox,
+                       ui->compact_escape_combox, ui->compact_print_section_cbox,
+                       ui->compact_suffix_le}, ui->compact_cbox->isChecked());
+
+    // XML format
+    connect(ui->xml_cbox, &QCheckBox::toggled, this, [this](bool checked) {
+        setWidgetsEnabled({ui->xml_fully_qualified_cbox, ui->xml_xsd_strict_cbox,
+                           ui->xml_suffix_le}, checked);
+    });
+    setWidgetsEnabled({ui->xml_fully_qualified_cbox, ui->xml_xsd_strict_cbox,
+                       ui->xml_suffix_le}, ui->xml_cbox->isChecked());
+}
+
+void ExportWG::setWidgetsEnabled(const QList<QWidget*> &widgets, bool enabled)
+{
+    for (QWidget *widget : widgets) {
+        if (widget) {
+            widget->setEnabled(enabled);
+        }
+    }
 }
 
 void ExportWG::setExportModel(ExportModelType type)
@@ -339,8 +410,8 @@ void ExportWG::on_export_btn_clicked()
             .arg(FFPROBE)
                 .arg(LOGLEVEL)
                 .arg(QUIET)
-                .arg(it->text())
-                .arg(QDir(m_save_dir).filePath(QString("%1%2.txt").arg(FFPROBE).arg(it->text())));
+                .arg(shellEscape(it->text()))
+                .arg(shellEscape(QDir(m_save_dir).filePath(QString("%1%2.txt").arg(FFPROBE).arg(it->text()))));
 
             cmds << basicInfo_Cmd;
         }
@@ -354,10 +425,10 @@ void ExportWG::on_export_btn_clicked()
                 .arg(LOGLEVEL)
                 .arg(QUIET)
                 .arg(getMediaInfoSelectedExportFileds().join(" "))
-                .arg(m_input_fileName)
+                .arg(shellEscape(m_input_fileName))
                 .arg(ui->default_nokey_cbox->isChecked() ? "1" : "0")
                 .arg(ui->default_noprint_wrappers_cbox->isChecked() ? "1" : "0")
-                .arg(QDir(m_save_dir).filePath(m_save_name + "_default_" + ui->default_suffix_le->text().trimmed()));
+                .arg(shellEscape(QDir(m_save_dir).filePath(m_save_name + "_default_" + ui->default_suffix_le->text().trimmed())));
 
             cmds << deault_Cmd;
         }
@@ -369,9 +440,9 @@ void ExportWG::on_export_btn_clicked()
                 .arg(LOGLEVEL)
                 .arg(QUIET)
                 .arg(getMediaInfoSelectedExportFileds().join(" "))
-                .arg(m_input_fileName)
+                .arg(shellEscape(m_input_fileName))
                 .arg(ui->json_compact_cbox->isChecked() ? "1" : "0")
-                .arg(QDir(m_save_dir).filePath(m_save_name + "_json_" + ui->json_suffix_le->text().trimmed()));
+                .arg(shellEscape(QDir(m_save_dir).filePath(m_save_name + "_json_" + ui->json_suffix_le->text().trimmed())));
 
             cmds << json_Cmd;
         }
@@ -383,9 +454,9 @@ void ExportWG::on_export_btn_clicked()
                 .arg(LOGLEVEL)
                 .arg(QUIET)
                 .arg(getMediaInfoSelectedExportFileds().join(" "))
-                .arg(m_input_fileName)
+                .arg(shellEscape(m_input_fileName))
                 .arg(ui->ini_hierarchical_cbox->isChecked() ? "1" : "0")
-                .arg(QDir(m_save_dir).filePath(m_save_name + "_ini_"  + ui->ini_suffix_le->text().trimmed()));
+                .arg(shellEscape(QDir(m_save_dir).filePath(m_save_name + "_ini_"  + ui->ini_suffix_le->text().trimmed())));
 
             cmds << ini_Cmd;
         }
@@ -397,10 +468,10 @@ void ExportWG::on_export_btn_clicked()
                 .arg(LOGLEVEL)
                 .arg(QUIET)
                 .arg(getMediaInfoSelectedExportFileds().join(" "))
-                .arg(m_input_fileName)
+                .arg(shellEscape(m_input_fileName))
                 .arg(ui->xml_fully_qualified_cbox->isChecked() ? "1" : "0")
                 .arg(ui->xml_xsd_strict_cbox->isChecked() ? "1" : "0")
-                .arg(QDir(m_save_dir).filePath(m_save_name  + "_xml_" + ui->xml_suffix_le->text().trimmed()));
+                .arg(shellEscape(QDir(m_save_dir).filePath(m_save_name  + "_xml_" + ui->xml_suffix_le->text().trimmed())));
 
             cmds << xml_Cmd;
         }
@@ -412,10 +483,10 @@ void ExportWG::on_export_btn_clicked()
                 .arg(LOGLEVEL)
                 .arg(QUIET)
                 .arg(getMediaInfoSelectedExportFileds().join(" "))
-                .arg(m_input_fileName)
-                .arg(ui->flat_sep_char_le->text().trimmed())
+                .arg(shellEscape(m_input_fileName))
+                .arg(shellEscape(ui->flat_sep_char_le->text().trimmed()))
                 .arg(ui->flat_hierarchical_cbox->isChecked() ? "1" : "0")
-                .arg(QDir(m_save_dir).filePath(m_save_name + "_flat_"  + ui->flat_suffix_le->text().trimmed()));
+                .arg(shellEscape(QDir(m_save_dir).filePath(m_save_name + "_flat_"  + ui->flat_suffix_le->text().trimmed())));
 
             cmds << flat_Cmd;
         }
@@ -427,12 +498,12 @@ void ExportWG::on_export_btn_clicked()
                 .arg(LOGLEVEL)
                 .arg(QUIET)
                 .arg(getMediaInfoSelectedExportFileds().join(" "))
-                .arg(m_input_fileName)
-                .arg(ui->compact_item_sep_le->text().trimmed())
+                .arg(shellEscape(m_input_fileName))
+                .arg(shellEscape(ui->compact_item_sep_le->text().trimmed()))
                 .arg(ui->compact_nokey_cbox->isChecked() ? "1" : "0")
-                .arg(ui->compact_escape_combox->currentText().trimmed())
+                .arg(shellEscape(ui->compact_escape_combox->currentText().trimmed()))
                 .arg(ui->compact_print_section_cbox->isChecked() ? "1" : "0")
-                .arg(QDir(m_save_dir).filePath(m_save_name + "_csv_"  + ui->compact_suffix_le->text().trimmed()));
+                .arg(shellEscape(QDir(m_save_dir).filePath(m_save_name + "_csv_"  + ui->compact_suffix_le->text().trimmed())));
 
             cmds << compact_Cmd;
         }

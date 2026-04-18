@@ -44,6 +44,7 @@ SOURCES += \
     src/widgets/configurebuildtool.cpp \
     src/widgets/exportwg.cpp \
     src/widgets/fileswg.cpp \
+    src/widgets/formatwg.cpp \
     src/widgets/globalconfingwg.cpp \
     src/widgets/helpquerywg.cpp \
     src/main.cpp \
@@ -53,7 +54,7 @@ SOURCES += \
     src/widgets/progressdlg.cpp \
     src/widgets/searchwg.cpp \
     src/widgets/tabconfigwg.cpp \
-    src/widgets/mediapropswg.cpp \
+    src/widgets/streamswg.cpp \
     src/widgets/tablefmtwg.cpp
 
 HEADERS += \
@@ -81,6 +82,7 @@ HEADERS += \
     src/widgets/configurebuildtool.h \
     src/widgets/exportwg.h \
     src/widgets/fileswg.h \
+    src/widgets/formatwg.h \
     src/widgets/globalconfingwg.h \
     src/widgets/helpquerywg.h \
     src/mainwindow.h \
@@ -89,13 +91,14 @@ HEADERS += \
     src/widgets/progressdlg.h \
     src/widgets/searchwg.h \
     src/widgets/tabconfigwg.h \
-    src/widgets/mediapropswg.h \
+    src/widgets/streamswg.h \
     src/widgets/tablefmtwg.h
 
 FORMS += \
     src/widgets/configurebuildtool.ui \
     src/widgets/exportwg.ui \
     src/widgets/fileswg.ui \
+    src/widgets/formatwg.ui \
     src/widgets/globalconfingwg.ui \
     src/widgets/helpquerywg.ui \
     src/mainwindow.ui \
@@ -103,7 +106,7 @@ FORMS += \
     src/widgets/logwg.ui \
     src/widgets/searchwg.ui \
     src/widgets/tabconfigwg.ui \
-    src/widgets/mediapropswg.ui \
+    src/widgets/streamswg.ui \
     src/widgets/tablefmtwg.ui
 
 TRANSLATIONS += \

@@ -318,12 +318,11 @@ void Common::cleanupDirectory(const QString& dirPath)
 QString Common::getPackageVersion(const QString& packageName)
 {
     QProcess process;
-    QString command = QString("dpkg -s %1 | grep Version | awk '{print $2}'").arg(packageName);
-
-    process.start("bash", QStringList() << "-c" << command);
+    // Use QProcess arguments directly to avoid shell injection via packageName
+    process.start("dpkg", QStringList() << "-s" << packageName);
     process.waitForFinished(3000); // Wait up to 3 seconds
 
-    QString output = process.readAllStandardOutput().trimmed();
+    QString output = process.readAllStandardOutput();
     QString error = process.readAllStandardError().trimmed();
 
     if (!error.isEmpty()) {
@@ -331,7 +330,14 @@ QString Common::getPackageVersion(const QString& packageName)
         return QString();
     }
 
-    return output;
+    // Parse the "Version:" line from dpkg output (replaces grep+awk pipe)
+    for (const QString& line : output.split('\n')) {
+        if (line.startsWith("Version:")) {
+            return line.mid(8).trimmed();
+        }
+    }
+
+    return QString();
 }
 
 QString Common::getCurrentPackageVersion()

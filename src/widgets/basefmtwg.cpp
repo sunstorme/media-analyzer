@@ -91,3 +91,20 @@ void BaseFormatWG::removeContextMenuMenu(QMenu *menu)
         m_contextMenu->removeAction(menu->menuAction());
     }
 }
+
+void BaseFormatWG::copyAllData()
+{
+    QString allData = getAllData();
+    if (!allData.isEmpty()) {
+        QApplication::clipboard()->setText(allData);
+    }
+}
+
+void BaseFormatWG::copyCmd()
+{
+    QString text = m_extraInfo.commandList.join(" ");
+
+    if (!text.isEmpty()) {
+        QApplication::clipboard()->setText(text);
+    }
+}

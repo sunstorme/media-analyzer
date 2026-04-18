@@ -6,6 +6,7 @@
 #include "common/common.h"
 #include <QDesktopServices>
 #include <QFileInfo>
+#include <QMetaObject>
 #include <QTabWidget>
 #include <QTimer>
 
@@ -67,7 +68,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_actionWidgetMap = {
         {ui->actionLog, m_logWGDock},
         {ui->actionFiles, m_filesWGDock},
-        {ui->actionMedia_Properties, m_mediaPropsWGDock}
+        {ui->actionFormat, m_formatWGDock},
+        {ui->actionStreams, m_streamsWGDock}
     };
 }
 
@@ -261,7 +263,7 @@ void MainWindow::popMediaInfoWindow(const QString &title, const QString &info, c
 void MainWindow::popMediaPropsWindow(const QString &filePath)
 {
     // Update content if a valid file is provided
-    if (!filePath.isEmpty() && &m_mediaPropsWidget) {
+    if (!filePath.isEmpty()) {
         loadMediaProperties(filePath);
         
         // Update window title to reflect current file
@@ -271,36 +273,88 @@ void MainWindow::popMediaPropsWindow(const QString &filePath)
 
 void MainWindow::loadMediaProperties(const QString &filePath)
 {
-    if (!filePath.isEmpty() && &m_mediaPropsWidget) {
-        // Check if file exists before processing
-        if (!QFile::exists(filePath)) {
-            qWarning() << "Media file does not exist:" << filePath;
-            return;
-        }
-        
-        // Update dock title
-        m_mediaPropsWGDock->setWindowTitle(tr("Properties: %1").arg(QFileInfo(filePath).fileName()));
-        
-        // Update MediaPropsWidget
-        m_mediaPropsWidget.setMediaFile(filePath);
+    if (filePath.isEmpty()) {
+        return;
     }
+
+    // Check if file exists before processing
+    if (!QFile::exists(filePath)) {
+        qWarning() << "Media file does not exist:" << filePath;
+        return;
+    }
+    
+    m_mediaFile = filePath;
+
+    // Update dock titles
+    QString fileName = QFileInfo(filePath).fileName();
+    m_formatWGDock->setWindowTitle(tr("Format: %1").arg(fileName));
+    m_streamsWGDock->setWindowTitle(tr("Streams: %1").arg(fileName));
+    
+    // Load format info
+    QString formatData = m_probe.getMediaInfoJsonFormat(SHOW_FORMAT, m_mediaFile);
+    m_formatWG.setFormatData(formatData.toUtf8());
+    
+    // Load streams info
+    QString streamsData = m_probe.getMediaInfoJsonFormat(SHOW_STREAMS, m_mediaFile);
+    m_streamsWG.setStreamsData(streamsData.toUtf8());
 }
 
 void MainWindow::loadMediaPropertiesAsync(const QString &filePath)
 {
-    if (!filePath.isEmpty() && &m_mediaPropsWidget) {
-        // Check if file exists before processing
-        if (!QFile::exists(filePath)) {
-            qWarning() << "Media file does not exist:" << filePath;
-            return;
-        }
-        
-        // Update dock title immediately
-        m_mediaPropsWGDock->setWindowTitle(tr("Properties: %1").arg(QFileInfo(filePath).fileName()));
-        
-        // Update MediaPropsWidget (it will handle async loading internally)
-        m_mediaPropsWidget.setMediaFile(filePath);
+    if (filePath.isEmpty()) {
+        return;
     }
+
+    // Skip if already loading the same file (prevents duplicate ProgressDialog
+    // caused by multiple signals firing for a single click, e.g. pressed+clicked)
+    if (m_mediaFile == filePath) {
+        return;
+    }
+
+    // Check if file exists before processing
+    if (!QFile::exists(filePath)) {
+        qWarning() << "Media file does not exist:" << filePath;
+        return;
+    }
+    
+    m_mediaFile = filePath;
+
+    // Update dock titles immediately
+    QString fileName = QFileInfo(filePath).fileName();
+    m_formatWGDock->setWindowTitle(tr("Format: %1").arg(fileName));
+    m_streamsWGDock->setWindowTitle(tr("Streams: %1").arg(fileName));
+    
+    // Create and show progress dialog
+    ProgressDialog *progressDlg = new ProgressDialog(this);
+    progressDlg->setWindowTitle(tr("Loading Media Properties"));
+    progressDlg->setProgressMode(ProgressDialog::Indeterminate);
+    progressDlg->setMessage(tr("Loading media properties..."));
+    progressDlg->setAutoClose(false);
+    progressDlg->setCancelButtonVisible(false);
+    progressDlg->show();
+    
+    // Run the loading operation in a separate thread
+    QtConcurrent::run([=](){
+        // Get format info
+        QString formatInfo = m_probe.getMediaInfoJsonFormat(SHOW_FORMAT, m_mediaFile);
+        
+        // Get streams info
+        QString streamsInfo = m_probe.getMediaInfoJsonFormat(SHOW_STREAMS, m_mediaFile);
+        
+        // Update both widgets in a single main thread invocation
+        QMetaObject::invokeMethod(this, [this, formatInfo, streamsInfo, progressDlg]() {
+            // Update format widget
+            m_formatWG.setFormatData(formatInfo.toUtf8());
+            
+            // Update streams widget
+            m_streamsWG.setStreamsData(streamsInfo.toUtf8());
+            
+            // Finish progress dialog
+            progressDlg->finish();
+            // Clean up progress dialog immediately
+            progressDlg->deleteLater();
+        }, Qt::QueuedConnection);
+    });
 }
 
 void MainWindow::createDockWidgets()
@@ -317,26 +371,25 @@ void MainWindow::createDockWidgets()
     m_logWGDock->setWidget(&m_logWG);
     addDockWidget(Qt::BottomDockWidgetArea, m_logWGDock);
 
-    // Create Media Properties as central widget (center area)
-    m_mediaPropsWidget.setObjectName("MediaPropsWidget");
-    
-    // Create a widget with layout to manage margins
-    QWidget *centralWidget = new QWidget;
-    QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
-    centralLayout->setContentsMargins(9, 9, 9, 9);
-    centralLayout->setSpacing(0);
-    centralLayout->addWidget(&m_mediaPropsWidget);
-    
-    // Create Media Properties DockWidget (for visibility control)
-    m_mediaPropsWGDock = new QDockWidget(tr("Media Properties"), this);
-    m_mediaPropsWGDock->setObjectName("MediaPropsDock");
-    m_mediaPropsWGDock->setWidget(centralWidget);
-    setCentralWidget(m_mediaPropsWGDock);
+    // Create FormatWG DockWidget (center area - central widget)
+    m_formatWG.setObjectName("FormatWidget");
+    m_formatWGDock = new QDockWidget(tr("Format"), this);
+    m_formatWGDock->setObjectName("FormatDock");
+    m_formatWGDock->setWidget(&m_formatWG);
+    setCentralWidget(m_formatWGDock);
+
+    // Create StreamsWG DockWidget (right side)
+    m_streamsWG.setObjectName("StreamsWidget");
+    m_streamsWGDock = new QDockWidget(tr("Streams"), this);
+    m_streamsWGDock->setObjectName("StreamsDock");
+    m_streamsWGDock->setWidget(&m_streamsWG);
+    addDockWidget(Qt::RightDockWidgetArea, m_streamsWGDock);
 
     // Set dock widget sizes
     m_filesWGDock->setMinimumWidth(200);
     m_logWGDock->setMinimumHeight(150);
-    m_mediaPropsWGDock->setMinimumWidth(300);
+    m_formatWGDock->setMinimumWidth(300);
+    m_streamsWGDock->setMinimumWidth(200);
 }
 
 void MainWindow::saveLayoutSettings()
@@ -437,8 +490,8 @@ void MainWindow::slotMenuMedia_InfoTriggered(bool checked)
         return;
     }
 
-    // Handle Media Properties action
-    if (senderAction == ui->actionMedia_Properties) {
+    // Handle Format action
+    if (senderAction == ui->actionFormat) {
         QString fileName = m_filesWG.getCurrentSelectFileName();
         if (!fileName.isEmpty()) {
             // Just make the dock widget visible and update its content

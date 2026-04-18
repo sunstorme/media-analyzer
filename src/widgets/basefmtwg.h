@@ -61,6 +61,10 @@ signals:
 public:
     virtual bool loadJson(const QByteArray &json) = 0;
 
+    // Common copy operations - can be overridden by subclasses
+    virtual void copyAllData();
+    void copyCmd();
+
 protected:
     QMenu *m_contextMenu = nullptr;
 

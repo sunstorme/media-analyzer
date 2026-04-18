@@ -82,8 +82,8 @@ void TableFormatWG::initMenu()
     m_copyMenu = new QMenu(tr("Copy"), this);
     m_copySelectedTextAction = new QAction(tr("Select Text"), this);
     m_copySelectedTextWithHeaderAction = new QAction(tr("Select Text With Header"), this);
-     m_copyMenu->addAction(m_copySelectedTextAction);
-     m_copyMenu->addAction(m_copySelectedTextWithHeaderAction);
+    m_copyMenu->addAction(m_copySelectedTextAction);
+    m_copyMenu->addAction(m_copySelectedTextWithHeaderAction);
     m_copyMenu->addSeparator();
 
     // copy selected rows action
@@ -197,7 +197,7 @@ void TableFormatWG::initConnection()
 
     connect(m_copyAllDataWithHeaderAction, &QAction::triggered, this, &TableFormatWG::copyAllDataWithHeader);
 
-    connect(m_copyCmdAction, &QAction::triggered, this, &TableFormatWG::copyCmd);
+    connect(m_copyCmdAction, &QAction::triggered, this, &BaseFormatWG::copyCmd);
 
     connect(m_previewImageAction, &QAction::triggered, this, &TableFormatWG::previewImage);
 
@@ -205,8 +205,8 @@ void TableFormatWG::initConnection()
 
     connect(this, &TableFormatWG::contextMenuAboutToShow, this, &TableFormatWG::onContextMenuAboutToShow);
 
-    // Connect search related signals
     connect(m_searchWG, &SearchWG::searchReady, this, &TableFormatWG::onSearchReady);
+    
     connect(m_searchWG, &SearchWG::matchControlChanged, this, &TableFormatWG::onSearchReady);
 
     connect(m_searchWG, &SearchWG::searchTextChanged, this, &TableFormatWG::onSearchTextChanged);
@@ -424,225 +424,6 @@ void TableFormatWG::removeSelectedRow()
     m_model->setRow(m_data_tb.count());
 }
 
-void TableFormatWG::formatData(const QString &data, QList<QStringList> &data_tb, QStringList &headers, QString format_key)
-{
-    headers.clear();
-    data_tb.clear();
-
-    QStringList rawStringLines = data.split("\n", QT_SKIP_EMPTY_PARTS);
-
-    if (rawStringLines.size() < 1)
-        return;
-
-    if (rawStringLines.at(0).contains(":"))
-        rawStringLines.removeFirst();
-
-    // -L -sources -sinks
-    if (QStringList{"L", "sources", "sinks"}.contains(format_key, Qt::CaseInsensitive)){
-        headers << tr("Info");
-        for (auto it : rawStringLines) {
-            data_tb << QStringList{it};
-        }
-        return;
-    }
-
-    // -version
-    if (QStringList{"version"}.contains(format_key, Qt::CaseInsensitive)) {
-        headers << tr("Config") << "Value";
-
-        data_tb.append(QStringList{tr("Version"), rawStringLines.at(0)});
-        data_tb.append(QStringList{tr("Build"), rawStringLines.at(1)});
-
-        for (int i = 2; i < rawStringLines.size(); ++i) {
-            QStringList tmp = rawStringLines.at(i).split(" ", QT_SKIP_EMPTY_PARTS);
-            if (tmp.size() > 0 && tmp.at(0).contains("configuration"))
-                tmp.takeFirst();
-
-            QStringList tb_of_line;
-            if (rawStringLines.at(i).contains("=")){
-                for (auto it : tmp) {
-                    QStringList keyParts = it.split("=", QT_SKIP_EMPTY_PARTS);
-                    tb_of_line.clear();
-                    if (keyParts.size() == 2) {
-                        tb_of_line << keyParts[0].replace("--", "").trimmed() << keyParts.at(1).trimmed();
-                    } else {
-                        tb_of_line << "" << keyParts[0].replace("--", "").trimmed();
-                    }
-                    data_tb.append(tb_of_line);
-                }
-            } else {
-                tb_of_line.append(tmp.at(0).trimmed());
-                tmp.removeFirst();
-                tb_of_line.append(tmp.join(" "));
-                data_tb.append(tb_of_line);
-            }
-        }
-        return;
-    }
-
-    // -formats -muxers -demuxers -devices -codecs -decoders -encoders -filters -pix_fmts
-    if (QStringList{"formats", "muxers", "demuxers", "devices", "codecs", "decoders", "filters", "encoders", "pixfmts"}.contains(format_key, Qt::CaseInsensitive)) {
-        QStringList parts;
-        parts << QString("") << QString("");
-        if (format_key.contains("filters")) {
-            for (auto it : rawStringLines) {
-                if (it.contains("=")) {
-                    parts[0].append(it + "\n");
-                } else {
-                    parts[1].append(it + "\n");
-                }
-            }
-        } else {
-            parts = data.split("--", QT_SKIP_EMPTY_PARTS);
-        }
-
-        if (parts.size() >= 2) {
-
-            // header
-            QString head_code = "";
-            auto tmp_headers = parts.at(0).split("\n", QT_SKIP_EMPTY_PARTS);
-            for (auto it : tmp_headers) {
-                if (it.contains(":"))
-                    continue;
-
-                if (it.contains("=")) {
-                    QStringList tmp = it.split("=", QT_SKIP_EMPTY_PARTS);
-                    if (tmp.size() >= 2) {
-                        headers.append("[" +tmp[0].replace(".", "").trimmed() + "]" + tmp.at(1).trimmed());
-                        head_code.append(tmp[0].replace(".", "").trimmed());
-                    }
-                }
-            }
-            headers.append(tr("name"));
-            if (format_key.contains("pixfmts")) {
-                headers.append(tr("NB_COMPONENTS"));
-                headers.append(tr("BITS_PER_PIXEL"));
-            } else if (format_key.contains("filters")){
-                headers.append(tr("direct"));
-            } else {
-                headers.append(tr("detail"));
-            }
-
-            qDebug() << "header size:" << headers.size() << "head_code: " << head_code;
-
-            // content
-            auto tmp_content = parts.at(1).split("\n", QT_SKIP_EMPTY_PARTS);
-            for (auto it : tmp_content) {
-                QStringList tb_of_line;
-
-                QStringList tmp = it.split(" ", QT_SKIP_EMPTY_PARTS);
-                if (tmp.size() < 3){
-                    continue;
-                }
-                for (int ch = 0; ch < head_code.size(); ++ch) {
-                    tb_of_line.append("");
-                }
-                for (auto ch : tmp.at(0).trimmed()) {
-                    int index = head_code.lastIndexOf(ch);
-
-                    if (index >= 0) {
-                        tb_of_line[index] = "√";
-                    }
-                }
-
-                tb_of_line.append(tmp.at(1).trimmed());
-
-                tmp.removeFirst();
-                tmp.removeFirst();
-
-                if (format_key.contains("pixfmts")) {
-                    tb_of_line.append(tmp.at(0).trimmed());
-                    tb_of_line.append(tmp.at(1).trimmed());
-                }else {
-                    tb_of_line.append(tmp.join(" "));
-                }
-
-                data_tb.append(tb_of_line);
-            }
-        }
-
-        return;
-    }
-
-    // -colors -sample_fmts -layouts (inner: videorate, videosize)
-    if (QStringList{"colors", "samplefmts", "layouts", "videorate", "videosize"}.contains(format_key, Qt::CaseInsensitive)) {
-        headers << tr("Name") << "Value";
-
-        for (int i = 1; i < rawStringLines.size(); ++i) {
-            if (rawStringLines.at(i).contains(":", Qt::CaseInsensitive) ||
-                rawStringLines.at(i).contains("DECOMPOSITION", Qt::CaseInsensitive) ||
-                rawStringLines.at(i).contains("DESCRIPTION", Qt::CaseInsensitive)) {
-                continue;
-            }
-            QStringList tmp = rawStringLines.at(i).split(" ", QT_SKIP_EMPTY_PARTS);
-            if (tmp.size() >= 2) {
-                QStringList tb_of_line;
-                tb_of_line << tmp.at(0).trimmed();
-                tmp.removeFirst();
-                tb_of_line.append(tmp.join(" "));
-                data_tb.append(tb_of_line);
-            }
-        }
-
-        return;
-    }
-
-    // -protocols
-    if (QStringList{"protocols"}.contains(format_key, Qt::CaseInsensitive)) {
-        headers << tr("Input") << "Output";
-
-        QStringList input, output;
-        bool startOutput = false;
-        for (int i = 2; i < rawStringLines.size(); i++) {
-            if (rawStringLines.at(i).contains("output", Qt::CaseInsensitive)){
-                startOutput = true;
-                continue;
-            }
-            if (startOutput){
-                output.append(rawStringLines.at(i).trimmed());
-            } else {
-                input.append(rawStringLines.at(i).trimmed());
-            }
-        }
-
-        int maxRow = std::max(input.size(), output.size());
-
-        for (int i = 0; i < maxRow; i++) {
-            QStringList tmpRow;
-            if (input.size() <= i) {
-                tmpRow.append("");
-            } else {
-                tmpRow.append(input.at(i));
-            }
-
-            if (output.size() <= i) {
-                tmpRow.append("");
-            } else {
-                tmpRow.append(output.at(i));
-            }
-
-            data_tb.append(tmpRow);
-        }
-
-        return;
-    }
-
-    // -bsfs -buildconf
-    if (QStringList{"bsfs", "buildconf"}.contains(format_key, Qt::CaseInsensitive)) {
-        headers.append(tr("name"));
-
-        for (int i = 0; i < rawStringLines.size(); i++) {
-            data_tb.append(QStringList{rawStringLines.at(i).trimmed()});
-        }
-
-        return;
-    }
-
-    if (format_key == "") {
-
-    }
-}
-
 QString TableFormatWG::valueToString(const QJsonValue &value)
 {
     if (value.isNull()) return "null";
@@ -733,7 +514,7 @@ void TableFormatWG::updateImageMenuVisibility()
 
     QStringList mediaTypes = getSelectedMediaTypes();
 
-    bool hasVideo = mediaTypes.contains("video") || mediaTypes.isEmpty();
+    bool hasVideo = mediaTypes.contains("video");
 
     if (hasVideo) {
         addContextMenuMenu(m_imageMenu);
@@ -744,7 +525,10 @@ void TableFormatWG::updateImageMenuVisibility()
 
 void TableFormatWG::initDetailTb(const QString &data, const QString& format_key)
 {
-    formatData(data, m_data_tb, m_headers, format_key);
+    ZFfprobe probe;
+    FormattedTableData tableData = probe.formatBasicInfoToTable(data, format_key);
+    m_headers = tableData.headers;
+    m_data_tb = tableData.rows;
 
     initHeaderDetailTb(m_headers);
     updateDataDetailTb(m_data_tb);
@@ -1169,16 +953,6 @@ void TableFormatWG::copyAllData()
 void TableFormatWG::copyAllDataWithHeader()
 {
     copyData(CopyAllDataWithHeader);
-}
-
-void TableFormatWG::copyCmd()
-{
-    QString text = m_extraInfo.commandList.join(" ");
-
-    if (!text.isEmpty()) {
-        // Copy text directly
-        QApplication::clipboard()->setText(text);
-    }
 }
 
 void TableFormatWG::fitTableColumnToContent()

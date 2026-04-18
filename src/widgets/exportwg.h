@@ -81,6 +81,9 @@ private slots:
     void showExportButtonContextMenu(const QPoint &pos);
 
 private:
+    void initFormatOptionControls();
+    void setWidgetsEnabled(const QList<QWidget*> &widgets, bool enabled);
+
     Ui::ExportWG *ui;
 
     ZFlowLayout *m_mediaInfoFloatLayout = nullptr;
