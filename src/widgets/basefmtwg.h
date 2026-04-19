@@ -61,6 +61,11 @@ signals:
 public:
     virtual bool loadJson(const QByteArray &json) = 0;
 
+    /**
+     * @brief Get all data as string (public wrapper for protected getAllData)
+     */
+    QString getData() { return getAllData(); }
+
     // Common copy operations - can be overridden by subclasses
     virtual void copyAllData();
     void copyCmd();

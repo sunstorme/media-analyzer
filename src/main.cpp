@@ -17,6 +17,7 @@
 #include "common/common.h"
 #include "common/zlogger.h"
 #include "common/zffprobe.h"
+#include "common/zjsonconfig.h"
 
 /**
  * @brief logConfig
@@ -219,6 +220,9 @@ int commandConfig(const QApplication& app) {
         printf("\nBasic Info:\n%s", basicinfo.toUtf8().data());
         return 0;
     }
+
+    // Initialize JSON config system (with QSettings migration)
+    ZJsonConfig::instance()->initialize();
 
     logConfig(app);
 

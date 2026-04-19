@@ -492,6 +492,78 @@
         <source>No items found</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Enable Edit</source>
+        <translation>Enable Edit</translation>
+    </message>
+    <message>
+        <source>Disable Edit</source>
+        <translation>Disable Edit</translation>
+    </message>
+    <message>
+        <source>Insert</source>
+        <translation>Insert</translation>
+    </message>
+    <message>
+        <source>Insert Item</source>
+        <translation>Insert Item</translation>
+    </message>
+    <message>
+        <source>Insert Child Item</source>
+        <translation>Insert Child Item</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Delete</translation>
+    </message>
+    <message>
+        <source>new_key</source>
+        <translation>new_key</translation>
+    </message>
+    <message>
+        <source>new_value</source>
+        <translation>new_value</translation>
+    </message>
+    <message>
+        <source>Key:</source>
+        <translation>Key:</translation>
+    </message>
+    <message>
+        <source>Value:</source>
+        <translation>Value:</translation>
+    </message>
+    <message>
+        <source>Please select a parent item first.</source>
+        <translation>Please select a parent item first.</translation>
+    </message>
+    <message>
+        <source>Cannot insert child into a non-object/non-array item.</source>
+        <translation>Cannot insert child into a non-object/non-array item.</translation>
+    </message>
+    <message>
+        <source>Please select an item to delete.</source>
+        <translation>Please select an item to delete.</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete the selected item(s)?</source>
+        <translation>Are you sure you want to delete the selected item(s)?</translation>
+    </message>
+    <message>
+        <source>Unmodified Default Value</source>
+        <translation>Unmodified Default Value</translation>
+    </message>
+    <message>
+        <source>The default key-value pair ("%1": "%2") has not been modified. Do you want to save anyway?</source>
+        <translation>The default key-value pair ("%1": "%2") has not been modified. Do you want to save anyway?</translation>
+    </message>
+    <message>
+        <source>JSON Parse Error</source>
+        <translation>JSON Parse Error</translation>
+    </message>
+    <message>
+        <source>Failed to parse JSON: %1\n\nSwitching to tree view anyway, but text changes will be lost.</source>
+        <translation>Failed to parse JSON: %1\n\nSwitching to tree view anyway, but text changes will be lost.</translation>
+    </message>
 </context>
 <context>
     <name>LogWG</name>
@@ -1700,6 +1772,19 @@ Installation log:</source>
         <location filename="../src/common/ztexteditor.cpp" line="400"/>
         <source>No content to search</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../src/common/common.cpp" line="22"/>
+        <source>Log</source>
+        <translation>Log</translation>
+    </message>
+    <message>
+        <location filename="../src/common/common.cpp" line="24"/>
+        <source>General</source>
+        <translation>General</translation>
     </message>
 </context>
 </TS>

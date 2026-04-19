@@ -8,6 +8,7 @@
 #include <QMutex>
 #include <QSettings>
 #include <QSet>
+#include <QMap>
 #include <QDebug>
 #include <QMimeData>
 #include <QCoreApplication>
@@ -34,6 +35,19 @@ constexpr auto RECENTFILES_SETTINGS_GROUP = "RecentFiles";
 constexpr auto CONFIGURE_BUILDER_SETTINGS_GROUP = "ConfigureBuilder";
 
 extern const QStringList CONFIG_GROUPS;
+
+/**
+ * @brief Get the translated display name for a config group key
+ * @param groupKey The internal group key (e.g. "Log", "General")
+ * @return Translated display name suitable for UI
+ */
+QString translatedConfigGroupName(const QString &groupKey);
+
+/**
+ * @brief Get the list of config groups with translated display names
+ * @return Map of internal key → translated display name
+ */
+QMap<QString, QString> translatedConfigGroups();
 
 constexpr auto CONFIGURE_BUILDER_RECENTFOLDERS_KEY = "RecentFolders";
 

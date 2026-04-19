@@ -4,6 +4,9 @@
 #include "zffplay.h"
 #include <QFileInfo>
 #include <QDebug>
+#include <QProcessEnvironment>
+
+#include "zfftoolconfig.h"
 
 ZFFplay::ZFFplay(QObject *parent)
     : QObject(parent)
@@ -101,7 +104,7 @@ void ZFFplay::stop()
 bool ZFFplay::isAvailable()
 {
     QProcess process;
-    process.start("ffplay", QStringList() << "-version");
+    process.start(ZFFToolConfig::ffplayPath(), QStringList() << "-version");
     if (!process.waitForStarted(3000)) {
         return false;
     }
@@ -165,7 +168,15 @@ bool ZFFplay::executeCommand(const QStringList &arguments)
 {
     qDebug() << "ZFFplay: Starting ffplay with arguments:" << arguments.join(" ");
     
-    m_process->start("ffplay", arguments);
+    {
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        QMap<QString, QString> envVars = ZFFToolConfig::environmentVariables();
+        for (auto it = envVars.constBegin(); it != envVars.constEnd(); ++it) {
+            env.insert(it.key(), it.value());
+        }
+        m_process->setProcessEnvironment(env);
+    }
+    m_process->start(ZFFToolConfig::ffplayPath(), arguments);
     
     if (!m_process->waitForStarted(5000)) {
         qWarning() << "ZFFplay: Failed to start ffplay process";

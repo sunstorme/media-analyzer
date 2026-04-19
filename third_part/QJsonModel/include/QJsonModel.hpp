@@ -53,6 +53,10 @@ public:
   QVariant value() const;
   QJsonValue::Type type() const;
 
+  void insertChild(int row, QJsonTreeItem *item);
+  void removeChild(int row);
+  QJsonTreeItem *takeChild(int row);
+
   static QJsonTreeItem *load(const QJsonValue &value,
                              const QStringList &exceptions = {},
                              QJsonTreeItem *parent = nullptr);
@@ -105,6 +109,15 @@ public:
   //! List of tags to skip during JSON parsing
   void addException(const QStringList &exceptions);
 
+  // Editable control
+  void setEditable(bool editable);
+  bool isEditable() const;
+
+  // Insert/Delete operations
+  bool insertItem(const QModelIndex &parent, const QString &key, const QVariant &value);
+  bool removeItem(const QModelIndex &index);
+  QJsonTreeItem* rootItem() const;
+
 private:
   QJsonValue genJson(QJsonTreeItem *) const;
   QJsonTreeItem *mRootItem = nullptr;
@@ -112,4 +125,5 @@ private:
   //! List of exceptions (e.g. comments). Case insensitive, compairs on
   //! "contains".
   QStringList mExceptions;
+  bool m_editable = false;
 };

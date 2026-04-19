@@ -7,6 +7,9 @@
 #include <QStandardPaths>
 #include <QDebug>
 #include <QCoreApplication>
+#include <QProcessEnvironment>
+
+#include "zfftoolconfig.h"
 
 ZFFmpeg::ZFFmpeg(QObject *parent)
     : QObject(parent)
@@ -77,7 +80,15 @@ QString ZFFmpeg::getVideoInfo(const QString &inputFile)
     arguments << "-i" << inputFile
               << "-hide_banner";
 
-    m_process->start("ffmpeg", arguments);
+    {
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        QMap<QString, QString> envVars = ZFFToolConfig::environmentVariables();
+        for (auto it = envVars.constBegin(); it != envVars.constEnd(); ++it) {
+            env.insert(it.key(), it.value());
+        }
+        m_process->setProcessEnvironment(env);
+    }
+    m_process->start(ZFFToolConfig::ffmpegPath(), arguments);
     
     if (!m_process->waitForStarted(5000)) {
         qWarning() << "ZFFmpeg: Failed to start ffmpeg process";
@@ -100,7 +111,7 @@ QString ZFFmpeg::getVideoInfo(const QString &inputFile)
 bool ZFFmpeg::isAvailable()
 {
     QProcess process;
-    process.start("ffmpeg", QStringList() << "-version");
+    process.start(ZFFToolConfig::ffmpegPath(), QStringList() << "-version");
     if (!process.waitForStarted(3000)) {
         return false;
     }
@@ -122,7 +133,15 @@ bool ZFFmpeg::executeCommand(const QStringList &arguments)
         }
     }
 
-    m_process->start("ffmpeg", arguments);
+    {
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        QMap<QString, QString> envVars = ZFFToolConfig::environmentVariables();
+        for (auto it = envVars.constBegin(); it != envVars.constEnd(); ++it) {
+            env.insert(it.key(), it.value());
+        }
+        m_process->setProcessEnvironment(env);
+    }
+    m_process->start(ZFFToolConfig::ffmpegPath(), arguments);
     
     if (!m_process->waitForStarted(5000)) {
         qWarning() << "ZFFmpeg: Failed to start ffmpeg process";

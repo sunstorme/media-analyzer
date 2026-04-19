@@ -18,10 +18,25 @@ QList<QStringList> Common::logLevels = QList<QStringList>()
 
 const QStringList CONFIG_GROUPS = QStringList()
     << LOG_SETTINGS_GROUP
-    << GENERAL_SETTINGS_GROUP
-    << MAINWINDOW_SETTINGS_GROUP
-    << WINDOWHEAD_SETTINGS_GROUP
-    << RECENTFILES_SETTINGS_GROUP;
+    << GENERAL_SETTINGS_GROUP;
+
+QString translatedConfigGroupName(const QString &groupKey)
+{
+    if (groupKey == LOG_SETTINGS_GROUP)
+        return QObject::tr("Log");
+    if (groupKey == GENERAL_SETTINGS_GROUP)
+        return QObject::tr("General");
+    return groupKey;
+}
+
+QMap<QString, QString> translatedConfigGroups()
+{
+    QMap<QString, QString> result;
+    for (const auto &key : CONFIG_GROUPS) {
+        result.insert(key, translatedConfigGroupName(key));
+    }
+    return result;
+}
 
 QMutex Common::m_mutex;
 Common* Common::m_instance = nullptr;

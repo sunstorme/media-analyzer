@@ -5,13 +5,12 @@
 #define GLOBALCONFINGWG_H
 
 #include <QWidget>
-#include <QSettings>
-#include <QCoreApplication>
-#include <QDebug>
 #include <QButtonGroup>
-#include <QPushButton>
+#include <QRadioButton>
+#include <QLabel>
 
-#include <widgets/tablefmtwg.h>
+#include <widgets/jsonfmtwg.h>
+#include <common/zjsonconfig.h>
 
 #include <common/qtcompat.h>
 
@@ -27,17 +26,25 @@ public:
     explicit GlobalConfingWG(QWidget *parent = nullptr);
     ~GlobalConfingWG();
 
-    void setCurrentConfig(const QString& group);
+    void setCurrentConfig(const QString &group);
 
 private:
     Ui::GlobalConfingWG *ui;
 
-    TableFormatWG *generalCfgWg = nullptr;
+    JsonFormatWG *m_jsonView = nullptr;
     QButtonGroup *configButtonGroup = nullptr;
+    QLabel *m_statusLabel = nullptr;
+    QString m_currentGroup;
 
 private:
-    void loadConfigData(const QString& group, const QStringList& keys = QStringList());
     void setupButtonGroup();
+    void setupJsonView();
+    void setupStatusBar();
+    void loadConfigGroup(const QString &group);
+    void saveCurrentGroup();
+    void onConfigChanged(const QString &path);
+    void onExternalConfigChanged();
+    void showStatusMessage(const QString &message, int timeout = 3000);
 };
 
 #endif // GLOBALCONFINGWG_H

@@ -9,6 +9,24 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QProcessEnvironment>
+
+#include "zfftoolconfig.h"
+
+/**
+ * @brief Set up process environment with configured FFmpeg tool environment variables
+ */
+static void setupProcessEnvironment(QProcess &process)
+{
+    QMap<QString, QString> envVars = ZFFToolConfig::environmentVariables();
+    if (!envVars.isEmpty()) {
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        for (auto it = envVars.constBegin(); it != envVars.constEnd(); ++it) {
+            env.insert(it.key(), it.value());
+        }
+        process.setProcessEnvironment(env);
+    }
+}
 
 ZFfprobe::ZFfprobe(QObject *parent)
     : QObject{parent}
@@ -172,13 +190,15 @@ QString ZFfprobe::getBasicInfo(const QString &function, bool *sucess)
 QString ZFfprobe::getMediaInfoJsonFormat(const QString& command, const QString& fileName)
 {
     QProcess process;
-    process.start(FFPROBE, QStringList() << HIDEBANNER <<
+    setupProcessEnvironment(process);
+    QString ffprobeCmd = ZFFToolConfig::ffprobePath();
+    process.start(ffprobeCmd, QStringList() << HIDEBANNER <<
                                LOGLEVEL << QUIET <<
                                OF << JSON <<
                                command.split(" ", QT_SKIP_EMPTY_PARTS) <<
                                FI  << fileName);
 
-    qDebug() << process.arguments().join(" ").prepend(" ").prepend(FFPROBE);
+    qDebug() << process.arguments().join(" ").prepend(" ").prepend(ffprobeCmd);
     process.waitForFinished(-1);
     return process.readAll();
 }
@@ -192,14 +212,16 @@ int ZFfprobe::getPacketCount(const QString& fileName, int streamIndex)
     // Fast approach: read nb_frames from stream metadata (no decoding needed).
     // For packets, nb_frames is a reasonable approximation and returns instantly.
     QProcess process;
-    process.start(FFPROBE, QStringList()
+    setupProcessEnvironment(process);
+    QString ffprobeCmd = ZFFToolConfig::ffprobePath();
+    process.start(ffprobeCmd, QStringList()
                   << HIDEBANNER << LOGLEVEL << QUIET
                   << SELECT_STREAMS << QString::number(streamIndex)
                   << SHOW_ENTRIES << "stream=nb_frames"
                   << OF << JSON
                   << FI << fileName);
 
-    qDebug() << process.arguments().join(" ").prepend(" ").prepend(FFPROBE);
+    qDebug() << process.arguments().join(" ").prepend(" ").prepend(ffprobeCmd);
     process.waitForFinished(-1);
     QByteArray output = process.readAll();
 
@@ -238,14 +260,16 @@ int ZFfprobe::getFrameCount(const QString& fileName, int streamIndex)
     // This reads the container header directly and returns instantly, unlike
     // the old -count_frames approach which required decoding the entire file.
     QProcess process;
-    process.start(FFPROBE, QStringList()
+    setupProcessEnvironment(process);
+    QString ffprobeCmd = ZFFToolConfig::ffprobePath();
+    process.start(ffprobeCmd, QStringList()
                   << HIDEBANNER << LOGLEVEL << QUIET
                   << SELECT_STREAMS << QString::number(streamIndex)
                   << SHOW_ENTRIES << "stream=nb_frames"
                   << OF << JSON
                   << FI << fileName);
 
-    qDebug() << process.arguments().join(" ").prepend(" ").prepend(FFPROBE);
+    qDebug() << process.arguments().join(" ").prepend(" ").prepend(ffprobeCmd);
     process.waitForFinished(-1);
     QByteArray output = process.readAll();
 
@@ -898,10 +922,12 @@ FormattedTableData ZFfprobe::formatBasicInfoToTable(const QString &data, const Q
 QString ZFfprobe::getFFprobeCommandOutput(const QString &command, const QStringList &otherParms)
 {
     QProcess process;
-    process.start(FFPROBE, QStringList() << ffmpegCommandList <<
+    setupProcessEnvironment(process);
+    QString ffprobeCmd = ZFFToolConfig::ffprobePath();
+    process.start(ffprobeCmd, QStringList() << ffmpegCommandList <<
                                command << otherParms);
 
-    qDebug() << "cmd: " << process.arguments().join(" ").prepend(" ").prepend(FFPROBE);
+    qDebug() << "cmd: " << process.arguments().join(" ").prepend(" ").prepend(ffprobeCmd);
     process.waitForFinished(-1);
     return process.readAll();
 }

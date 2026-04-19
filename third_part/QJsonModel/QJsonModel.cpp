@@ -69,6 +69,22 @@ QVariant QJsonTreeItem::value() const { return mValue; }
 
 QJsonValue::Type QJsonTreeItem::type() const { return mType; }
 
+void QJsonTreeItem::insertChild(int row, QJsonTreeItem *item) {
+  item->mParent = this;
+  mChilds.insert(row, item);
+}
+
+void QJsonTreeItem::removeChild(int row) {
+  QJsonTreeItem *child = mChilds.takeAt(row);
+  delete child;
+}
+
+QJsonTreeItem *QJsonTreeItem::takeChild(int row) {
+  QJsonTreeItem *child = mChilds.takeAt(row);
+  child->mParent = nullptr;
+  return child;
+}
+
 QJsonTreeItem *QJsonTreeItem::load(const QJsonValue &value,
                                    const QStringList &exceptions,
                                    QJsonTreeItem *parent) {
@@ -256,6 +272,8 @@ QVariant QJsonModel::data(const QModelIndex &index, int role) const {
     if (index.column() == 1)
       return item->value();
   } else if (Qt::EditRole == role) {
+    if (index.column() == 0)
+      return item->key();
     if (index.column() == 1)
       return item->value();
   }
@@ -267,9 +285,13 @@ bool QJsonModel::setData(const QModelIndex &index, const QVariant &value,
                          int role) {
   int col = index.column();
   if (Qt::EditRole == role) {
-    if (col == 1) {
-      QJsonTreeItem *item =
-          static_cast<QJsonTreeItem *>(index.internalPointer());
+    QJsonTreeItem *item =
+        static_cast<QJsonTreeItem *>(index.internalPointer());
+    if (col == 0) {
+      item->setKey(value.toString());
+      emit dataChanged(index, index, {Qt::EditRole});
+      return true;
+    } else if (col == 1) {
       item->setValue(value);
       emit dataChanged(index, index, {Qt::EditRole});
       return true;
@@ -345,13 +367,87 @@ Qt::ItemFlags QJsonModel::flags(const QModelIndex &index) const {
   int col = index.column();
   auto item = static_cast<QJsonTreeItem *>(index.internalPointer());
 
+  if (!item) return QAbstractItemModel::flags(index);
+
   auto isArray = QJsonValue::Array == item->type();
   auto isObject = QJsonValue::Object == item->type();
 
-  if ((col == 1) && !(isArray || isObject))
-    return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+  if (m_editable) {
+    if (col == 0) {
+      // Allow editing key column
+      return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+    } else if (col == 1 && !(isArray || isObject)) {
+      // Allow editing value column for non-container types
+      return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+    }
+  }
+
+  return QAbstractItemModel::flags(index);
+}
+
+void QJsonModel::setEditable(bool editable) {
+  m_editable = editable;
+}
+
+bool QJsonModel::isEditable() const {
+  return m_editable;
+}
+
+bool QJsonModel::insertItem(const QModelIndex &parent, const QString &key, const QVariant &value) {
+  QJsonTreeItem *parentItem = nullptr;
+  if (!parent.isValid())
+    parentItem = mRootItem;
   else
-    return QAbstractItemModel::flags(index);
+    parentItem = static_cast<QJsonTreeItem *>(parent.internalPointer());
+
+  if (!parentItem)
+    return false;
+
+  // Only allow inserting into Object or Array types (or root)
+  if (parentItem != mRootItem) {
+    auto parentType = parentItem->type();
+    if (parentType != QJsonValue::Object && parentType != QJsonValue::Array) {
+      return false;
+    }
+  }
+
+  int row = parentItem->childCount();
+
+  beginInsertRows(parent, row, row);
+
+  QJsonTreeItem *newItem = new QJsonTreeItem(parentItem);
+  newItem->setKey(key);
+  newItem->setValue(value);
+  newItem->setType(QJsonValue::String);
+  parentItem->appendChild(newItem);
+
+  endInsertRows();
+  return true;
+}
+
+bool QJsonModel::removeItem(const QModelIndex &index) {
+  if (!index.isValid())
+    return false;
+
+  QJsonTreeItem *item = static_cast<QJsonTreeItem *>(index.internalPointer());
+  if (!item || item == mRootItem)
+    return false;
+
+  QJsonTreeItem *parentItem = item->parent();
+  if (!parentItem)
+    return false;
+
+  int row = item->row();
+
+  beginRemoveRows(parent(index), row, row);
+  parentItem->removeChild(row);
+  endRemoveRows();
+
+  return true;
+}
+
+QJsonTreeItem* QJsonModel::rootItem() const {
+  return mRootItem;
 }
 
 QByteArray QJsonModel::json(bool compact) {

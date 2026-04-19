@@ -491,6 +491,78 @@
         <source>No items found</source>
         <translation>未找到项目</translation>
     </message>
+    <message>
+        <source>Enable Edit</source>
+        <translation>启用编辑</translation>
+    </message>
+    <message>
+        <source>Disable Edit</source>
+        <translation>停用编辑</translation>
+    </message>
+    <message>
+        <source>Insert</source>
+        <translation>插入</translation>
+    </message>
+    <message>
+        <source>Insert Item</source>
+        <translation>插入项</translation>
+    </message>
+    <message>
+        <source>Insert Child Item</source>
+        <translation>插入子项</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <source>new_key</source>
+        <translation>新键</translation>
+    </message>
+    <message>
+        <source>new_value</source>
+        <translation>新值</translation>
+    </message>
+    <message>
+        <source>Key:</source>
+        <translation>键：</translation>
+    </message>
+    <message>
+        <source>Value:</source>
+        <translation>值：</translation>
+    </message>
+    <message>
+        <source>Please select a parent item first.</source>
+        <translation>请先选择一个父项。</translation>
+    </message>
+    <message>
+        <source>Cannot insert child into a non-object/non-array item.</source>
+        <translation>无法向非对象/非数组项插入子项。</translation>
+    </message>
+    <message>
+        <source>Please select an item to delete.</source>
+        <translation>请选择要删除的项目。</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete the selected item(s)?</source>
+        <translation>确定要删除选中的项目吗？</translation>
+    </message>
+    <message>
+        <source>Unmodified Default Value</source>
+        <translation>未修改的默认值</translation>
+    </message>
+    <message>
+        <source>The default key-value pair ("%1": "%2") has not been modified. Do you want to save anyway?</source>
+        <translation>默认键值对（"%1": "%2"）尚未修改。是否仍然保存？</translation>
+    </message>
+    <message>
+        <source>JSON Parse Error</source>
+        <translation>JSON 解析错误</translation>
+    </message>
+    <message>
+        <source>Failed to parse JSON: %1\n\nSwitching to tree view anyway, but text changes will be lost.</source>
+        <translation>JSON 解析失败：%1\n\n仍然切换到树视图，但文本修改将丢失。</translation>
+    </message>
 </context>
 <context>
     <name>LogWG</name>
@@ -1764,6 +1836,19 @@ Installation log:</source>
         <location filename="../src/common/ztexteditor.cpp" line="400"/>
         <source>No content to search</source>
         <translation>没有内容可搜索</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../src/common/common.cpp" line="22"/>
+        <source>Log</source>
+        <translation>日志</translation>
+    </message>
+    <message>
+        <location filename="../src/common/common.cpp" line="24"/>
+        <source>General</source>
+        <translation>通用</translation>
     </message>
 </context>
 </TS>

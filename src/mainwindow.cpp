@@ -4,6 +4,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "common/common.h"
+#include "common/zjsonconfig.h"
 #include <QDesktopServices>
 #include <QFileInfo>
 #include <QMetaObject>
@@ -25,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_QuitOnClose, true);
 
     for (auto it : CONFIG_GROUPS) {
-        auto action = new QAction(it, ui->menuSetting);
+        auto action = new QAction(translatedConfigGroupName(it), ui->menuSetting);
         action->setObjectName(it);
         ui->menuSetting->addAction(action);
     }
@@ -647,34 +648,39 @@ void MainWindow::slotMenuHelpTriggered(QAction *action)
     }
 
     if (ui->actionSetting_Dir == action) {
-        QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
-        // Set encoding to UTF-8 to support Chinese paths (Qt5 only)
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        settings.setIniCodec("UTF-8");
-#endif
-        QString fileName = settings.fileName();
-
-        QFileInfo fileInfo(fileName);
-        if (fileInfo.exists()) {
-            QDesktopServices::openUrl(QUrl::fromLocalFile(fileInfo.absolutePath()));
+        // Prefer JSON config directory
+        QString jsonConfigPath = ZJsonConfig::instance()->configFilePath();
+        QFileInfo jsonFileInfo(jsonConfigPath);
+        if (jsonFileInfo.exists()) {
+            QDesktopServices::openUrl(QUrl::fromLocalFile(jsonFileInfo.absolutePath()));
         } else {
-            qWarning() << "Setting dir not exists!";
+            // Fallback to QSettings path
+            QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
+            QFileInfo fileInfo(settings.fileName());
+            if (fileInfo.exists()) {
+                QDesktopServices::openUrl(QUrl::fromLocalFile(fileInfo.absolutePath()));
+            } else {
+                qWarning() << "Setting dir not exists!";
+            }
         }
     }
 
     if (ui->actionSetting_File == action) {
-        QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
-        // Set encoding to UTF-8 to support Chinese paths (Qt5 only)
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        settings.setIniCodec("UTF-8");
-#endif
-        QString fileName = settings.fileName();
-
-        QFile file(fileName);
-        if (file.exists()) {
-            QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
+        // Prefer JSON config file
+        QString jsonConfigPath = ZJsonConfig::instance()->configFilePath();
+        QFile jsonFile(jsonConfigPath);
+        if (jsonFile.exists()) {
+            QDesktopServices::openUrl(QUrl::fromLocalFile(jsonConfigPath));
         } else {
-            qWarning() << "Setting File not exists!";
+            // Fallback to QSettings file
+            QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
+            QString fileName = settings.fileName();
+            QFile file(fileName);
+            if (file.exists()) {
+                QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
+            } else {
+                qWarning() << "Setting File not exists!";
+            }
         }
     }
 

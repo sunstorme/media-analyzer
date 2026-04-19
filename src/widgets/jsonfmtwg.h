@@ -31,6 +31,23 @@ public:
     ~JsonFormatWG();
 
     void setControlMargin(const int &top, const int &bottom, const int &left, const int &right);
+
+    // Edit mode control
+    void setEditMode(bool enabled);
+    bool isEditMode() const;
+
+    // Config save path for edit mode
+    void setConfigSavePath(const QString &group);
+    QString configSavePath() const;
+
+signals:
+    void dataChanged();
+    void editModeChanged(bool enabled);
+
+protected:
+    // Override close event to check for unsaved default values
+    void closeEvent(QCloseEvent *event) override;
+
 private:
     Ui::JsonFormatWG *ui;
 
@@ -73,6 +90,13 @@ private slots:
     void toggleSearch();
     void toggleSwitchView();
 
+    // Edit mode slots
+    void toggleEditMode();
+    void insertItem();
+    void insertChildItem();
+    void deleteItem();
+    void onModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
+
 private:
     QMenu *m_copyMenu = nullptr;
     QMenu *m_expandMenu = nullptr;
@@ -81,6 +105,23 @@ private:
     QAction *m_searchAction = nullptr;
     QAction *m_switchViewAction = nullptr;
     QShortcut *m_searchShortcut = nullptr;
+
+    // Edit mode actions and menus
+    QAction *m_editModeAction = nullptr;
+    QAction *m_insertAction = nullptr;
+    QAction *m_insertChildAction = nullptr;
+    QAction *m_deleteAction = nullptr;
+    QMenu *m_insertMenu = nullptr;
+
+    // Edit mode state
+    bool m_editMode = false;
+    QString m_configSavePath;
+    QString m_defaultInsertKey;
+    QString m_defaultInsertValue;
+
+    void updateEditModeUI();
+    void saveConfig();
+    bool checkDefaultValues();
 
 private:
     void countVisibleAndTotalItems(QAbstractItemModel *model, const QModelIndex &parent, int &visibleCount, int &totalCount);
