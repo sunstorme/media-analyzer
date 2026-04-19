@@ -3,6 +3,7 @@
 
 #include "ztexteditor.h"
 #include "common.h"
+#include "zhighlightconfig.h"
 #include "ztexthighlighter.h"
 #include "widgets/searchwg.h"
 #include <QPainter>
@@ -16,14 +17,6 @@
 #include <QHBoxLayout>
 #include <QPalette>
 #include <QColor>
-
-// GitHub-style color definitions
-const QColor LINE_NUMBER_BG = QColor(247, 247, 247);       // Line number area background
-const QColor LINE_NUMBER_TEXT = QColor(153, 153, 153);      // Line number text color
-const QColor CURRENT_LINE_BG = QColor(247, 247, 247);       // Current line background
-const QColor CURRENT_LINE_NUMBER = QColor(55, 118, 171);    // Current line number color
-const QColor EDITOR_BG = QColor(255, 255, 255);             // Editor background
-const int LINE_NUMBER_RIGHT_MARGIN = 8;                     // Line number right margin
 
 ZTextEditor::ZTextEditor(QWidget *parent)
     : QPlainTextEdit(parent)
@@ -50,6 +43,9 @@ ZTextEditor::ZTextEditor(QWidget *parent)
     
     // Setup search functionality (disabled by default)
     setupSearch();
+    
+    // Setup syntax highlighting
+    setupSyntaxHighlighter();
 }
 
 int ZTextEditor::lineNumberAreaWidth()
@@ -61,7 +57,7 @@ int ZTextEditor::lineNumberAreaWidth()
         digits++;
     }
     // Add right margin when calculating width
-    return 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits + LINE_NUMBER_RIGHT_MARGIN;
+    return 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits + ZHighlightConfig::Editor::lineNumberRightMargin();
 }
 
 void ZTextEditor::updateLineNumberAreaWidth()
@@ -100,7 +96,7 @@ void ZTextEditor::highlightCurrentLine()
     if (!isReadOnly()) {
         QTextEdit::ExtraSelection selection;
         // Current line background color (GitHub light gray)
-        selection.format.setBackground(CURRENT_LINE_BG);
+        selection.format.setBackground(ZHighlightConfig::Editor::currentLineBackground());
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
@@ -113,7 +109,7 @@ void ZTextEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(m_lineNumberArea);
     // Line number area background color (GitHub-style light gray)
-    painter.fillRect(event->rect(), LINE_NUMBER_BG);
+    painter.fillRect(event->rect(), ZHighlightConfig::Editor::lineNumberBackground());
 
     // Use the same font as the editor for line numbers to ensure height matching
     painter.setFont(font());
@@ -133,14 +129,14 @@ void ZTextEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
             QString number = QString::number(blockNumber + 1);
             // Highlight current line number (GitHub blue)
             if (blockNumber == currentLine) {
-                painter.setPen(CURRENT_LINE_NUMBER);
+                painter.setPen(ZHighlightConfig::Editor::currentLineNumber());
                 painter.setFont(QFont(font().family(), font().pointSize(), QFont::Medium));
             } else {
-                painter.setPen(LINE_NUMBER_TEXT);
+                painter.setPen(ZHighlightConfig::Editor::lineNumberText());
                 painter.setFont(font());
             }
             // Draw line numbers, accounting for right margin
-            painter.drawText(0, top, m_lineNumberArea->width() - LINE_NUMBER_RIGHT_MARGIN,
+            painter.drawText(0, top, m_lineNumberArea->width() - ZHighlightConfig::Editor::lineNumberRightMargin(),
                              blockHeight, Qt::AlignRight | Qt::AlignTop, number);
         }
 
@@ -440,4 +436,29 @@ void ZTextEditor::onCurrentHighlightChanged(int index)
 void ZTextEditor::onSearchTextNotFound(const QString &searchText)
 {
     m_searchWG->setSearchStatus(QString("Text '%1' not found").arg(searchText));
+}
+
+// ─── Syntax Highlighting ────────────────────────────────────────────────────
+
+void ZTextEditor::setupSyntaxHighlighter()
+{
+    m_syntaxHighlighter = new ZSyntaxHighlighter(document());
+    m_syntaxHighlighter->setBaseFont(font());
+}
+
+void ZTextEditor::setSyntaxMode(ZHighlightMode mode)
+{
+    if (m_syntaxHighlighter) {
+        m_syntaxHighlighter->setMode(mode);
+    }
+}
+
+ZHighlightMode ZTextEditor::syntaxMode() const
+{
+    return m_syntaxHighlighter ? m_syntaxHighlighter->mode() : ZHighlightMode::PlainText;
+}
+
+ZSyntaxHighlighter *ZTextEditor::syntaxHighlighter() const
+{
+    return m_syntaxHighlighter;
 }

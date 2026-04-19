@@ -3,6 +3,7 @@
 
 #include "logwg.h"
 #include "ui_logwg.h"
+#include "common/zsyntaxhighlighter.h"
 #include <QMenu>
 #include <QShortcut>
 #include <model/logmodel.h>
@@ -14,6 +15,9 @@ LogWG::LogWG(QWidget *parent)
 {
     ui->setupUi(this);
     ui->stackedWidget->setCurrentWidget(ui->log_text_wg);
+    
+    // Enable log level syntax highlighting
+    ui->log_ple->setSyntaxMode(ZHighlightMode::Log);
     
     // Setup log table view
     ui->log_tbv->setModel(m_logModel);

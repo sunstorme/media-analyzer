@@ -4,6 +4,7 @@
 #include "tablefmtwg.h"
 #include "common/zffmpeg.h"
 #include "common/zffplay.h"
+#include "common/zsyntaxhighlighter.h"
 #include "qdebug.h"
 #include "ui_tablefmtwg.h"
 #include <QtGlobal>
@@ -25,6 +26,9 @@ void TableFormatWG::initUI()
 {
     // Setup UI
     ui->setupUi(this);
+
+    // Enable table data syntax highlighting for the detail raw view
+    ui->detail_raw_pte->setSyntaxMode(ZHighlightMode::Table);
 
     // Hide streaming progress widget by default - it should only be visible during streaming
     ui->streamingProgressWidget->setVisible(false);

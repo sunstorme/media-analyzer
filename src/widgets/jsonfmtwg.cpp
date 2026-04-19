@@ -4,6 +4,7 @@
 #include "jsonfmtwg.h"
 #include "common/common.h"
 #include "common/zjsonconfig.h"
+#include "common/zsyntaxhighlighter.h"
 #include "ui_jsonfmtwg.h"
 
 #include <QMessageBox>
@@ -49,6 +50,9 @@ void JsonFormatWG::initUI()
 
     // Set text view to read-only by default (enabled in edit mode)
     ui->textView->setReadOnly(true);
+
+    // Enable JSON syntax highlighting for the text view
+    ui->textView->setSyntaxMode(ZHighlightMode::Json);
 
     // Default insert key-value
     m_defaultInsertKey = tr("new_key");

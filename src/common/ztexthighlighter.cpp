@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "ztexthighlighter.h"
+#include "zhighlightconfig.h"
 #include <QDebug>
 
 ZTextHighlighter::ZTextHighlighter(QPlainTextEdit *parent)
@@ -12,9 +13,8 @@ ZTextHighlighter::ZTextHighlighter(QPlainTextEdit *parent)
     , m_useRegex(false)
     , m_currentIndex(-1)
 {
-    // Set default highlight format
-    m_highlightFormat.setBackground(QColor(255, 255, 100)); // Light yellow background
-    m_highlightFormat.setForeground(Qt::black);            // Black text
+    // Set default highlight format from centralized config
+    m_highlightFormat = ZHighlightConfig::searchHighlightFormat();
 }
 
 ZTextHighlighter::~ZTextHighlighter()

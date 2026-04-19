@@ -11,6 +11,8 @@
 #include <QContextMenuEvent>
 #include <QShortcut>
 
+#include "zsyntaxhighlighter.h"
+
 class ZLineNumberArea;
 class ZTextHighlighter;
 class SearchWG;
@@ -35,6 +37,11 @@ public:
     bool isSearchEnabled() const;
     SearchWG *searchWidget() const;
     ZTextHighlighter *highlighter() const;
+
+    // Syntax highlighting
+    void setSyntaxMode(ZHighlightMode mode);
+    ZHighlightMode syntaxMode() const;
+    ZSyntaxHighlighter *syntaxHighlighter() const;
 
 private slots:
     void updateLineNumberAreaWidth();
@@ -80,9 +87,13 @@ private:
     QShortcut *m_searchShortcut = nullptr;
     bool m_searchEnabled = true;
     
+    // Syntax highlighting
+    ZSyntaxHighlighter *m_syntaxHighlighter = nullptr;
+    
     void setupContextMenu();
     void updateContextMenuActions();
     void setupSearch();
+    void setupSyntaxHighlighter();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
