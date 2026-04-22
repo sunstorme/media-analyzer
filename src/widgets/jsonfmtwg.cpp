@@ -5,10 +5,12 @@
 #include "common/common.h"
 #include "common/zjsonconfig.h"
 #include "common/zsyntaxhighlighter.h"
+#include "insertnodedialog.h"
 #include "ui_jsonfmtwg.h"
 
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QDebug>
 
 JsonFormatWG::JsonFormatWG(QWidget *parent)
     : BaseFormatWG(parent)
@@ -399,41 +401,74 @@ void JsonFormatWG::insertItem()
     if (!m_editMode) return;
 
     // Get the current selection to determine parent
+    // Always use column 0 for parent determination — rowCount() returns 0 for column > 0
     QModelIndex currentIndex = ui->treeView->currentIndex();
-    QModelIndex sourceIndex = m_proxyModel->mapToSource(currentIndex);
+    QModelIndex currentCol0 = currentIndex.sibling(currentIndex.row(), 0);
+    QModelIndex sourceIndex = m_proxyModel->mapToSource(currentCol0);
 
     // Determine parent: if the selected item is an object/array, insert as child;
     // otherwise insert as sibling
-    QModelIndex parentIndex;
-    QJsonTreeItem *item = getItemForIndex(currentIndex);
+    QModelIndex parentSourceIndex;
+    QJsonTreeItem *item = getItemForIndex(currentCol0);
 
     if (item && (item->type() == QJsonValue::Object || item->type() == QJsonValue::Array)) {
-        parentIndex = sourceIndex;
+        parentSourceIndex = sourceIndex;
     } else if (sourceIndex.isValid()) {
-        parentIndex = sourceIndex.parent();
+        parentSourceIndex = sourceIndex.parent();
     }
 
-    // Directly insert with default values, user can edit in-place in the tree
-    if (m_model->insertItem(parentIndex, m_defaultInsertKey, m_defaultInsertValue)) {
+    // Determine parent type for dialog configuration
+    QJsonTreeItem *parentItem = nullptr;
+    if (!parentSourceIndex.isValid())
+        parentItem = m_model->rootItem();
+    else
+        parentItem = static_cast<QJsonTreeItem*>(parentSourceIndex.internalPointer());
+
+    bool parentIsArray = parentItem && parentItem->type() == QJsonValue::Array;
+
+    // Show insert dialog
+    InsertNodeDialog dialog(this);
+    dialog.setParentIsArray(parentIsArray);
+
+    if (parentIsArray) {
+        // Auto-generate key for array items
+        int index = parentItem ? parentItem->childCount() : 0;
+        dialog.setKey(QString::number(index));
+    }
+
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    QString key = dialog.getKey();
+    QVariant value = dialog.getValue();
+    QJsonValue::Type type = dialog.getSelectedType();
+
+    // Remember child count before insertion
+    int childCountBefore = parentItem ? parentItem->childCount() : m_model->rootItem()->childCount();
+
+    if (m_model->insertItem(parentSourceIndex, key, value, type)) {
+        // Verify the child was actually added
+        int childCountAfter = parentItem ? parentItem->childCount() : m_model->rootItem()->childCount();
+        if (childCountAfter <= childCountBefore) {
+            qDebug() << "InsertItem: child count did not increase. Before:" << childCountBefore << "After:" << childCountAfter;
+            return;
+        }
+
+        // Clear any active filter to ensure new item is visible
+        m_proxyModel->setFilterFixedString("");
+
         ui->treeView->expandAll();
 
         // Find the newly inserted item and start editing it
-        QJsonTreeItem *parentItem = nullptr;
-        if (!parentIndex.isValid())
-            parentItem = m_model->rootItem();
-        else
-            parentItem = static_cast<QJsonTreeItem*>(parentIndex.internalPointer());
-
-        if (parentItem) {
-            int newRow = parentItem->childCount() - 1;
-            QModelIndex newSourceIndex = m_model->index(newRow, 0, parentIndex);
-            QModelIndex newProxyIndex = m_proxyModel->mapFromSource(newSourceIndex);
-            if (newProxyIndex.isValid()) {
-                ui->treeView->setCurrentIndex(newProxyIndex);
-                ui->treeView->edit(newProxyIndex);
-            }
+        int newRow = childCountAfter - 1;
+        QModelIndex newSourceIndex = m_model->index(newRow, 0, parentSourceIndex);
+        QModelIndex newProxyIndex = m_proxyModel->mapFromSource(newSourceIndex);
+        if (newProxyIndex.isValid()) {
+            ui->treeView->setCurrentIndex(newProxyIndex);
+            ui->treeView->scrollTo(newProxyIndex);
+            ui->treeView->edit(newProxyIndex);
         }
 
+        updateTextViewFromModel();
         saveConfig();
         emit dataChanged();
     }
@@ -443,36 +478,66 @@ void JsonFormatWG::insertChildItem()
 {
     if (!m_editMode) return;
 
+    // Always use column 0 for parent determination — rowCount() returns 0 for column > 0
     QModelIndex currentIndex = ui->treeView->currentIndex();
-    if (!currentIndex.isValid()) {
+    QModelIndex currentCol0 = currentIndex.sibling(currentIndex.row(), 0);
+    if (!currentCol0.isValid()) {
         QMessageBox::warning(this, tr("Insert Child Item"), tr("Please select a parent item first."));
         return;
     }
 
-    QModelIndex sourceIndex = m_proxyModel->mapToSource(currentIndex);
-    QJsonTreeItem *item = getItemForIndex(currentIndex);
+    QModelIndex sourceIndex = m_proxyModel->mapToSource(currentCol0);
+    QJsonTreeItem *item = getItemForIndex(currentCol0);
 
     if (!item || (item->type() != QJsonValue::Object && item->type() != QJsonValue::Array)) {
         QMessageBox::warning(this, tr("Insert Child Item"), tr("Cannot insert child into a non-object/non-array item."));
         return;
     }
 
-    // Directly insert with default values, user can edit in-place in the tree
-    if (m_model->insertItem(sourceIndex, m_defaultInsertKey, m_defaultInsertValue)) {
+    bool parentIsArray = item->type() == QJsonValue::Array;
+
+    // Show insert dialog
+    InsertNodeDialog dialog(this);
+    dialog.setParentIsArray(parentIsArray);
+
+    if (parentIsArray) {
+        int index = item->childCount();
+        dialog.setKey(QString::number(index));
+    }
+
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    QString key = dialog.getKey();
+    QVariant value = dialog.getValue();
+    QJsonValue::Type type = dialog.getSelectedType();
+
+    // Remember child count before insertion
+    int childCountBefore = item->childCount();
+
+    if (m_model->insertItem(sourceIndex, key, value, type)) {
+        // Verify the child was actually added
+        int childCountAfter = item->childCount();
+        if (childCountAfter <= childCountBefore) {
+            qDebug() << "InsertChildItem: child count did not increase. Before:" << childCountBefore << "After:" << childCountAfter;
+            return;
+        }
+
+        // Clear any active filter to ensure new item is visible
+        m_proxyModel->setFilterFixedString("");
+
         ui->treeView->expandAll();
 
         // Find the newly inserted item and start editing it
-        QJsonTreeItem *parentItem = static_cast<QJsonTreeItem*>(sourceIndex.internalPointer());
-        if (parentItem) {
-            int newRow = parentItem->childCount() - 1;
-            QModelIndex newSourceIndex = m_model->index(newRow, 0, sourceIndex);
-            QModelIndex newProxyIndex = m_proxyModel->mapFromSource(newSourceIndex);
-            if (newProxyIndex.isValid()) {
-                ui->treeView->setCurrentIndex(newProxyIndex);
-                ui->treeView->edit(newProxyIndex);
-            }
+        int newRow = childCountAfter - 1;
+        QModelIndex newSourceIndex = m_model->index(newRow, 0, sourceIndex);
+        QModelIndex newProxyIndex = m_proxyModel->mapFromSource(newSourceIndex);
+        if (newProxyIndex.isValid()) {
+            ui->treeView->setCurrentIndex(newProxyIndex);
+            ui->treeView->scrollTo(newProxyIndex);
+            ui->treeView->edit(newProxyIndex);
         }
 
+        updateTextViewFromModel();
         saveConfig();
         emit dataChanged();
     }
@@ -510,8 +575,18 @@ void JsonFormatWG::deleteItem()
         m_model->removeItem(sourceIndexes[i]);
     }
 
+    updateTextViewFromModel();
     saveConfig();
     emit dataChanged();
+}
+
+void JsonFormatWG::updateTextViewFromModel()
+{
+    // Only update if text view is currently visible (stackedWidget index 1)
+    if (ui->stackedWidget->currentIndex() == 1) {
+        QByteArray jsonData = m_model->json(false);
+        ui->textView->setPlainText(QString::fromUtf8(jsonData));
+    }
 }
 
 void JsonFormatWG::onModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
@@ -521,6 +596,7 @@ void JsonFormatWG::onModelDataChanged(const QModelIndex &topLeft, const QModelIn
     Q_UNUSED(roles);
 
     if (m_editMode) {
+        updateTextViewFromModel();
         saveConfig();
         emit dataChanged();
     }

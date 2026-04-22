@@ -393,7 +393,8 @@ bool QJsonModel::isEditable() const {
   return m_editable;
 }
 
-bool QJsonModel::insertItem(const QModelIndex &parent, const QString &key, const QVariant &value) {
+bool QJsonModel::insertItem(const QModelIndex &parent, const QString &key, const QVariant &value,
+                            QJsonValue::Type type) {
   QJsonTreeItem *parentItem = nullptr;
   if (!parent.isValid())
     parentItem = mRootItem;
@@ -411,14 +412,45 @@ bool QJsonModel::insertItem(const QModelIndex &parent, const QString &key, const
     }
   }
 
+  // Normalize parent index to column 0 — rowCount() returns 0 for column > 0,
+  // so beginInsertRows must use a column-0 parent for the proxy model to work correctly
+  QModelIndex normalizedParent = parent.isValid()
+      ? createIndex(parent.row(), 0, parent.internalPointer())
+      : QModelIndex();
+
   int row = parentItem->childCount();
 
-  beginInsertRows(parent, row, row);
+  beginInsertRows(normalizedParent, row, row);
 
   QJsonTreeItem *newItem = new QJsonTreeItem(parentItem);
   newItem->setKey(key);
-  newItem->setValue(value);
-  newItem->setType(QJsonValue::String);
+  newItem->setType(type);
+
+  // Set value based on type
+  switch (type) {
+  case QJsonValue::String:
+    newItem->setValue(value.toString());
+    break;
+  case QJsonValue::Double:
+    newItem->setValue(value.toDouble());
+    break;
+  case QJsonValue::Bool:
+    newItem->setValue(value.toBool());
+    break;
+  case QJsonValue::Null:
+    newItem->setValue(QVariant());
+    break;
+  case QJsonValue::Object:
+    newItem->setValue(QVariant());
+    break;
+  case QJsonValue::Array:
+    newItem->setValue(QVariant());
+    break;
+  default:
+    newItem->setValue(value);
+    break;
+  }
+
   parentItem->appendChild(newItem);
 
   endInsertRows();
@@ -439,7 +471,15 @@ bool QJsonModel::removeItem(const QModelIndex &index) {
 
   int row = item->row();
 
-  beginRemoveRows(parent(index), row, row);
+  // Normalize parent index to column 0 for consistency with rowCount()
+  QModelIndex sourceParent;
+  if (parentItem == mRootItem) {
+    sourceParent = QModelIndex();
+  } else {
+    sourceParent = createIndex(parentItem->row(), 0, parentItem);
+  }
+
+  beginRemoveRows(sourceParent, row, row);
   parentItem->removeChild(row);
   endRemoveRows();
 
@@ -585,17 +625,23 @@ QJsonValue QJsonModel::genJson(QJsonTreeItem *item) const {
     }
     return arr;
   } else {
-    QJsonValue va;
-    switch (item->value().type()) {
-    case QMetaType::Bool: {
-      va = item->value().toBool();
-      break;
+    // Handle leaf node values based on the JSON type
+    switch (item->type()) {
+    case QJsonValue::Bool:
+      return QJsonValue(item->value().toBool());
+    case QJsonValue::Double: {
+      bool ok = false;
+      double d = item->value().toDouble(&ok);
+      if (ok)
+        return QJsonValue(d);
+      else
+        return QJsonValue(item->value().toString());
     }
+    case QJsonValue::Null:
+      return QJsonValue(QJsonValue::Null);
+    case QJsonValue::String:
     default:
-      va = item->value().toString();
-      break;
+      return QJsonValue(item->value().toString());
     }
-    (item->value());
-    return va;
   }
 }

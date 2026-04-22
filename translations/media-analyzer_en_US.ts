@@ -566,6 +566,99 @@
     </message>
 </context>
 <context>
+    <name>InsertNodeDialog</name>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="14"/>
+        <source>Insert Node</source>
+        <translation>Insert Node</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="22"/>
+        <source>Key:</source>
+        <translation>Key:</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="29"/>
+        <source>new_key</source>
+        <translation>new_key</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="38"/>
+        <source>Type:</source>
+        <translation>Type:</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="51"/>
+        <source>String</source>
+        <translation>String</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="62"/>
+        <source>Number</source>
+        <translation>Number</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="73"/>
+        <source>Boolean</source>
+        <translation>Boolean</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="84"/>
+        <source>Null</source>
+        <translation>Null</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="95"/>
+        <source>JSON Object</source>
+        <translation>JSON Object</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="106"/>
+        <source>JSON Array</source>
+        <translation>JSON Array</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="101"/>
+        <source>Value:</source>
+        <translation>Value:</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="109"/>
+        <source>new_value</source>
+        <translation>new_value</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="123"/>
+        <source>true</source>
+        <translation>true</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="128"/>
+        <source>false</source>
+        <translation>false</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.ui" line="142"/>
+        <source>"new_key": "new_value"</source>
+        <translation>"new_key": "new_value"</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.cpp" line="173"/>
+        <source>Validation Error</source>
+        <translation>Validation Error</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.cpp" line="173"/>
+        <source>Key cannot be empty.</source>
+        <translation>Key cannot be empty.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/insertnodedialog.cpp" line="182"/>
+        <source>Invalid number value.</source>
+        <translation>Invalid number value.</translation>
+    </message>
+</context>
+<context>
     <name>LogWG</name>
     <message>
         <location filename="../src/widgets/logwg.ui" line="16"/>

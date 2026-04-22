@@ -120,6 +120,7 @@ private:
     QString m_defaultInsertValue;
 
     void updateEditModeUI();
+    void updateTextViewFromModel();
     void saveConfig();
     bool checkDefaultValues();
 

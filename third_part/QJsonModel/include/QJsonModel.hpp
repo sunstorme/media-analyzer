@@ -114,7 +114,8 @@ public:
   bool isEditable() const;
 
   // Insert/Delete operations
-  bool insertItem(const QModelIndex &parent, const QString &key, const QVariant &value);
+  bool insertItem(const QModelIndex &parent, const QString &key, const QVariant &value,
+                  QJsonValue::Type type = QJsonValue::String);
   bool removeItem(const QModelIndex &index);
   QJsonTreeItem* rootItem() const;
 
