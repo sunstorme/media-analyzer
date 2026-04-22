@@ -183,6 +183,29 @@ void JsonFormatWG::showContextMenu(const QPoint &pos)
     
     // Check if there is a valid selection
     if (index.isValid() || !ui->treeView->selectionModel()->selectedIndexes().isEmpty()) {
+        // Dynamically update expand/collapse menu visibility based on node state
+        QModelIndex targetIndex = index.isValid() ? index : ui->treeView->currentIndex();
+        // Normalize to column 0 for hasChildren check
+        QModelIndex targetCol0 = targetIndex.sibling(targetIndex.row(), 0);
+        if (!targetCol0.isValid()) {
+            targetCol0 = targetIndex;
+        }
+
+        bool hasChildren = m_proxyModel->hasChildren(targetCol0);
+
+        if (hasChildren) {
+            bool isExpanded = ui->treeView->isExpanded(targetCol0);
+            // Show only the action matching the current state:
+            // - If collapsed → show expand menu, hide collapse menu
+            // - If expanded  → show collapse menu, hide expand menu
+            m_expandMenu->menuAction()->setVisible(!isExpanded);
+            m_collapseMenu->menuAction()->setVisible(isExpanded);
+        } else {
+            // No children: hide both expand and collapse menus entirely
+            m_expandMenu->menuAction()->setVisible(false);
+            m_collapseMenu->menuAction()->setVisible(false);
+        }
+
         BaseFormatWG::showContextMenu(pos);
     }
 }
