@@ -145,6 +145,52 @@ bool Common::isMediaFile(const QString &filePath)
     return isVideoFile(filePath) || isAudioFile(filePath);
 }
 
+bool Common::isImageFile(const QString &filePath)
+{
+    QFileInfo fileInfo(filePath);
+    if (!fileInfo.isFile() || !fileInfo.exists()) {
+        return false;
+    }
+
+    QMimeDatabase mimeDb;
+    QMimeType mimeType = mimeDb.mimeTypeForFile(filePath, QMimeDatabase::MatchExtension);
+
+    const QSet<QString> &supportedMimeTypes = getSupportedImageMimeTypes();
+    if (supportedMimeTypes.contains(mimeType.name())) {
+        return true;
+    }
+
+    const QSet<QString> &supportedExtensions = getSupportedImageExtensions();
+    QString extension = fileInfo.suffix().toLower();
+    return supportedExtensions.contains(extension);
+}
+
+bool Common::isSubtitleFile(const QString &filePath)
+{
+    QFileInfo fileInfo(filePath);
+    if (!fileInfo.isFile() || !fileInfo.exists()) {
+        return false;
+    }
+
+    QMimeDatabase mimeDb;
+    QMimeType mimeType = mimeDb.mimeTypeForFile(filePath, QMimeDatabase::MatchExtension);
+
+    const QSet<QString> &supportedMimeTypes = getSupportedSubtitleMimeTypes();
+    if (supportedMimeTypes.contains(mimeType.name())) {
+        return true;
+    }
+
+    const QSet<QString> &supportedExtensions = getSupportedSubtitleExtensions();
+    QString extension = fileInfo.suffix().toLower();
+    return supportedExtensions.contains(extension);
+}
+
+bool Common::isSupportedMediaFile(const QString &filePath)
+{
+    return isSupportedVideoFile(filePath) || isAudioFile(filePath) || 
+           isImageFile(filePath) || isSubtitleFile(filePath);
+}
+
 QSet<QString> Common::supportedVideoMimeTypes()
 {
     return getSupportedVideoMimeTypes();
@@ -153,6 +199,36 @@ QSet<QString> Common::supportedVideoMimeTypes()
 QSet<QString> Common::supportedVideoExtensions()
 {
     return getSupportedVideoExtensions();
+}
+
+QSet<QString> Common::supportedAudioMimeTypes()
+{
+    return getSupportedAudioMimeTypes();
+}
+
+QSet<QString> Common::supportedAudioExtensions()
+{
+    return getSupportedAudioExtensions();
+}
+
+QSet<QString> Common::supportedImageMimeTypes()
+{
+    return getSupportedImageMimeTypes();
+}
+
+QSet<QString> Common::supportedImageExtensions()
+{
+    return getSupportedImageExtensions();
+}
+
+QSet<QString> Common::supportedSubtitleMimeTypes()
+{
+    return getSupportedSubtitleMimeTypes();
+}
+
+QSet<QString> Common::supportedSubtitleExtensions()
+{
+    return getSupportedSubtitleExtensions();
 }
 
 QStringList Common::extractSupportedMediaFiles(const QMimeData *mimeData)
@@ -166,7 +242,7 @@ QStringList Common::extractSupportedMediaFiles(const QMimeData *mimeData)
     QList<QUrl> urlList = mimeData->urls();
     for (const QUrl &url : urlList) {
         QString filePath = url.toLocalFile();
-        if (!filePath.isEmpty() && isSupportedVideoFile(filePath)) {
+        if (!filePath.isEmpty() && isSupportedMediaFile(filePath)) {
             supportedFiles.append(filePath);
         }
     }
@@ -183,7 +259,7 @@ bool Common::containsSupportedMediaFiles(const QMimeData *mimeData)
     QList<QUrl> urlList = mimeData->urls();
     for (const QUrl &url : urlList) {
         QString filePath = url.toLocalFile();
-        if (!filePath.isEmpty() && isSupportedVideoFile(filePath)) {
+        if (!filePath.isEmpty() && isSupportedMediaFile(filePath)) {
             return true;
         }
     }
@@ -220,6 +296,162 @@ const QSet<QString> &Common::getSupportedVideoExtensions()
         "flv", "webm", "m4v", "3gp", "ts", "mts", "m2ts",
         "asf", "mng", "qt", "divx", "xvid", "rm", "rmvb",
         "vob", "ogv", "mxf", "mjp", "mjpeg"
+    };
+
+    return supportedExtensions;
+}
+
+const QSet<QString> &Common::getSupportedAudioMimeTypes()
+{
+    static QSet<QString> supportedMimeTypes = {
+        "audio/mpeg",        // MP3
+        "audio/mp4",         // M4A
+        "audio/x-m4a",       // M4A
+        "audio/wav",         // WAV
+        "audio/wave",        // WAV
+        "audio/x-wav",       // WAV
+        "audio/ogg",         // OGG
+        "audio/flac",        // FLAC
+        "audio/x-flac",      // FLAC
+        "audio/aac",         // AAC
+        "audio/aacp",        // AAC+
+        "audio/x-aac",       // AAC
+        "audio/x-ms-wma",    // WMA
+        "audio/vnd.wave",    // WAV
+        "audio/x-aiff",      // AIFF
+        "audio/aiff",        // AIFF
+        "audio/basic",       // AU
+        "audio/x-au",        // AU
+        "audio/midi",        // MIDI
+        "audio/x-midi",      // MIDI
+        "audio/opus",        // OPUS
+        "audio/x-opus",      // OPUS
+        "audio/x-speex",     // SPEEX
+        "audio/x-vorbis",    // VORBIS
+        "audio/x-vorbis+ogg" // VORBIS
+    };
+
+    return supportedMimeTypes;
+}
+
+const QSet<QString> &Common::getSupportedAudioExtensions()
+{
+    static QSet<QString> supportedExtensions = {
+        "mp3", "m4a", "wav", "wave", "ogg", "oga", "flac",
+        "aac", "wma", "aiff", "aif", "au", "snd", "mid", "midi",
+        "rmi", "opus", "speex", "amr", "awb", "ape", "ac3",
+        "dts", "dtshd", "tta", "wv", "ast", "au", "gsm"
+    };
+
+    return supportedExtensions;
+}
+
+const QSet<QString> &Common::getSupportedImageMimeTypes()
+{
+    static QSet<QString> supportedMimeTypes = {
+        "image/jpeg",        // JPG, JPEG
+        "image/png",         // PNG
+        "image/gif",         // GIF
+        "image/webp",        // WEBP
+        "image/bmp",         // BMP
+        "image/x-bmp",       // BMP
+        "image/x-ms-bmp",    // BMP
+        "image/tiff",        // TIFF, TIF
+        "image/x-tiff",      // TIFF
+        "image/svg+xml",     // SVG
+        "image/vnd.microsoft.icon",  // ICO
+        "image/x-icon",      // ICO
+        "image/x-ico",       // ICO
+        "image/vnd.adobe.photoshop",  // PSD
+        "image/x-photoshop", // PSD
+        "image/x-psd",       // PSD
+        "image/x-portable-pixmap",  // PPM
+        "image/x-portable-graymap", // PGM
+        "image/x-portable-bitmap",  // PBM
+        "image/x-pcx",       // PCX
+        "image/x-tga",       // TGA
+        "image/x-icns",      // ICNS
+        "image/jp2",         // JPEG 2000
+        "image/x-jp2",       // JPEG 2000
+        "image/jpx",         // JPEG 2000
+        "image/apng",        // APNG
+        "image/avif",        // AVIF
+        "image/heic",        // HEIC
+        "image/heif",        // HEIF
+        "image/x-heic",      // HEIC
+        "image/x-heif"       // HEIF
+    };
+
+    return supportedMimeTypes;
+}
+
+const QSet<QString> &Common::getSupportedImageExtensions()
+{
+    static QSet<QString> supportedExtensions = {
+        "jpg", "jpeg", "png", "gif", "webp", "bmp", "dib",
+        "tiff", "tif", "svg", "svgz", "ico", "cur", "psd",
+        "psb", "ppm", "pgm", "pbm", "pnm", "pcx", "tga",
+        "icns", "jp2", "j2k", "jpf", "jpx", "apng", "avif",
+        "heic", "heif", "jxl", "exr", "hdr", "pic", "pict",
+        "pct", "pix", "pxr", "raw", "cr2", "crw", "nef",
+        "orf", "pef", "raf", "sr2", "dng", "arw", "k25"
+    };
+
+    return supportedExtensions;
+}
+
+const QSet<QString> &Common::getSupportedSubtitleMimeTypes()
+{
+    static QSet<QString> supportedMimeTypes = {
+        "text/plain",        // Generic text (for SRT, ASS, SSA, VTT, etc.)
+        "text/x-ssa",        // SSA
+        "text/x-ass",        // ASS
+        "text/x-srt",        // SRT
+        "text/x-vtt",        // VTT
+        "application/x-subrip",  // SRT
+        "application/x-subtitle" // Generic subtitle
+    };
+
+    return supportedMimeTypes;
+}
+
+const QSet<QString> &Common::getSupportedSubtitleExtensions()
+{
+    static QSet<QString> supportedExtensions = {
+        "srt",      // SubRip
+        "ass",      // Advanced SubStation Alpha
+        "ssa",      // SubStation Alpha
+        "vtt",      // WebVTT
+        "sub",      // MicroDVD
+        "idx",      // VobSub index
+        "smi",      // SAMI
+        "sam",      // SAMI
+        "psb",      // PowerScript
+        "rt",       // RealText
+        "txt",      // Plain text (may contain subtitles)
+        "usf",      // Universal Subtitle Format
+        "jss",      // JACOsub
+        "ssf",      // Stretched Sprite Format
+        "sup",      // HDMV Presentation Graphic Stream
+        "mks",      // MKA subtitle
+        "lrc",      // LRC lyrics
+        "sbv",      // YouTube subtitles
+        "xml",      // TTML, etc.
+        "ttml",     // TTML
+        "dfxp",     // Distribution Format Exchange Profile
+        "cap",      // CEA-608
+        "sc",       // Scenarist
+        "scc",      // Scenarist Closed Captions
+        "stl",      // Spruce Subtitle
+        "son",      // Son
+        "s2k",      // Son
+        "pjs",      // Phoenix Subtitle
+        "mpl",      // MPL2
+        "mpsub",    // MPlayer subtitle
+        "aqtitle",  // AQTitle
+        "gsub",     // GSUB
+        "js",       // JSON Subtitle
+        "json"      // JSON Subtitle
     };
 
     return supportedExtensions;

@@ -130,11 +130,38 @@ public:
     // Check if the file is a media file (video or audio)
     static bool isMediaFile(const QString &filePath);
 
+    // Check if the file is an image file
+    static bool isImageFile(const QString &filePath);
+
+    // Check if the file is a subtitle file
+    static bool isSubtitleFile(const QString &filePath);
+
+    // Check if the file is a supported media file (video, audio, image, subtitle)
+    static bool isSupportedMediaFile(const QString &filePath);
+
     // Get all supported video MIME types
     static QSet<QString> supportedVideoMimeTypes();
 
     // Get all supported video file extensions
     static QSet<QString> supportedVideoExtensions();
+
+    // Get all supported audio MIME types
+    static QSet<QString> supportedAudioMimeTypes();
+
+    // Get all supported audio file extensions
+    static QSet<QString> supportedAudioExtensions();
+
+    // Get all supported image MIME types
+    static QSet<QString> supportedImageMimeTypes();
+
+    // Get all supported image file extensions
+    static QSet<QString> supportedImageExtensions();
+
+    // Get all supported subtitle MIME types
+    static QSet<QString> supportedSubtitleMimeTypes();
+
+    // Get all supported subtitle file extensions
+    static QSet<QString> supportedSubtitleExtensions();
 
     // Extract supported media file paths from MIME data
     static QStringList extractSupportedMediaFiles(const QMimeData *mimeData);
@@ -168,6 +195,24 @@ private:
 
     // Initialize supported file extensions (lazy initialization)
     static const QSet<QString> &getSupportedVideoExtensions();
+
+    // Initialize supported audio MIME types (lazy initialization)
+    static const QSet<QString> &getSupportedAudioMimeTypes();
+
+    // Initialize supported audio file extensions (lazy initialization)
+    static const QSet<QString> &getSupportedAudioExtensions();
+
+    // Initialize supported image MIME types (lazy initialization)
+    static const QSet<QString> &getSupportedImageMimeTypes();
+
+    // Initialize supported image file extensions (lazy initialization)
+    static const QSet<QString> &getSupportedImageExtensions();
+
+    // Initialize supported subtitle MIME types (lazy initialization)
+    static const QSet<QString> &getSupportedSubtitleMimeTypes();
+
+    // Initialize supported subtitle file extensions (lazy initialization)
+    static const QSet<QString> &getSupportedSubtitleExtensions();
 };
 
 #endif // COMMON_H
