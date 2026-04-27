@@ -1,3 +1,27 @@
+media-analyzer (1.2.3-1) unstable; urgency=medium
+
+  * chore: Update version to 1.2.3-1
+  * build: consolidate Qt5 and Qt6 packages into single unified package
+  * feat(common): add image and subtitle file type support to media detection
+  * feat(ui): add dynamic expand/collapse context menu visibility
+  * feat(editor): add insert node dialog with type selection
+  * feat(editor): add syntax highlighting for JSON, log, and table modes
+  * feat(config): replace QSettings with JSON-based configuration system
+  * refactor(ui): split MediaPropsWG into separate FormatWG and StreamsWG dock widgets
+  * feat(streaming): add determinate progress bar and refactor streaming parser
+  * refactor: standardize Qt container initialization syntax
+  * fix(ui): conditionally hide empty menus in frames and packets
+  * feat(streaming): add incremental streaming for frames/packets data
+  * feat(i18n): add translation support to UI strings in MainWindow and TableFormatWG
+  * feat(ui): remove FoldersWG widget and update project configuration
+  * build: migrate from qmake to CMake build system
+  * feat(i18n): configure translation installation path and improve loading priority
+  * feat(i18n): improve internationalization configuration, keep only Chinese and English translations
+  * refactor(ffmpeg): centralize command construction and add clipboard copy functionality
+  * fix(media-info): fix cli parse old file
+
+ -- zhang hongyuan <2063218120@qq.com>  Mon, 27 Apr 2026 16:14:16 +0800
+
 media-analyzer (1.2.2-1) unstable; urgency=medium
 
   * chore: Update version to 1.2.2-1
