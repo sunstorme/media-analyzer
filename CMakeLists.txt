@@ -127,14 +127,27 @@ else()
 endif()
 
 # Copy translation files to build directory for development
-add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/bin/translations
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        ${CMAKE_SOURCE_DIR}/translations/media-analyzer_zh_CN.qm
-        ${CMAKE_SOURCE_DIR}/translations/media-analyzer_en_US.qm
-        ${CMAKE_BINARY_DIR}/bin/translations/
-    COMMENT "Copying translation files to build directory"
-)
+if(QT_MAJOR_VERSION EQUAL 5)
+    # Qt5: .qm files are generated in the build directory by QT5_ADD_TRANSLATION
+    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/bin/translations
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_BINARY_DIR}/media-analyzer_zh_CN.qm
+            ${CMAKE_BINARY_DIR}/media-analyzer_en_US.qm
+            ${CMAKE_BINARY_DIR}/bin/translations/
+        COMMENT "Copying translation files to build directory"
+    )
+else()
+    # Qt6: .qm files are generated in the source directory by the lrelease custom target
+    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/bin/translations
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/translations/media-analyzer_zh_CN.qm
+            ${CMAKE_SOURCE_DIR}/translations/media-analyzer_en_US.qm
+            ${CMAKE_BINARY_DIR}/bin/translations/
+        COMMENT "Copying translation files to build directory"
+    )
+endif()
 
 # Installation configuration
 # Set these BEFORE including GNUInstallDirs to override defaults
@@ -165,17 +178,10 @@ install(FILES assets/128x128/media-analyzer.svg
     RENAME media-analyzer.svg
 )
 
-# Install desktop file (different file for Qt5 and Qt6)
-if(QT_MAJOR_VERSION EQUAL 6)
-    install(FILES assets/media-analyzer6.desktop
-        DESTINATION ${APPDIR}
-        RENAME media-analyzer.desktop
-    )
-else()
-    install(FILES assets/media-analyzer.desktop
-        DESTINATION ${APPDIR}
-    )
-endif()
+# Install desktop file
+install(FILES assets/media-analyzer.desktop
+    DESTINATION ${APPDIR}
+)
 
 # Install documentation
 install(FILES README.md LICENSE
@@ -183,13 +189,23 @@ install(FILES README.md LICENSE
 )
 
 # Install translation files
-# Manually install .qm files for both Qt5 and Qt6
-install(FILES 
-    translations/media-analyzer_zh_CN.qm
-    translations/media-analyzer_en_US.qm
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/media-analyzer/translations
-    COMPONENT Runtime
-)
+if(QT_MAJOR_VERSION EQUAL 5)
+    # Qt5: .qm files are generated in the build directory by QT5_ADD_TRANSLATION
+    install(FILES
+        ${CMAKE_BINARY_DIR}/media-analyzer_zh_CN.qm
+        ${CMAKE_BINARY_DIR}/media-analyzer_en_US.qm
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/media-analyzer/translations
+        COMPONENT Runtime
+    )
+else()
+    # Qt6: .qm files are generated in the source directory by the lrelease custom target
+    install(FILES
+        translations/media-analyzer_zh_CN.qm
+        translations/media-analyzer_en_US.qm
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/media-analyzer/translations
+        COMPONENT Runtime
+    )
+endif()
 
 # Print configuration information
 message(STATUS "")

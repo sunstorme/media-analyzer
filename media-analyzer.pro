@@ -154,9 +154,4 @@ doc.files = README.md LICENSE
 translations.files = translations/media-analyzer_zh_CN.qm translations/media-analyzer_en_US.qm
 # contextmenu.files = assets/media-analyzer.conf
 
-# Install different desktop file for Qt6 version
-equals(QT_MAJOR_VERSION, 6) {
-    desktop.files = assets/media-analyzer6.desktop
-}
-
 INSTALLS += target icon desktop doc translations

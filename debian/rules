@@ -9,52 +9,41 @@ QT6_AVAILABLE := $(shell pkg-config --exists Qt6Core && echo yes)
 	dh $@ --buildsystem=cmake
 
 override_dh_auto_configure:
-	# Build Qt5 version if available
-	if [ -n "$(QT5_AVAILABLE)" ]; then \
-		mkdir -p build-qt5; \
-		cmake -S . -B build-qt5 \
-			-DCMAKE_INSTALL_PREFIX=/usr \
-			-DCMAKE_BUILD_TYPE=Release \
-			-DQT_MAJOR_VERSION=5 \
-			-DCMAKE_INSTALL_BINDIR=bin \
-			-DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu \
-			-DCMAKE_INSTALL_INCLUDEDIR=include; \
-	fi
-	# Build Qt6 version if available
+	# Prefer Qt6, fallback to Qt5
 	if [ -n "$(QT6_AVAILABLE)" ]; then \
-		mkdir -p build-qt6; \
-		cmake -S . -B build-qt6 \
+		mkdir -p build; \
+		cmake -S . -B build \
 			-DCMAKE_INSTALL_PREFIX=/usr \
 			-DCMAKE_BUILD_TYPE=Release \
 			-DQT_MAJOR_VERSION=6 \
 			-DCMAKE_INSTALL_BINDIR=bin \
 			-DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu \
 			-DCMAKE_INSTALL_INCLUDEDIR=include; \
+	elif [ -n "$(QT5_AVAILABLE)" ]; then \
+		mkdir -p build; \
+		cmake -S . -B build \
+			-DCMAKE_INSTALL_PREFIX=/usr \
+			-DCMAKE_BUILD_TYPE=Release \
+			-DQT_MAJOR_VERSION=5 \
+			-DCMAKE_INSTALL_BINDIR=bin \
+			-DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu \
+			-DCMAKE_INSTALL_INCLUDEDIR=include; \
+	else \
+		echo "Error: Neither Qt5 nor Qt6 is available"; \
+		exit 1; \
 	fi
 
 override_dh_auto_build:
-	# Build Qt5 version if available
-	if [ -n "$(QT5_AVAILABLE)" ]; then \
-		cmake --build build-qt5 --parallel 16; \
-	fi
-	# Build Qt6 version if available
-	if [ -n "$(QT6_AVAILABLE)" ]; then \
-		cmake --build build-qt6 --parallel 16; \
-	fi
+	# Build the configured version
+	cmake --build build --parallel 16
 
 override_dh_auto_install:
-	# Install Qt5 version if available
-	if [ -n "$(QT5_AVAILABLE)" ]; then \
-		DESTDIR=debian/media-analyzer cmake --install build-qt5; \
-	fi
-	# Install Qt6 version if available
-	if [ -n "$(QT6_AVAILABLE)" ]; then \
-		DESTDIR=debian/media-analyzer6 cmake --install build-qt6; \
-	fi
+	# Install the configured version
+	DESTDIR=debian/media-analyzer cmake --install build
 
 override_dh_clean:
 	dh_clean
-	rm -rf build-qt5 build-qt6
+	rm -rf build
 
 override_dh_auto_test:
 	# Skip tests as there are no test targets defined

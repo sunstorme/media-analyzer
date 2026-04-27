@@ -1,3 +1,0 @@
-assets/media-analyzer6-dbus-service /usr/bin/
-assets/org.media.mediaanalyzer6.service /usr/share/dbus-1/services/
-assets/org.media.mediaanalyzer6.xml /usr/share/dbus-1/interfaces/
