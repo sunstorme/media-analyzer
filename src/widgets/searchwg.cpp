@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2025 - 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
 #include "searchwg.h"
@@ -68,6 +68,9 @@ void SearchWG::setupGroupBoxes()
     updateGroupBoxDetail(ui->file_groupBox, false);
     updateGroupBoxDetail(ui->time_groupBox, false);
     updateGroupBoxDetail(ui->operation_groupBox, true);
+
+    // Make search_le the focus proxy so any setFocus() on SearchWG forwards to it
+    setFocusProxy(ui->search_le);
 }
 
 void SearchWG::setupSearchRangeControls()
@@ -407,5 +410,11 @@ void SearchWG::on_clear_btn_clicked()
     m_isSearching = false;
     m_lastSearchText.clear();
     emit searchClear();
+}
+
+void SearchWG::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    ui->search_le->setFocus();
 }
 

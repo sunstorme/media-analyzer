@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2025 - 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
 #ifndef SEARCHWG_H
@@ -12,6 +12,7 @@
 #include <QVBoxLayout>
 #include <QRadioButton>
 #include <QLineEdit>
+#include <QShowEvent>
 
 #include <common/zflowlayout.h>
 
@@ -89,6 +90,9 @@ private slots:
     void on_next_btn_clicked();
 
     void on_clear_btn_clicked();
+
+protected:
+    void showEvent(QShowEvent *event) override;
 
 private:
     void setupGroupBoxes();

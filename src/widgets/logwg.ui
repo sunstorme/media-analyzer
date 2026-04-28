@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com> -->
-<!-- SPDX-License-Identifier: MIT -->
 <ui version="4.0">
  <class>LogWG</class>
  <widget class="QWidget" name="LogWG">
@@ -23,6 +21,21 @@
      </property>
      <widget class="QWidget" name="log_table_wg">
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QTableView" name="log_tbv"/>
        </item>
@@ -30,6 +43,18 @@
      </widget>
      <widget class="QWidget" name="log_text_wg">
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="ZTextEditor" name="log_ple">
          <property name="plainText">
