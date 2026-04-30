@@ -32,9 +32,16 @@ public:
 public slots:
     void onExecuteClicked();
 
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
     void setupUI();
     void setupConnections();
+    bool isLocalFile(const QString &input);
+    void loadLocalFile(const QString &filePath);
 
     // UI - command launcher only
     QComboBox *m_commandInput;
@@ -58,6 +65,7 @@ public:
     void startCommand(const QString &command);
     void startFetch(const QUrl &url);
     void setRunning(bool running);
+    void setStatusMessage(const QString &message);
 
 signals:
     void windowClosed();

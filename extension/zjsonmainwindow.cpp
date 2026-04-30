@@ -12,6 +12,11 @@
 #include <QFile>
 #include <QDir>
 #include <QCloseEvent>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QEvent>
+#include <QMimeData>
+#include <QFileInfo>
 
 #include "common/zwindowhelper.h"
 
@@ -23,6 +28,7 @@ ZJsonMainWindow::ZJsonMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_history(new CommandHistory(this))
 {
+    setAcceptDrops(true);
     setupUI();
     setupConnections();
 }
@@ -34,6 +40,7 @@ ZJsonMainWindow::~ZJsonMainWindow()
 void ZJsonMainWindow::setupUI()
 {
     setWindowTitle(tr("zjson-gui"));
+    setWindowFlags(Qt::Dialog | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint);
     resize(600, 80);
 
     auto *centralWidget = new QWidget(this);
@@ -43,8 +50,11 @@ void ZJsonMainWindow::setupUI()
 
     m_commandInput = new QComboBox(this);
     m_commandInput->setEditable(true);
+    m_commandInput->lineEdit()->setDragEnabled(false);
+    m_commandInput->lineEdit()->setAcceptDrops(true);
+    m_commandInput->lineEdit()->installEventFilter(this);
     m_commandInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_commandInput->setPlaceholderText(tr("Enter command or URL (http://, https://)..."));
+    m_commandInput->setPlaceholderText(tr("Enter command, URL (http://, https://), or local file path..."));
     m_commandInput->setInsertPolicy(QComboBox::NoInsert);
     m_commandInput->addItems(m_history->history());
 
@@ -87,6 +97,9 @@ void ZJsonMainWindow::onExecuteClicked()
 
     if (input.startsWith("http://") || input.startsWith("https://")) {
         resultWindow->startFetch(QUrl(input));
+    } else if (isLocalFile(input)) {
+        loadLocalFile(input);
+        return;
     } else {
         resultWindow->startCommand(input);
     }
@@ -203,6 +216,11 @@ void ZJsonResultWindow::loadJsonData(const QByteArray &data)
     m_statusLabel->setText(tr("Loaded %1 bytes").arg(data.size()));
 }
 
+void ZJsonResultWindow::setStatusMessage(const QString &message)
+{
+    m_statusLabel->setText(message);
+}
+
 void ZJsonResultWindow::startCommand(const QString &command)
 {
     m_accumulatedOutput.clear();
@@ -303,4 +321,93 @@ void ZJsonResultWindow::closeEvent(QCloseEvent *event)
     if (m_isRunning)
         onStopClicked();
     event->accept();
+}
+
+// ============================================================
+// ZJsonMainWindow - File handling
+// ============================================================
+
+void ZJsonMainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasUrls()) {
+        event->acceptProposedAction();
+    }
+}
+
+void ZJsonMainWindow::dropEvent(QDropEvent *event)
+{
+    const QMimeData *mimeData = event->mimeData();
+    if (mimeData->hasUrls()) {
+        QList<QUrl> urls = mimeData->urls();
+        for (const QUrl &url : urls) {
+            if (url.isLocalFile()) {
+                QString filePath = url.toLocalFile();
+                m_commandInput->setEditText(filePath);
+                qWarning() << "Dropped file:" << filePath;
+                onExecuteClicked();
+                break;
+            }
+        }
+    }
+    event->acceptProposedAction();
+}
+
+bool ZJsonMainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == m_commandInput->lineEdit()) {
+        if (event->type() == QEvent::DragEnter) {
+            QDragEnterEvent *dragEvent = static_cast<QDragEnterEvent*>(event);
+            if (dragEvent->mimeData()->hasUrls()) {
+                dragEvent->acceptProposedAction();
+                return true;
+            }
+        } else if (event->type() == QEvent::Drop) {
+            QDropEvent *dropEvent = static_cast<QDropEvent*>(event);
+            const QMimeData *mimeData = dropEvent->mimeData();
+            if (mimeData->hasUrls()) {
+                QList<QUrl> urls = mimeData->urls();
+                for (const QUrl &url : urls) {
+                    if (url.isLocalFile()) {
+                        QString filePath = url.toLocalFile();
+                        m_commandInput->setEditText(filePath);
+                        qWarning() << "Dropped file on lineEdit:" << filePath;
+                        onExecuteClicked();
+                        dropEvent->acceptProposedAction();
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
+
+bool ZJsonMainWindow::isLocalFile(const QString &input)
+{
+    QFileInfo fileInfo(input);
+    return fileInfo.exists() && fileInfo.isFile();
+}
+
+void ZJsonMainWindow::loadLocalFile(const QString &filePath)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        auto *resultWindow = new ZJsonResultWindow();
+        resultWindow->setAttribute(Qt::WA_DeleteOnClose);
+        resultWindow->loadJsonData(QByteArray());
+        resultWindow->setStatusMessage(tr("Failed to open file: %1").arg(filePath));
+        ZWindowHelper::centerToCurrentScreen(resultWindow);
+        resultWindow->show();
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    auto *resultWindow = new ZJsonResultWindow();
+    resultWindow->setAttribute(Qt::WA_DeleteOnClose);
+    resultWindow->loadJsonData(data);
+    resultWindow->setStatusMessage(tr("File: %1 (%2 bytes)").arg(filePath).arg(data.size()));
+    ZWindowHelper::centerToCurrentScreen(resultWindow);
+    resultWindow->show();
 }

@@ -10,8 +10,8 @@
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="47"/>
-        <source>Enter command or URL (http://, https://)...</source>
-        <translation>Enter command or URL (http://, https://)...</translation>
+        <source>Enter command, URL (http://, https://), or local file path...</source>
+        <translation>Enter command, URL (http://, https://), or local file path...</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="57"/>
