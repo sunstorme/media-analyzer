@@ -71,3 +71,21 @@ void ZWindowHelper::centerToParent(QWidget* widget, bool dialog)
         widget->setAttribute(Qt::WA_ShowModal, true);
     }
 }
+
+void ZWindowHelper::topCenterToCurrentScreen(QWidget *widget, int topMargin)
+{
+    if (!widget) return;
+
+    QScreen *screen = QGuiApplication::screenAt(QCursor::pos());
+    if (!screen)
+        screen = QGuiApplication::primaryScreen();
+    if (!screen) return;
+
+    QRect geo = screen->availableGeometry();
+    QSize size = widget->size();
+
+    int x = geo.x() + (geo.width() - size.width()) / 2;
+    int y = geo.y() + topMargin;
+
+    widget->move(x, y);
+}

@@ -22,6 +22,9 @@ public:
 
     // Center to parent window
     static void centerToParent(QWidget* widget, bool dialog = false);
+
+    // Horizontal center at top of current screen
+    static void topCenterToCurrentScreen(QWidget* widget, int topMargin = 0);
 };
 
 #endif // ZWINDOWHELPER_H

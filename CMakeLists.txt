@@ -62,6 +62,9 @@ set(TRANSLATION_FILES
 # Add QJsonModel subdirectory
 add_subdirectory(third_part/QJsonModel)
 
+# Add extension subdirectory
+add_subdirectory(extension)
+
 # Create executable
 # Use the same executable name for both Qt5 and Qt6
 set(EXECUTABLE_NAME media-analyzer)
