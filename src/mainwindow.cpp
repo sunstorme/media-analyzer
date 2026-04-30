@@ -1,10 +1,11 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2025 - 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "common/common.h"
 #include "common/zjsonconfig.h"
+#include "common/mediainfodisplayer.h"
 #include <QDesktopServices>
 #include <QFileInfo>
 #include <QMetaObject>
@@ -132,60 +133,7 @@ void MainWindow::showMediaInfo(const QString filePath, const QString &function, 
         Common::instance()->setConfigValue(CURRENTFILE, filePath);
     }
 
-    // Determine if this is a streaming-compatible query (frames/packets with table format)
-    bool isStreamingCompatible = (extrainfo.formatKey == FORMAT_TABLE) &&
-                                  (function.contains("show_frames") || function.contains("show_packets"));
-
-    if (isStreamingCompatible) {
-        // Use streaming loading for frames/packets data
-        TableFormatWG *tableWindow = new TableFormatWG;
-        tableWindow->setAttribute(Qt::WA_DeleteOnClose);
-        tableWindow->setWindowTitle(windwowTitle);
-        tableWindow->setExtraInfo(extrainfo);
-        tableWindow->show();
-        ZWindowHelper::centerToParent(tableWindow);
-
-        // Determine the array key
-        QString arrayKey = function.contains("show_packets") ? "packets" : "frames";
-
-        // Build the ffprobe arguments
-        QStringList args;
-        args << ffmpegCommandList
-             << function.split(" ", QT_SKIP_EMPTY_PARTS)
-             << OF << JSON << FI << filePath;
-
-        // Start streaming immediately (no blocking)
-        tableWindow->startStreamingLoad(FFPROBE, args, arrayKey);
-
-        // Asynchronously query total count for progress display (non-blocking)
-        bool isPackets = function.contains("show_packets");
-        tableWindow->startTotalCountQuery(filePath, isPackets);
-
-        qDebug() << "Streaming media info:" << FFPROBE << args.join(" ");
-    } else {
-        // Use the original non-streaming approach
-        ProgressDialog *progressDlg = new ProgressDialog;
-        progressDlg->setWindowTitle(tr("Parse Media: %1").arg(filePath));
-        progressDlg->setProgressMode(ProgressDialog::Indeterminate);
-        progressDlg->setMessage(tr("Parsing..."));
-        progressDlg->setAutoClose(true);
-
-        progressDlg->start();
-        QtConcurrent::run([=](){
-            QString formats = m_probe.getMediaInfoJsonFormat(function, filePath);
-            bool ok = QMetaObject::invokeMethod(this, "popMediaInfoWindow",
-                                      Qt::QueuedConnection,
-                                      Q_ARG(QString, windwowTitle),
-                                      Q_ARG(QString, formats),
-                                      Q_ARG(ZExtraInfo, extrainfo)
-                                      );
-            qDebug() << "Media info query: " << ok;
-            emit progressDlg->messageChanged("Finsh parse");
-            emit progressDlg->toFinish();
-            progressDlg->deleteLater();
-        });
-        progressDlg->exec();
-    }
+    MediaInfoDisplayer::showMediaInfo(filePath, function, windwowTitle, extrainfo);
 }
 
 void MainWindow::InitConnectation()
@@ -946,7 +894,7 @@ void MainWindow::slotDynamicStreamActionTriggered()
                               .arg(streamIndex);
         ZExtraInfo extrainfo(command, FORMAT_TABLE);
         extrainfo.commandList << FFPROBE << ffmpegCommandList << command << OF << JSON << FI << fileName;
-        showMediaInfo(fileName, command,
+        MediaInfoDisplayer::showMediaInfo(fileName, command,
                       QString("[%1] - %2").arg(fileName).arg(extrainfo.commandList.join(" ")),
                       extrainfo);
         return;

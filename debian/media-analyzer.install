@@ -1,0 +1,13 @@
+# Main application binary
+usr/bin/media-analyzer
+
+# Desktop integration
+usr/share/applications/media-analyzer.desktop
+usr/share/icons/hicolor/scalable/apps/media-analyzer.svg
+
+# Translations
+usr/share/media-analyzer/translations/*.qm
+
+# Documentation
+usr/share/doc/media-analyzer/README.md
+usr/share/doc/media-analyzer/LICENSE

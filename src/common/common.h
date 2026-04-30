@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2025 - 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
 #ifndef COMMON_H
@@ -22,6 +22,9 @@
 #define CURRENTFILE "currentFile"
 #define CURRENTFILES "currentFiles"
 #define CURRENTDir "currentDir"
+
+#define FORMAT_JSON "json"
+#define FORMAT_TABLE "table"
 
 #define ORGANIZATION_NAME "MediaTools"
 #define APPLICATION_NAME "MediaAnalyzer"

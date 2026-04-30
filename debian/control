@@ -7,7 +7,8 @@ Build-Depends:
  pkg-config,
  qtbase5-dev | qt6-base-dev,
  qttools5-dev | qt6-tools-dev,
- qttools5-dev-tools | qt6-tools-dev-tools
+ qttools5-dev-tools | qt6-tools-dev-tools,
+ libdfm-extension-dev
 Standards-Version: 4.5.0
 Homepage: https://gitee.com/sunstom/media-analyzer
 Vcs-Browser: https://gitee.com/sunstom/media-analyzer
@@ -21,23 +22,37 @@ Description: Media file analysis tool
  A Qt-based application for analyzing media files,
  providing detailed information about video/audio formats and codecs.
 
+Package: dfm-plugin-media-analyzer
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         media-analyzer (= ${binary:Version}),
+         dde-file-manager,
+         ffmpeg
+Description: DDE file manager media analysis plugin
+ Provides dynamic, stream-aware context menu integration for
+ media file analysis, preview and conversion in the Deepin File Manager.
+ Supports per-category menus for video, audio and image files.
+
 Package: dfm-xmenu-media-analyzer
 Architecture: all
-Depends: media-analyzer (= ${source:Version}),
+Depends: media-analyzer,
          dde-file-manager,
          ${misc:Depends}
-Description: DDE file manager context menu integration for media-analyzer
+Description: DDE file manager context menu integration for media-analyzer (legacy)
  Adds media-analyzer options to the context menu of DDE file manager.
- 
+ .
+ This is the legacy xmenu plugin. Consider using dfm-plugin-media-analyzer
+ instead for dynamic stream-aware menus.
+
 Package: nautilus-xmenu-media-analyzer
 Architecture: all
-Depends: media-analyzer (= ${source:Version}),
+Depends: media-analyzer,
          nautilus (>= 42),
          python3-gi,
          gir1.2-nautilus-3.0
 Description: Nautilus file manager context menu integration for media-analyzer
  Adds Media Analyzer options to the right-click menu in Nautilus file manager.
- 
+
 Package: media-analyzer-dbus
 Architecture: all
 Depends: media-analyzer (= ${source:Version}),

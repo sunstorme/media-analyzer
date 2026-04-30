@@ -1944,4 +1944,87 @@ Installation log:</source>
         <translation>通用</translation>
     </message>
 </context>
+<context>
+    <name>DfmMediaPlugin</name>
+    <message>
+        <source>Video Tools</source>
+        <translation>视频工具</translation>
+    </message>
+    <message>
+        <source>Audio Tools</source>
+        <translation>音频工具</translation>
+    </message>
+    <message>
+        <source>Image Tools</source>
+        <translation>图片工具</translation>
+    </message>
+    <message>
+        <source>Format Info</source>
+        <translation>格式信息</translation>
+    </message>
+    <message>
+        <source>Video Stream Info</source>
+        <translation>视频流信息</translation>
+    </message>
+    <message>
+        <source>Frame Info</source>
+        <translation>帧信息</translation>
+    </message>
+    <message>
+        <source>Packet Info</source>
+        <translation>包信息</translation>
+    </message>
+    <message>
+        <source>Video Stream %1</source>
+        <translation>视频流 %1</translation>
+    </message>
+    <message>
+        <source>Operations</source>
+        <translation>操作</translation>
+    </message>
+    <message>
+        <source>Convert to GIF...</source>
+        <translation>转为 GIF...</translation>
+    </message>
+    <message>
+        <source>Extract Audio Track</source>
+        <translation>提取音轨</translation>
+    </message>
+    <message>
+        <source>Convert Format...</source>
+        <translation>转换格式...</translation>
+    </message>
+    <message>
+        <source>Audio Stream Info</source>
+        <translation>音频流信息</translation>
+    </message>
+    <message>
+        <source>Audio Stream %1</source>
+        <translation>音频流 %1</translation>
+    </message>
+    <message>
+        <source>Extract Stream %1 as %2</source>
+        <translation>提取流 %1 为 %2</translation>
+    </message>
+    <message>
+        <source>Show Image Info</source>
+        <translation>显示图片信息</translation>
+    </message>
+    <message>
+        <source>Show EXIF Data</source>
+        <translation>显示 EXIF 数据</translation>
+    </message>
+    <message>
+        <source>Parsing Media: %1</source>
+        <translation>解析媒体: %1</translation>
+    </message>
+    <message>
+        <source>Parsing</source>
+        <translation>解析中...</translation>
+    </message>
+    <message>
+        <source>Finished</source>
+        <translation>解析完成</translation>
+    </message>
+</context>
 </TS>

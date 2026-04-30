@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+# SPDX-FileCopyrightText: 2025 - 2026 zhang hongyuan <2063218120@qq.com>
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.16)
@@ -32,10 +32,13 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/third_part/QJsonModel/include)
 
 # Collect source files
-file(GLOB_RECURSE SOURCES 
+file(GLOB_RECURSE SOURCES
     "src/*.cpp"
     "src/*.h"
 )
+
+# Exclude dfm-plugin sources from main executable (built as separate shared library)
+list(FILTER SOURCES EXCLUDE REGEX "src/dfm-plugin/")
 
 file(GLOB UI_FILES
     "src/*.ui"
@@ -61,6 +64,15 @@ set(TRANSLATION_FILES
 
 # Add QJsonModel subdirectory
 add_subdirectory(third_part/QJsonModel)
+
+# Find dfm-extension for the plugin
+find_package(dfm-extension QUIET)
+if(dfm-extension_FOUND)
+    message(STATUS "dfm-extension found, building DFMExt plugin")
+    add_subdirectory(src/dfm-plugin)
+else()
+    message(STATUS "dfm-extension not found, skipping DFMExt plugin build")
+endif()
 
 # Create executable
 # Use the same executable name for both Qt5 and Qt6
