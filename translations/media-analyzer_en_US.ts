@@ -1880,4 +1880,87 @@ Installation log:</source>
         <translation>General</translation>
     </message>
 </context>
+<context>
+    <name>DfmMediaPlugin</name>
+    <message>
+        <source>Video Tools</source>
+        <translation>Video Tools</translation>
+    </message>
+    <message>
+        <source>Audio Tools</source>
+        <translation>Audio Tools</translation>
+    </message>
+    <message>
+        <source>Image Tools</source>
+        <translation>Image Tools</translation>
+    </message>
+    <message>
+        <source>Format Info</source>
+        <translation>Format Info</translation>
+    </message>
+    <message>
+        <source>Video Stream Info</source>
+        <translation>Video Stream Info</translation>
+    </message>
+    <message>
+        <source>Frame Info</source>
+        <translation>Frame Info</translation>
+    </message>
+    <message>
+        <source>Packet Info</source>
+        <translation>Packet Info</translation>
+    </message>
+    <message>
+        <source>Video Stream %1</source>
+        <translation>Video Stream %1</translation>
+    </message>
+    <message>
+        <source>Operations</source>
+        <translation>Operations</translation>
+    </message>
+    <message>
+        <source>Convert to GIF...</source>
+        <translation>Convert to GIF...</translation>
+    </message>
+    <message>
+        <source>Extract Audio Track</source>
+        <translation>Extract Audio Track</translation>
+    </message>
+    <message>
+        <source>Convert Format...</source>
+        <translation>Convert Format...</translation>
+    </message>
+    <message>
+        <source>Audio Stream Info</source>
+        <translation>Audio Stream Info</translation>
+    </message>
+    <message>
+        <source>Audio Stream %1</source>
+        <translation>Audio Stream %1</translation>
+    </message>
+    <message>
+        <source>Extract Stream %1 as %2</source>
+        <translation>Extract Stream %1 as %2</translation>
+    </message>
+    <message>
+        <source>Show Image Info</source>
+        <translation>Show Image Info</translation>
+    </message>
+    <message>
+        <source>Show EXIF Data</source>
+        <translation>Show EXIF Data</translation>
+    </message>
+    <message>
+        <source>Parsing Media: %1</source>
+        <translation>Parsing Media: %1</translation>
+    </message>
+    <message>
+        <source>Parsing</source>
+        <translation>Parsing</translation>
+    </message>
+    <message>
+        <source>Finished</source>
+        <translation>Finished</translation>
+    </message>
+</context>
 </TS>

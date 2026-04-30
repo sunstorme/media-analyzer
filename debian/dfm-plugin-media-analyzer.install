@@ -1,0 +1,2 @@
+# DFMExt plugin shared library (lib prefix required by dde-file-manager)
+usr/lib/*/dde-file-manager/plugins/extensions/libdfm-extension-media-qt*.so

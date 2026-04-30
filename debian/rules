@@ -38,8 +38,10 @@ override_dh_auto_build:
 	cmake --build build --parallel 16
 
 override_dh_auto_install:
-	# Install the configured version
+	# Install to debian/tmp so dh_install can distribute to multiple packages
 	DESTDIR=debian/tmp cmake --install build
+
+override_dh_install:
 	dh_install
 
 override_dh_clean:
