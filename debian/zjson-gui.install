@@ -1,0 +1,5 @@
+usr/bin/zjson-gui
+usr/share/applications/zjson-gui.desktop
+usr/share/icons/hicolor/scalable/apps/zjson-gui.svg
+usr/share/zjson-gui/translations/*
+usr/share/man/man1/zjson-gui.1

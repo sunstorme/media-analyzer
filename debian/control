@@ -46,3 +46,12 @@ Depends: media-analyzer (= ${source:Version}),
          python3
 Description: dbus integration for media-analyzer
  Adds Media Analyzer options to the session dbus.
+
+Package: zjson-gui
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         libqt5widgets5 | libqt6widgets6,
+         libqt5network5 | libqt6network6
+Description: JSON file viewer and editor
+ A Qt-based application for viewing and editing JSON files,
+ with support for syntax highlighting and network requests.

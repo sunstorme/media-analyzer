@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
 #include "zjsonmainwindow.h"
@@ -19,6 +19,38 @@
 #endif
 
 #include <unistd.h>
+
+// Split command string respecting quotes
+QStringList splitCommandString(const QString &commandStr)
+{
+    QStringList result;
+    QString current;
+    bool inQuotes = false;
+    bool inSingleQuotes = false;
+
+    for (int i = 0; i < commandStr.length(); ++i) {
+        QChar c = commandStr[i];
+
+        if (c == '"' && !inSingleQuotes) {
+            inQuotes = !inQuotes;
+        } else if (c == '\'' && !inQuotes) {
+            inSingleQuotes = !inSingleQuotes;
+        } else if (c.isSpace() && !inQuotes && !inSingleQuotes) {
+            if (!current.isEmpty()) {
+                result.append(current);
+                current.clear();
+            }
+        } else {
+            current.append(c);
+        }
+    }
+
+    if (!current.isEmpty()) {
+        result.append(current);
+    }
+
+    return result;
+}
 
 int main(int argc, char *argv[])
 {
@@ -54,17 +86,56 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.addVersionOption();
 
+    // Custom window title option
+    QCommandLineOption titleOption(QStringList() << "t" << "title",
+        QCoreApplication::translate("main", "Set custom window title"),
+        QCoreApplication::translate("main", "title"));
+
+    // Command execution option
+    QCommandLineOption cmdOption(QStringList() << "c" << "cmd",
+        QCoreApplication::translate("main", "Execute command string"),
+        QCoreApplication::translate("main", "command"));
+
+    parser.addOption(titleOption);
+    parser.addOption(cmdOption);
     parser.addPositionalArgument("source",
         QCoreApplication::translate("main", "JSON file path or HTTP(S) URL to open"));
 
     parser.process(app);
 
+    QString customTitle = parser.value(titleOption);
+    QString commandStr = parser.value(cmdOption);
+
     const QStringList args = parser.positionalArguments();
     bool hasPipeInput = !isatty(fileno(stdin));
 
+    // Determine window title
+    QString windowTitle;
+    if (!customTitle.isEmpty()) {
+        windowTitle = customTitle;
+    } else if (!commandStr.isEmpty()) {
+        windowTitle = commandStr;
+    }
+
+    // Command execution: show result window and execute command
+    if (!commandStr.isEmpty()) {
+        auto *result = new ZJsonResultWindow(nullptr, windowTitle);
+        result->setAttribute(Qt::WA_DeleteOnClose);
+        ZWindowHelper::centerToCurrentScreen(result);
+        result->show();
+
+        // Split command string and execute
+        QStringList commandArgs = splitCommandString(commandStr);
+        if (!commandArgs.isEmpty()) {
+            result->startCommand(commandStr);
+        }
+
+        return app.exec();
+    }
+
     // Pipe or file/URL argument: show result window only
     if (hasPipeInput || !args.isEmpty()) {
-        auto *result = new ZJsonResultWindow();
+        auto *result = new ZJsonResultWindow(nullptr, windowTitle);
         result->setAttribute(Qt::WA_DeleteOnClose);
         ZWindowHelper::centerToCurrentScreen(result);
         result->show();
@@ -98,7 +169,7 @@ int main(int argc, char *argv[])
     }
 
     // No input: show launcher window
-    ZJsonMainWindow window;
+    ZJsonMainWindow window(nullptr, customTitle);
     window.show();
     return app.exec();
 }

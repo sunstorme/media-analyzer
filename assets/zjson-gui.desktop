@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=ZJSON GUI
+GenericName=JSON Viewer
+Comment=A simple JSON file viewer and editor
+Exec=zjson-gui
+Icon=zjson-gui
+Terminal=false
+Categories=Development;Utility;TextEditor;
+MimeType=application/json;
+StartupWMClass=zjson-gui

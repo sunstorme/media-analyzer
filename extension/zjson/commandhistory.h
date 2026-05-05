@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
 #ifndef COMMANDHISTORY_H

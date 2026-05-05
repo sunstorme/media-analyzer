@@ -1,0 +1,153 @@
+.TH zjson-gui 1 "2025-05-05" "1.0.0" "Media Tools"
+.SH NAME
+zjson-gui \- JSON file viewer and command executor
+.SH SYNOPSIS
+.B zjson-gui
+[\fIOPTIONS\fR]... [\fISOURCE\fR]
+.SH DESCRIPTION
+.B zjson-gui
+is a Qt-based application for viewing and editing JSON files, with support for syntax highlighting and command execution. It can open local JSON files, fetch data from HTTP(S) URLs, and execute shell commands to view their JSON output.
+.SH OPTIONS
+.TP
+\fB\-h, \-\-help\fR
+Displays help on command-line options.
+.TP
+\fB\-\-help\-all\fR
+Displays help, including generic Qt options.
+.TP
+\fB\-v, \-\-version\fR
+Displays version information.
+.TP
+\fB\-t, \-\-title\fR \fItitle\fR
+Set custom window title. If specified with \fB\-c\fR, this title takes precedence over the command string.
+.TP
+\fB\-c, \-\-cmd\fR \fIcommand\fR
+Execute command string and display the result. The command will be parsed with quote-aware splitting: spaces inside double quotes (\fB"\fR) or single quotes (\fB'\fR) are preserved. When this option is used, the result window opens automatically and executes the command.
+.TP
+\fBSOURCE\fR
+Optional positional argument for JSON file path or HTTP(S) URL to open.
+.SH COMMAND STRING PARSING
+When using the \fB\-c\fR option, the command string is parsed with the following rules:
+.TP
+3
+\(bu Spaces separate arguments by default
+.TP
+3
+\(bu Double quotes (\fB"\fR) protect spaces and other characters
+.TP
+3
+\(bu Single quotes (\fB'\fR) also protect spaces and other characters
+.TP
+3
+\(bu Nested quotes are supported (e.g., \fB"text 'inside' quotes"\fR)
+.sp
+Examples of command string parsing:
+.sp
+.RS
+.nf
+\f(CW"echo hello world"\fP        -> ["echo", "hello", "world"]
+\f(CW"echo \"hello world\""\fP     -> ["echo", "hello world"]
+\f(CW"echo 'hello world'"\fP       -> ["echo", "hello world"]
+.fi
+.RE
+.SH WINDOW TITLE PRIORITY
+The window title is determined in the following order:
+.TP
+3
+\(bu 1. If \fB\-t\fR/\fB\-\-title\fR is specified, use that title
+.TP
+3
+\(bu 2. If \fB\-c\fR/\fB\-\-cmd\fR is specified without \fB\-t\fR, use the command string as title
+.TP
+3
+\(bu 3. Otherwise, use the default title
+.SH EXAMPLES
+.TP
+Execute a simple command:
+.sp
+.RS
+.nf
+\f(CW$ zjson-gui \-c "echo hello"
+.fi
+.RE
+.TP
+Execute command with quoted arguments (spaces preserved):
+.sp
+.RS
+.nf
+\f(CW$ zjson-gui \-c "ls \-la \"/home/user/my file.txt\""
+.fi
+.RE
+.TP
+Execute command with custom title:
+.sp
+.RS
+.nf
+\f(CW$ zjson-gui \-c "echo test" \-t "My Custom Title"
+.fi
+.RE
+.TP
+View local JSON file:
+.sp
+.RS
+.nf
+\f(CW$ zjson-gui data.json
+.fi
+.RE
+.TP
+Fetch JSON from URL:
+.sp
+.RS
+.nf
+\f(CW$ zjson-gui https://api.example.com/data
+.fi
+.RE
+.TP
+Pipe JSON data:
+.sp
+.RS
+.nf
+\f(CW$ echo '{"key": "value"}' | zjson-gui
+.fi
+.RE
+.SH FEATURES
+.TP
+3
+\(bu JSON syntax highlighting and formatting
+.TP
+3
+\(bu Search functionality with regular expressions
+.TP
+3
+\(bu Command execution with real-time output
+.TP
+3
+\(bu HTTP(S) URL fetching
+.TP
+3
+\(bu Drag-and-drop file support
+.TP
+3
+\(bu Multi-language support (English, Chinese)
+.SH FILES
+.TP
+.I /usr/bin/zjson-gui
+The main executable
+.TP
+.I /usr/share/applications/zjson-gui.desktop
+Desktop entry file
+.TP
+.I /usr/share/icons/hicolor/scalable/apps/zjson-gui.svg
+Application icon
+.TP
+.I /usr/share/zjson-gui/translations/*.qm
+Translation files
+.SH ENVIRONMENT
+.TP
+.B LANG
+Determines the language for translations. Supported values include \fIen_US\fR (English) and \fIzh_CN\fR (Chinese).
+.SH AUTHOR
+zhang hongyuan <2063218120@qq.com>
+.SH "SEE ALSO"
+.BR media-analyzer (1),
+.BR jq (1)

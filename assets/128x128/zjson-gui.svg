@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#4CAF50" opacity="0.9"/>
+
+  <!-- JSON text -->
+  <text x="64" y="75" font-family="monospace" font-size="36" font-weight="bold"
+        text-anchor="middle" fill="white">{}</text>
+
+  <!-- Decorative elements -->
+  <rect x="24" y="28" width="8" height="8" rx="2" fill="white" opacity="0.8"/>
+  <rect x="96" y="28" width="8" height="8" rx="2" fill="white" opacity="0.8"/>
+  <rect x="24" y="92" width="8" height="8" rx="2" fill="white" opacity="0.8"/>
+  <rect x="96" y="92" width="8" height="8" rx="2" fill="white" opacity="0.8"/>
+
+  <!-- Code lines -->
+  <line x1="38" y1="45" x2="55" y2="45" stroke="white" stroke-width="3" opacity="0.6"/>
+  <line x1="38" y1="55" x2="65" y2="55" stroke="white" stroke-width="3" opacity="0.6"/>
+  <line x1="73" y1="45" x2="90" y2="45" stroke="white" stroke-width="3" opacity="0.6"/>
+  <line x1="73" y1="55" x2="85" y2="55" stroke="white" stroke-width="3" opacity="0.6"/>
+</svg>

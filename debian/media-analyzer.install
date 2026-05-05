@@ -1,0 +1,5 @@
+usr/bin/media-analyzer
+usr/share/applications/media-analyzer.desktop
+usr/share/icons/hicolor/scalable/apps/media-analyzer.svg
+usr/share/media-analyzer/translations/*
+usr/share/doc/media-analyzer/*

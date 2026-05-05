@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
 #ifndef ZJSONMAINWINDOW_H
@@ -23,7 +23,7 @@ class ZJsonMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit ZJsonMainWindow(QWidget *parent = nullptr);
+    explicit ZJsonMainWindow(QWidget *parent = nullptr, const QString &customTitle = QString());
     ~ZJsonMainWindow();
 
     void loadJsonData(const QByteArray &data);
@@ -58,7 +58,7 @@ class ZJsonResultWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit ZJsonResultWindow(QWidget *parent = nullptr);
+    explicit ZJsonResultWindow(QWidget *parent = nullptr, const QString &customTitle = QString());
     ~ZJsonResultWindow();
 
     void loadJsonData(const QByteArray &data);

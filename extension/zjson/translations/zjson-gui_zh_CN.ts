@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="en_US">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>ZJsonMainWindow</name>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="36"/>
         <source>zjson-gui</source>
-        <translation>zjson-gui</translation>
+        <translation>JSON 查看器</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="47"/>
         <source>Enter command, URL (http://, https://), or local file path...</source>
-        <translation>Enter command, URL (http://, https://), or local file path...</translation>
+        <translation>输入命令或 URL (http://, https://), 或本地文件路径...</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="57"/>
         <source>Execute</source>
-        <translation>Execute</translation>
+        <translation>执行</translation>
     </message>
 </context>
 <context>
@@ -24,53 +24,53 @@
     <message>
         <location filename="../zjsonmainwindow.cpp" line="140"/>
         <source>JSON Viewer</source>
-        <translation>JSON Viewer</translation>
+        <translation>JSON 查看器</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="157"/>
         <source>Stop</source>
-        <translation>Stop</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="203"/>
         <source>Loaded %1 bytes</source>
-        <translation>Loaded %1 bytes</translation>
+        <translation>已加载 %1 字节</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="211"/>
         <source>Executing: %1</source>
-        <translation>Executing: %1</translation>
+        <translation>正在执行: %1</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="219"/>
         <source>Fetching: %1</source>
-        <translation>Fetching: %1</translation>
+        <translation>正在获取: %1</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="231"/>
         <source>Stopped</source>
-        <translation>Stopped</translation>
+        <translation>已停止</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="254"/>
         <source>Command exited with code %1 (no output)</source>
-        <translation>Command exited with code %1 (no output)</translation>
+        <translation>命令以代码 %1 退出（无输出）</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="264"/>
         <location filename="../zjsonmainwindow.cpp" line="272"/>
         <source>Done</source>
-        <translation>Done</translation>
+        <translation>完成</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="265"/>
         <source>Finished with errors</source>
-        <translation>Finished with errors</translation>
+        <translation>执行出错</translation>
     </message>
     <message>
         <location filename="../zjsonmainwindow.cpp" line="278"/>
         <source>Error: %1</source>
-        <translation>Error: %1</translation>
+        <translation>错误: %1</translation>
     </message>
 </context>
 <context>
@@ -78,7 +78,27 @@
     <message>
         <location filename="../main.cpp" line="36"/>
         <source>JSON file path or HTTP(S) URL to open</source>
-        <translation>JSON file path or HTTP(S) URL to open</translation>
+        <translation>要打开的 JSON 文件路径或 HTTP(S) URL</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="59"/>
+        <source>Set custom window title</source>
+        <translation>设置自定义窗口标题</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="60"/>
+        <source>title</source>
+        <translation>标题</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="64"/>
+        <source>Execute command string</source>
+        <translation>执行命令字符串</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="65"/>
+        <source>command</source>
+        <translation>命令</translation>
     </message>
 </context>
 </TS>

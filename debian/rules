@@ -39,7 +39,8 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	# Install the configured version
-	DESTDIR=debian/media-analyzer cmake --install build
+	DESTDIR=debian/tmp cmake --install build
+	dh_install
 
 override_dh_clean:
 	dh_clean
@@ -48,7 +49,6 @@ override_dh_clean:
 override_dh_auto_test:
 	# Skip tests as there are no test targets defined
 
-	dh_install
 	
 print-qt-versions:
 	@echo "Qt5 available: $(QT5_AVAILABLE)"

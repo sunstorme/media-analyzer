@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
 #include "zjsonmainwindow.h"
@@ -24,12 +24,15 @@
 // ZJsonMainWindow — Launcher window (command input only)
 // ============================================================
 
-ZJsonMainWindow::ZJsonMainWindow(QWidget *parent)
+ZJsonMainWindow::ZJsonMainWindow(QWidget *parent, const QString &customTitle)
     : QMainWindow(parent)
     , m_history(new CommandHistory(this))
 {
     setAcceptDrops(true);
     setupUI();
+    if (!customTitle.isEmpty()) {
+        setWindowTitle(customTitle);
+    }
     setupConnections();
 }
 
@@ -134,12 +137,15 @@ void ZJsonMainWindow::fetchUrl(const QString &url)
 // ZJsonResultWindow — JSON viewer + stop + progress bar
 // ============================================================
 
-ZJsonResultWindow::ZJsonResultWindow(QWidget *parent)
+ZJsonResultWindow::ZJsonResultWindow(QWidget *parent, const QString &customTitle)
     : QMainWindow(parent)
     , m_executor(new ZCommandExecutor(this))
     , m_networkManager(new ZJsonNetworkManager(this))
 {
     setupUI();
+    if (!customTitle.isEmpty()) {
+        setWindowTitle(customTitle);
+    }
     setupConnections();
     setRunning(false);
 }
