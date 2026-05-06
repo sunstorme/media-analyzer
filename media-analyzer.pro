@@ -22,12 +22,15 @@ INCLUDEPATH += src
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/common/zfftoolconfig.cpp \
+    src/common/zjsonconfig.cpp \
     src/common/zmediaplayerconfig.cpp \
     src/common/zmediaplayermanager.cpp \
     src/common/zcommandexecutor.cpp \
     src/common/common.cpp \
     src/common/zflowlayout.cpp \
     src/common/zmultiselectmenu.cpp \
+    src/common/zsyntaxhighlighter.cpp \
     src/common/ztableheadermanager.cpp \
     src/common/zffprobe.cpp \
     src/common/zffmpeg.cpp \
@@ -36,6 +39,7 @@ SOURCES += \
     src/common/ztexteditor.cpp \
     src/common/ztexthighlighter.cpp \
     src/common/zwindowhelper.cpp \
+    src/component/zprogressbar.cpp \
     src/model/fileshistorymodel.cpp \
     src/model/logmodel.cpp \
     src/model/mediainfotabelmodel.cpp \
@@ -49,6 +53,7 @@ SOURCES += \
     src/widgets/helpquerywg.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
+    src/widgets/insertnodedialog.cpp \
     src/widgets/jsonfmtwg.cpp \
     src/widgets/logwg.cpp \
     src/widgets/progressdlg.cpp \
@@ -58,6 +63,8 @@ SOURCES += \
     src/widgets/tablefmtwg.cpp
 
 HEADERS += \
+    src/common/zfftoolconfig.h \
+    src/common/zjsonconfig.h \
     src/common/zmediaplayerconfig.h \
     src/common/zmediaplayermanager.h \
     src/common/zcommandexecutor.h \
@@ -66,6 +73,7 @@ HEADERS += \
     src/common/qtcompat.h \
     src/common/zmultiselectmenu.h \
     src/common/zsingleton.h \
+    src/common/zsyntaxhighlighter.h \
     src/common/ztableheadermanager.h \
     src/common/zffprobe.h \
     src/common/zffmpeg.h \
@@ -74,6 +82,7 @@ HEADERS += \
     src/common/ztexteditor.h \
     src/common/ztexthighlighter.h \
     src/common/zwindowhelper.h \
+    src/component/zprogressbar.h \
     src/model/fileshistorymodel.h \
     src/model/logmodel.h \
     src/model/mediainfotabelmodel.h \
@@ -86,6 +95,7 @@ HEADERS += \
     src/widgets/globalconfingwg.h \
     src/widgets/helpquerywg.h \
     src/mainwindow.h \
+    src/widgets/insertnodedialog.h \
     src/widgets/jsonfmtwg.h \
     src/widgets/logwg.h \
     src/widgets/progressdlg.h \
@@ -102,6 +112,7 @@ FORMS += \
     src/widgets/globalconfingwg.ui \
     src/widgets/helpquerywg.ui \
     src/mainwindow.ui \
+    src/widgets/insertnodedialog.ui \
     src/widgets/jsonfmtwg.ui \
     src/widgets/logwg.ui \
     src/widgets/searchwg.ui \

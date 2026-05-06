@@ -24,6 +24,13 @@ TabConfigWg::~TabConfigWg()
 
 void TabConfigWg::setupConfigGroup(const QStringList &configKey)
 {
+    QLayoutItem *child;
+    while ((child = m_configFlowLayout->takeAt(0)) != nullptr) {
+        if (child->widget())
+            delete child->widget();
+        delete child;
+    }
+
     QStringList tmpconfigKeys = configKey;
     if (!configKey.contains(ALL_DEFAULT_CONFIG_KEY) && configKey.size() > 0) {
         tmpconfigKeys.prepend(ALL_DEFAULT_CONFIG_KEY);
