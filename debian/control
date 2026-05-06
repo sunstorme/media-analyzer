@@ -70,3 +70,13 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
 Description: JSON file viewer and editor
  A Qt-based application for viewing and editing JSON files,
  with support for syntax highlighting and network requests.
+
+Package: zconfigure-gui
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         libqt5widgets5 | libqt6widgets6
+Description: Graphical configure/build tool for autotools projects
+ zconfigure-gui provides a graphical interface for configuring,
+ building and installing autotools-based projects. It features
+ project option browsing, build command generation and compilation
+ output monitoring.

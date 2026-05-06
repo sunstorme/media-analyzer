@@ -9,6 +9,7 @@
 #include <QDesktopServices>
 #include <QFileInfo>
 #include <QMetaObject>
+#include <QProcess>
 #include <QTabWidget>
 #include <QTimer>
 
@@ -642,13 +643,15 @@ void MainWindow::slotMenuHelpTriggered(QAction *action)
     }
 
     if (ui->actionFFmpeg_Builder == action) {
-        ConfigureBuildTool *ffbuilder = new ConfigureBuildTool;
-        ffbuilder->setAttribute(Qt::WA_DeleteOnClose);
+        // Launch zconfigure-gui as external application
+        QString program = "zconfigure-gui";
+        QStringList arguments;
 
-        ffbuilder->setWindowTitle("Configure Builder");
-        // ffbuilder->setMinimumSize(1200, 900);
-        ffbuilder->show();
-        ZWindowHelper::centerToParent(ffbuilder);
+        // Try to start the process
+        if (!QProcess::startDetached(program, arguments)) {
+            QMessageBox::warning(this, tr("Warning"),
+                tr("Failed to launch zconfigure-gui. Please ensure it is installed."));
+        }
     }
 }
 

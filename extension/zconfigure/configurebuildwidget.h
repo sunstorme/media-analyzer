@@ -1,32 +1,32 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
-#ifndef CONFIGUREBUILDTOOL_H
-#define CONFIGUREBUILDTOOL_H
+#ifndef CONFIGUREBUILDWIDGET_H
+#define CONFIGUREBUILDWIDGET_H
 
 #include <QWidget>
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
-#include <QSettings>
 #include <QProcess>
 #include <QDateTime>
 #include <QTextCursor>
 
-
 #include <common/qtcompat.h>
 
 namespace Ui {
-class ConfigureBuildTool;
+class ConfigureBuildWidget;
 }
 
-class ConfigureBuildTool : public QWidget
+class ZConfigureConfig;
+
+class ConfigureBuildWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ConfigureBuildTool(QWidget *parent = nullptr);
-    ~ConfigureBuildTool();
+    explicit ConfigureBuildWidget(QWidget *parent = nullptr);
+    ~ConfigureBuildWidget();
 
     QMap<QString, QList<QStringList> > getOptions();
 
@@ -53,14 +53,15 @@ private:
 
     void loadConfigureOptions();
 private:
-    Ui::ConfigureBuildTool *ui;
+    Ui::ConfigureBuildWidget *ui;
     QAction *m_addRecordAction = nullptr;
     QAction *m_RemoveRecordAction = nullptr;
 
     QStringList m_filePaths;
     QProcess *m_process = nullptr;
+    ZConfigureConfig *m_config = nullptr;
 
     QMap<QString, QStringList> m_optionMaps;
 };
 
-#endif // CONFIGUREBUILDTOOL_H
+#endif // CONFIGUREBUILDWIDGET_H

@@ -1,0 +1,74 @@
+.\" SPDX-FileCopyrightText: 2026 zhang hongyuan <2063218120@qq.com>
+.\" SPDX-License-Identifier: MIT
+.TH ZCONFIGURE-GUI 1 "May 2026" "zconfigure-gui 1.0.0" "User Commands"
+.SH NAME
+zconfigure-gui \- graphical configure/build tool for autotools projects
+.SH SYNOPSIS
+.B zconfigure-gui
+.RI [ options ]
+.RI [ project-path ]
+.SH DESCRIPTION
+ZConfigure GUI provides a graphical interface for configuring,
+building and installing autotools-based projects (using configure/make).
+.PP
+It features:
+.IP \(bu 2
+Project option browsing with categorized configure options
+.IP \(bu 2
+Visual selection and configuration of build options
+.IP \(bu 2
+Real-time command generation preview
+.IP \(bu 2
+Build output monitoring with colored status messages
+.IP \(bu 2
+Recent project history management
+.SH OPTIONS
+.TP
+\fB\-h, \-\-help\fR
+Show help message and exit.
+.TP
+\fB\-v, \-\-version\fR
+Show version information and exit.
+.TP
+\fB\-\-title\fR \fItitle\fR
+Set custom window title.
+.TP
+\fIproject-path\fR
+Path to the project directory to open (optional).
+.SH FILES
+.TP
+.I ~/.config/zconfigure-gui/zconfigure-config.json
+User configuration file containing recent projects and window settings.
+.SH ENVIRONMENT
+.TP
+.B LANG, LC_ALL
+Specify the language for translations. Supported: zh_CN, en_US.
+.SH EXAMPLES
+.PP
+Launch the application:
+.RS
+.EX
+zconfigure-gui
+.EE
+.RE
+.PP
+Open a specific project:
+.RS
+.EX
+zconfigure-gui /path/to/project
+.EE
+.RE
+.PP
+Set custom window title:
+.RS
+.EX
+zconfigure-gui --title "My Project Build"
+.EE
+.RE
+.SH BUGS
+Report bugs at https://gitee.com/sunstom/media-analyzer/issues
+.SH AUTHOR
+zhang hongyuan <2063218120@qq.com>
+.SH SEE ALSO
+.BR make (1),
+.BR configure (1)

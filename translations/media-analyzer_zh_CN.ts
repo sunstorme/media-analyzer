@@ -2,69 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>ConfigureBuildTool</name>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="14"/>
-        <source>Form</source>
-        <translation>表单</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="27"/>
-        <source>Project:</source>
-        <translation>项目：</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="44"/>
-        <source>Select</source>
-        <translation>选择</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="56"/>
-        <source>Complie Options</source>
-        <translation>编译选项</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="83"/>
-        <source>Select Options</source>
-        <translation>选择选项</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="91"/>
-        <source>Show Cmd</source>
-        <translation>显示命令</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="111"/>
-        <source>Configure</source>
-        <translation>配置</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="118"/>
-        <source>Build</source>
-        <translation>构建</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="125"/>
-        <source>Install</source>
-        <translation>安装</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="132"/>
-        <source>Clean</source>
-        <translation>清理</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="172"/>
-        <source>Complie Out</source>
-        <translation>编译输出</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.cpp" line="201"/>
-        <source>Select configure source folder</source>
-        <translation>选择配置源文件夹</translation>
-    </message>
-</context>
-<context>
     <name>ExportWG</name>
     <message>
         <location filename="../src/widgets/exportwg.ui" line="16"/>

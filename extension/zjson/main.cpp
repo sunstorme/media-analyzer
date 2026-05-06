@@ -3,15 +3,13 @@
 
 #include "zjsonmainwindow.h"
 #include "common/zwindowhelper.h"
+#include "common/common.h"
 
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QFile>
 #include <QUrl>
 #include <QDebug>
-#include <QTranslator>
-#include <QLocale>
-#include <QStandardPaths>
 #include <QSettings>
 #include <QDir>
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -64,22 +62,8 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    // Load translations
-    QTranslator translator;
-    QString locale = QLocale::system().name();
-    QStringList searchPaths = {
-        QCoreApplication::applicationDirPath() + "/translations",
-        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/translations",
-    };
-#if defined(CMAKE_INSTALL_FULL_DATADIR)
-    searchPaths.append(CMAKE_INSTALL_FULL_DATADIR "/zjson-gui/translations");
-#endif
-    for (const auto &path : searchPaths) {
-        if (translator.load("zjson-gui_" + locale, path)) {
-            app.installTranslator(&translator);
-            break;
-        }
-    }
+    // Load translations using common function
+    loadAppTranslations(app, "zjson-gui");
 
     QCommandLineParser parser;
     parser.setApplicationDescription("JSON viewer and command executor");

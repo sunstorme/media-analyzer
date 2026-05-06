@@ -119,5 +119,5 @@ install(FILES
 # Install man page
 install(FILES
     ${CMAKE_SOURCE_DIR}/man/zjson-gui.1
-    DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
 )

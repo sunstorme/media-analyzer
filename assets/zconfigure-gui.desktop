@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=ZConfigure GUI
+Name[zh_CN]=配置构建工具
+GenericName=Configure Build Tool
+GenericName[zh_CN]=配置构建工具
+Comment=Graphical configure/build tool for autotools projects
+Comment[zh_CN]=autotools 项目的图形化配置/构建工具
+Exec=zconfigure-gui %f
+Icon=zconfigure-gui
+Terminal=false
+Type=Application
+Categories=Development;Building;
+Keywords=configure;build;compile;make;autotools;
+MimeType=application/x-autoconf;

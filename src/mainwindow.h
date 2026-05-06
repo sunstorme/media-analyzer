@@ -28,7 +28,6 @@
 #include "widgets/progressdlg.h"
 #include "widgets/exportwg.h"
 #include "widgets/helpquerywg.h"
-#include "widgets/configurebuildtool.h"
 #include "widgets/formatwg.h"
 #include "widgets/streamswg.h"
 

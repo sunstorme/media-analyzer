@@ -3,3 +3,6 @@
 
 # Add zjson-gui subdirectory
 add_subdirectory(zjson)
+
+# Add zconfigure-gui subdirectory
+add_subdirectory(zconfigure)

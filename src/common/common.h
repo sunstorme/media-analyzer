@@ -52,6 +52,20 @@ QString translatedConfigGroupName(const QString &groupKey);
  */
 QMap<QString, QString> translatedConfigGroups();
 
+/**
+ * @brief Load application translations from standard paths
+ * @param app The QApplication instance
+ * @param appName The application name (e.g., "media-analyzer", "zconfigure-gui", "zjson-gui")
+ *
+ * Search paths (in priority order):
+ * 1. <appdir>/translations/ - Development build directory
+ * 2. <appdir>/../share/<appName>/translations/ - Relative to bin
+ * 3. /usr/local/share/<appName>/translations/ - Local installation
+ * 4. /usr/share/<appName>/translations/ - System installation
+ * 5. :/translations/ - Resource file (embedded)
+ */
+void loadAppTranslations(const QApplication& app, const QString& appName);
+
 constexpr auto CONFIGURE_BUILDER_RECENTFOLDERS_KEY = "RecentFolders";
 
 // Image preview settings

@@ -1,0 +1,5 @@
+usr/bin/zconfigure-gui
+usr/share/zconfigure-gui/translations/*
+usr/share/applications/zconfigure-gui.desktop
+usr/share/icons/hicolor/scalable/apps/zconfigure-gui.svg
+usr/share/man/man1/zconfigure-gui.1

@@ -2,69 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>ConfigureBuildTool</name>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="27"/>
-        <source>Project:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="44"/>
-        <source>Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="56"/>
-        <source>Complie Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="83"/>
-        <source>Select Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="91"/>
-        <source>Show Cmd</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="111"/>
-        <source>Configure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="118"/>
-        <source>Build</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="125"/>
-        <source>Install</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="132"/>
-        <source>Clean</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.ui" line="172"/>
-        <source>Complie Out</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/configurebuildtool.cpp" line="201"/>
-        <source>Select configure source folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ExportWG</name>
     <message>
         <location filename="../src/widgets/exportwg.ui" line="16"/>

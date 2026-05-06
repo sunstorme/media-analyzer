@@ -1,12 +1,14 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
-#include "configurebuildtool.h"
-#include "ui_configurebuildtool.h"
+#include "configurebuildwidget.h"
+#include "zconfigureconfig.h"
+#include "ui_configurebuildwidget.h"
 
-ConfigureBuildTool::ConfigureBuildTool(QWidget *parent)
+ConfigureBuildWidget::ConfigureBuildWidget(QWidget *parent)
     : QWidget(parent)
-    , ui(new Ui::ConfigureBuildTool)
+    , ui(new Ui::ConfigureBuildWidget)
+    , m_config(ZConfigureConfig::instance())
 {
     ui->setupUi(this);
 
@@ -98,12 +100,12 @@ ConfigureBuildTool::ConfigureBuildTool(QWidget *parent)
             });
 }
 
-ConfigureBuildTool::~ConfigureBuildTool()
+ConfigureBuildWidget::~ConfigureBuildWidget()
 {
     delete ui;
 }
 
-QMap<QString, QList<QStringList>> ConfigureBuildTool::getOptions()
+QMap<QString, QList<QStringList>> ConfigureBuildWidget::getOptions()
 {
     QMap<QString, QList<QStringList>> options;
 
@@ -158,17 +160,10 @@ QMap<QString, QList<QStringList>> ConfigureBuildTool::getOptions()
         }
     }
 
-    // for (const QString& category : options.keys()) {
-    //     qDebug() << "=== " << category << " ===";
-    //     for (auto it : options[category]) {
-    //         qDebug() << it.join(" ");
-    //     }
-    // }
-
     return options;
 }
 
-QString ConfigureBuildTool::getConfigCmd()
+QString ConfigureBuildWidget::getConfigCmd()
 {
     QString cmd = "./configure \\\n";
 
@@ -189,12 +184,12 @@ QString ConfigureBuildTool::getConfigCmd()
     return cmd;
 }
 
-void ConfigureBuildTool::on_show_cmd_cbx_toggled(bool checked)
+void ConfigureBuildWidget::on_show_cmd_cbx_toggled(bool checked)
 {
     ui->cmd_ple->setVisible(checked);
 }
 
-void ConfigureBuildTool::on_select_local_path_btn_clicked()
+void ConfigureBuildWidget::on_select_local_path_btn_clicked()
 {
     QString folderPath = QFileDialog::getExistingDirectory(
         this,
@@ -211,8 +206,8 @@ void ConfigureBuildTool::on_select_local_path_btn_clicked()
         return;
     }
 
-    m_filePaths.removeAll(folderPath);
-    m_filePaths.prepend(folderPath);
+    m_config->addRecentProject(folderPath);
+    m_filePaths = m_config->recentProjects();
 
     const int maxHistory = 10;
     if (m_filePaths.size() > maxHistory) {
@@ -235,25 +230,17 @@ void ConfigureBuildTool::on_select_local_path_btn_clicked()
     saveSettings();
 }
 
-void ConfigureBuildTool::loadSettings()
+void ConfigureBuildWidget::loadSettings()
 {
-    QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
-    settings.beginGroup(CONFIGURE_BUILDER_SETTINGS_GROUP);
-    m_filePaths = settings.value(CONFIGURE_BUILDER_RECENTFOLDERS_KEY).toStringList();
-    settings.endGroup();
+    m_filePaths = m_config->recentProjects();
 }
 
-void ConfigureBuildTool::saveSettings()
+void ConfigureBuildWidget::saveSettings()
 {
-    QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
-    settings.beginGroup(CONFIGURE_BUILDER_SETTINGS_GROUP);
-    settings.setValue(CONFIGURE_BUILDER_RECENTFOLDERS_KEY, m_filePaths);
-    settings.endGroup();
-
-    settings.sync();
+    m_config->save();
 }
 
-void ConfigureBuildTool::on_build_btn_clicked()
+void ConfigureBuildWidget::on_build_btn_clicked()
 {
     m_process->setWorkingDirectory(ui->local_projects_combx->currentText());
     if (m_process->workingDirectory() != ui->local_projects_combx->currentText()) {
@@ -274,7 +261,7 @@ void ConfigureBuildTool::on_build_btn_clicked()
     m_process->start(cmd, arguments);
 }
 
-void ConfigureBuildTool::on_configure_btn_clicked()
+void ConfigureBuildWidget::on_configure_btn_clicked()
 {
     ui->build_btn->setEnabled(false);
 
@@ -297,7 +284,7 @@ void ConfigureBuildTool::on_configure_btn_clicked()
     m_process->start(cmd, arguments);
 }
 
-void ConfigureBuildTool::on_install_btn_clicked()
+void ConfigureBuildWidget::on_install_btn_clicked()
 {
     m_process->setWorkingDirectory(ui->local_projects_combx->currentText());
     if (m_process->workingDirectory() != ui->local_projects_combx->currentText()) {
@@ -318,7 +305,7 @@ void ConfigureBuildTool::on_install_btn_clicked()
     m_process->start(cmd, arguments);
 }
 
-void ConfigureBuildTool::on_clean_btn_clicked()
+void ConfigureBuildWidget::on_clean_btn_clicked()
 {
     m_process->kill();
 
@@ -341,7 +328,7 @@ void ConfigureBuildTool::on_clean_btn_clicked()
     m_process->start(cmd, arguments);
 }
 
-void ConfigureBuildTool::parseOptionLineFast(const QString& line, QString& option, QString& description, QString& defaultValue) {
+void ConfigureBuildWidget::parseOptionLineFast(const QString& line, QString& option, QString& description, QString& defaultValue) {
     option.clear();
     description.clear();
     defaultValue.clear();
@@ -363,17 +350,16 @@ void ConfigureBuildTool::parseOptionLineFast(const QString& line, QString& optio
     }
 }
 
-void ConfigureBuildTool::loadConfigureOptions()
+void ConfigureBuildWidget::loadConfigureOptions()
 {
     auto config = getOptions();
     ui->configure_complie_options_tb->setupConfigs(QStringList{"Option", "Description", "Default Value"}, config);
 }
 
 
-void ConfigureBuildTool::on_local_projects_combx_currentIndexChanged(int index)
+void ConfigureBuildWidget::on_local_projects_combx_currentIndexChanged(int index)
 {
     if (index >= 0) {
         loadConfigureOptions();
     }
 }
-

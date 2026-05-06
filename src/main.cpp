@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 zhang hongyuan <2063218120@qq.com>
+// SPDX-FileCopyrightText: 2025 - 2026 zhang hongyuan <2063218120@qq.com>
 // SPDX-License-Identifier: MIT
 
 #include "mainwindow.h"
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    translateConfig(app);
+    loadAppTranslations(app, APPLICATION_NAME);
 
     return commandConfig(app);
 }
@@ -277,33 +277,3 @@ int commandConfig(const QApplication& app) {
 
 }
 
-void translateConfig(const QApplication& app) {
-    static QTranslator translator;
-    const QStringList uiLanguages = QLocale::system().uiLanguages();
-    
-    // Priority order for translation search paths:
-    // 1. Development environment (build directory)
-    // 2. System installation paths
-    QStringList searchPaths;
-    searchPaths << QApplication::applicationDirPath() + "/translations";  // Development: build/bin/translations
-    searchPaths << QApplication::applicationDirPath() + "/../share/media-analyzer/translations";  // Relative to bin
-    searchPaths << "/usr/local/share/media-analyzer/translations";  // Local installation
-    searchPaths << "/usr/share/media-analyzer/translations";  // System installation
-    searchPaths << ":/translations";  // Resource file (embedded)
-    
-    for (const QString &locale : uiLanguages) {
-        const QString baseName = "media-analyzer_" + QLocale(locale).name();
-        
-        for (const QString &path : searchPaths) {
-            QString fullPath = path + "/" + baseName + ".qm";
-            qDebug() << "Trying to load translation:" << fullPath;
-            if (translator.load(fullPath)) {
-                const_cast<QApplication&>(app).installTranslator(&translator);
-                qDebug() << "Loaded translation:" << fullPath;
-                return;
-            }
-        }
-    }
-    
-    qDebug() << "No translation loaded for locale:" << QLocale::system().name();
-}
