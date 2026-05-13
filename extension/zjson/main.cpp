@@ -80,8 +80,13 @@ int main(int argc, char *argv[])
         QCoreApplication::translate("main", "Execute command string"),
         QCoreApplication::translate("main", "command"));
 
+    // File sync option
+    QCommandLineOption syncOption(QStringList() << "s" << "sync",
+        QCoreApplication::translate("main", "Enable file sync mode: auto-save changes and monitor external modifications"));
+
     parser.addOption(titleOption);
     parser.addOption(cmdOption);
+    parser.addOption(syncOption);
     parser.addPositionalArgument("source",
         QCoreApplication::translate("main", "JSON file path or HTTP(S) URL to open"));
 
@@ -89,6 +94,7 @@ int main(int argc, char *argv[])
 
     QString customTitle = parser.value(titleOption);
     QString commandStr = parser.value(cmdOption);
+    bool syncEnabled = parser.isSet(syncOption);
 
     const QStringList args = parser.positionalArguments();
     bool hasPipeInput = !isatty(fileno(stdin));
@@ -103,7 +109,7 @@ int main(int argc, char *argv[])
 
     // Command execution: show result window and execute command
     if (!commandStr.isEmpty()) {
-        auto *result = new ZJsonResultWindow(nullptr, windowTitle);
+        auto *result = new ZJsonResultWindow(nullptr, windowTitle, syncEnabled);
         result->setAttribute(Qt::WA_DeleteOnClose);
         ZWindowHelper::centerToCurrentScreen(result);
         result->show();
@@ -119,7 +125,7 @@ int main(int argc, char *argv[])
 
     // Pipe or file/URL argument: show result window only
     if (hasPipeInput || !args.isEmpty()) {
-        auto *result = new ZJsonResultWindow(nullptr, windowTitle);
+        auto *result = new ZJsonResultWindow(nullptr, windowTitle, syncEnabled);
         result->setAttribute(Qt::WA_DeleteOnClose);
         ZWindowHelper::centerToCurrentScreen(result);
         result->show();
@@ -129,13 +135,8 @@ int main(int argc, char *argv[])
             if (source.startsWith("http://") || source.startsWith("https://")) {
                 result->startFetch(QUrl(source));
             } else {
-                QFile file(source);
-                if (file.open(QIODevice::ReadOnly)) {
-                    result->loadJsonData(file.readAll());
-                    file.close();
-                } else {
-                    qWarning() << "Failed to open file:" << source;
-                }
+                // loadJsonFile handles both loading data and setting up sync
+                result->loadJsonFile(source);
             }
         }
 

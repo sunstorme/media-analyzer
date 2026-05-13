@@ -24,6 +24,14 @@ Set custom window title. If specified with \fB\-c\fR, this title takes precedenc
 \fB\-c, \-\-cmd\fR \fIcommand\fR
 Execute command string and display the result. The command will be parsed with quote-aware splitting: spaces inside double quotes (\fB"\fR) or single quotes (\fB'\fR) are preserved. When this option is used, the result window opens automatically and executes the command.
 .TP
+\fB\-s, \-\-sync\fR
+Enable file sync mode for local JSON files. When this option is used with a local file path:
+.RS
+\(bu Changes made in the editor are automatically saved to the file every 2 seconds
+\(bu External modifications to the file are detected and a confirmation dialog appears to reload the changes
+.RE
+This option only affects local file operations and is ignored when used with URLs or pipe input.
+.TP
 \fBSOURCE\fR
 Optional positional argument for JSON file path or HTTP(S) URL to open.
 .SH COMMAND STRING PARSING
@@ -95,6 +103,14 @@ View local JSON file:
 .fi
 .RE
 .TP
+View local JSON file with sync enabled:
+.sp
+.RS
+.nf
+\f(CW$ zjson-gui --sync data.json
+.fi
+.RE
+.TP
 Fetch JSON from URL:
 .sp
 .RS
@@ -126,6 +142,9 @@ Pipe JSON data:
 .TP
 3
 \(bu Drag-and-drop file support
+.TP
+3
+\(bu File sync mode with auto-save and external modification detection (\fB--sync\fR)
 .TP
 3
 \(bu Multi-language support (English, Chinese)

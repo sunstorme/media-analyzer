@@ -17,6 +17,9 @@
 #include <QEvent>
 #include <QMimeData>
 #include <QFileInfo>
+#include <QFileSystemWatcher>
+#include <QTimer>
+#include <QMessageBox>
 
 #include "common/zwindowhelper.h"
 
@@ -137,21 +140,41 @@ void ZJsonMainWindow::fetchUrl(const QString &url)
 // ZJsonResultWindow — JSON viewer + stop + progress bar
 // ============================================================
 
-ZJsonResultWindow::ZJsonResultWindow(QWidget *parent, const QString &customTitle)
+ZJsonResultWindow::ZJsonResultWindow(QWidget *parent, const QString &customTitle, bool syncEnabled)
     : QMainWindow(parent)
     , m_executor(new ZCommandExecutor(this))
     , m_networkManager(new ZJsonNetworkManager(this))
+    , m_syncEnabled(syncEnabled)
+    , m_fileWatcher(new QFileSystemWatcher(this))
+    , m_autoSaveTimer(new QTimer(this))
 {
     setupUI();
     if (!customTitle.isEmpty()) {
         setWindowTitle(customTitle);
     }
     setupConnections();
+
+    // Setup auto-save timer (started only when sync file is set)
+    connect(m_autoSaveTimer, &QTimer::timeout, this, &ZJsonResultWindow::saveToFile);
+    // Timer is started in setSyncFile()
+
+    // Setup file watcher
+    connect(m_fileWatcher, &QFileSystemWatcher::fileChanged,
+            this, &ZJsonResultWindow::onFileChanged);
+
+    // Connect data changed signal for unsaved changes tracking
+    connect(m_jsonViewer, &JsonFormatWG::dataChanged,
+            this, &ZJsonResultWindow::onDataChanged);
+
     setRunning(false);
 }
 
 ZJsonResultWindow::~ZJsonResultWindow()
 {
+    // Stop auto-save timer
+    if (m_autoSaveTimer) {
+        m_autoSaveTimer->stop();
+    }
 }
 
 void ZJsonResultWindow::setupUI()
@@ -220,6 +243,26 @@ void ZJsonResultWindow::loadJsonData(const QByteArray &data)
 
     m_jsonViewer->loadData(data);
     m_statusLabel->setText(tr("Loaded %1 bytes").arg(data.size()));
+}
+
+void ZJsonResultWindow::loadJsonFile(const QString &filePath)
+{
+    // Load the file data first
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        m_statusLabel->setText(tr("Failed to open file: %1").arg(filePath));
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    if (!data.isEmpty()) {
+        loadJsonData(data);
+    }
+
+    // Setup sync if enabled
+    _setupSyncFile(filePath);
 }
 
 void ZJsonResultWindow::setStatusMessage(const QString &message)
@@ -326,7 +369,160 @@ void ZJsonResultWindow::closeEvent(QCloseEvent *event)
 {
     if (m_isRunning)
         onStopClicked();
+    // Save any unsaved changes before closing
+    if (m_syncEnabled && !m_filePath.isEmpty() && m_hasUnsavedChanges) {
+        saveToFile();
+    }
+    // Stop auto-save timer
+    if (m_autoSaveTimer) {
+        m_autoSaveTimer->stop();
+    }
     event->accept();
+}
+
+// ============================================================
+// ZJsonResultWindow - File sync functionality
+// ============================================================
+
+void ZJsonResultWindow::onDataChanged()
+{
+    if (m_syncEnabled && !m_filePath.isEmpty()) {
+        m_hasUnsavedChanges = true;
+    }
+}
+
+void ZJsonResultWindow::_setupSyncFile(const QString &filePath)
+{
+    // Validate file path
+    QFileInfo fileInfo(filePath);
+    if (!fileInfo.exists() || !fileInfo.isFile()) {
+        m_statusLabel->setText(tr("Invalid file: %1").arg(filePath));
+        return;
+    }
+
+    m_filePath = filePath;
+    m_lastModified = fileInfo.lastModified().toSecsSinceEpoch();
+
+    // Initialize data hash from current data
+    m_currentDataHash = m_jsonViewer->getData().toUtf8();
+    m_hasUnsavedChanges = false;
+
+    if (m_syncEnabled) {
+        // Remove old path if exists
+        if (!m_fileWatcher->files().isEmpty()) {
+            m_fileWatcher->removePaths(m_fileWatcher->files());
+        }
+        m_fileWatcher->addPath(filePath);
+
+        // Start auto-save timer
+        if (!m_autoSaveTimer->isActive()) {
+            m_autoSaveTimer->start(2000);  // Auto-save every 2 seconds
+        }
+
+        m_statusLabel->setText(tr("File: %1 (Sync enabled)").arg(filePath));
+    } else {
+        m_statusLabel->setText(tr("File: %1 (%2 bytes)").arg(filePath).arg(m_currentDataHash.size()));
+    }
+}
+
+void ZJsonResultWindow::saveToFile()
+{
+    if (!m_syncEnabled || m_filePath.isEmpty())
+        return;
+
+    QString data = m_jsonViewer->getData();
+    if (data.isEmpty())
+        return;
+
+    QByteArray dataBytes = data.toUtf8();
+
+    // Check if data has changed
+    if (dataBytes == m_currentDataHash) {
+        return;  // Data unchanged, no need to save
+    }
+
+    // Check if file has been modified externally
+    QFileInfo fileInfo(m_filePath);
+    qint64 currentModified = fileInfo.lastModified().toSecsSinceEpoch();
+    if (currentModified > m_lastModified) {
+        // File was modified externally, don't overwrite
+        checkForExternalChanges();
+        return;
+    }
+
+    // Atomic write: write to temp file first
+    QString tempPath = m_filePath + ".tmp";
+    {
+        QFile tempFile(tempPath);
+        if (!tempFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            m_statusLabel->setText(tr("Failed to save: %1").arg(m_filePath));
+            return;
+        }
+        tempFile.write(dataBytes);
+        tempFile.close();
+    }
+
+    // Atomic replace
+    if (!QFile::rename(tempPath, m_filePath)) {
+        QFile::remove(tempPath);
+        m_statusLabel->setText(tr("Failed to save: %1").arg(m_filePath));
+        return;
+    }
+
+    m_lastModified = QFileInfo(m_filePath).lastModified().toSecsSinceEpoch();
+    m_currentDataHash = dataBytes;
+    m_hasUnsavedChanges = false;
+    m_statusLabel->setText(tr("Auto-saved: %1").arg(m_filePath));
+}
+
+void ZJsonResultWindow::onFileChanged(const QString &path)
+{
+    Q_UNUSED(path)
+    if (!m_syncEnabled || m_filePath.isEmpty())
+        return;
+
+    // Delay to avoid multiple triggers
+    QTimer::singleShot(500, this, &ZJsonResultWindow::checkForExternalChanges);
+}
+
+void ZJsonResultWindow::checkForExternalChanges()
+{
+    if (!m_syncEnabled || m_filePath.isEmpty())
+        return;
+
+    QFileInfo fileInfo(m_filePath);
+    qint64 currentModified = fileInfo.lastModified().toSecsSinceEpoch();
+
+    if (currentModified > m_lastModified) {
+        showReloadConfirmation();
+    }
+}
+
+void ZJsonResultWindow::showReloadConfirmation()
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        tr("File Changed Externally"),
+        tr("The file '%1' has been modified externally.\n\nDo you want to reload the file?").arg(m_filePath),
+        QMessageBox::Yes | QMessageBox::No
+    );
+
+    if (reply == QMessageBox::Yes) {
+        QFile file(m_filePath);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QByteArray data = file.readAll();
+            file.close();
+            loadJsonData(data);
+            m_lastModified = QFileInfo(m_filePath).lastModified().toSecsSinceEpoch();
+            m_currentDataHash = data;  // Update data hash
+            m_hasUnsavedChanges = false;
+            m_statusLabel->setText(tr("Reloaded: %1").arg(m_filePath));
+        }
+    } else {
+        // Update last modified to avoid asking again
+        m_lastModified = QFileInfo(m_filePath).lastModified().toSecsSinceEpoch();
+        m_hasUnsavedChanges = true;
+    }
 }
 
 // ============================================================

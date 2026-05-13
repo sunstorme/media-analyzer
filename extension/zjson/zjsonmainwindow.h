@@ -9,6 +9,9 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QByteArray>
+#include <QFileSystemWatcher>
+#include <QTimer>
+#include <QFileInfo>
 
 #include "commandhistory.h"
 #include "zjsonnetworkmanager.h"
@@ -58,10 +61,11 @@ class ZJsonResultWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit ZJsonResultWindow(QWidget *parent = nullptr, const QString &customTitle = QString());
+    explicit ZJsonResultWindow(QWidget *parent = nullptr, const QString &customTitle = QString(), bool syncEnabled = false);
     ~ZJsonResultWindow();
 
     void loadJsonData(const QByteArray &data);
+    void loadJsonFile(const QString &filePath);  // Load file and enable sync if syncEnabled is true
     void startCommand(const QString &command);
     void startFetch(const QUrl &url);
     void setRunning(bool running);
@@ -86,6 +90,14 @@ private:
     void setupUI();
     void setupConnections();
 
+    // File sync functionality
+    void _setupSyncFile(const QString &filePath);  // Private implementation
+    void saveToFile();
+    void onFileChanged(const QString &path);
+    void checkForExternalChanges();
+    void showReloadConfirmation();
+    void onDataChanged();
+
     // UI
     ZProgressBar *m_progressBar;
     QPushButton *m_stopButton;
@@ -99,6 +111,15 @@ private:
     // State
     QByteArray m_accumulatedOutput;
     bool m_isRunning = false;
+
+    // File sync state
+    bool m_syncEnabled = false;
+    QString m_filePath;
+    QFileSystemWatcher *m_fileWatcher;
+    QTimer *m_autoSaveTimer;
+    qint64 m_lastModified = 0;
+    bool m_hasUnsavedChanges = false;
+    QByteArray m_currentDataHash;  // Hash of current data for change detection
 };
 
 #endif // ZJSONMAINWINDOW_H
