@@ -32,7 +32,7 @@ void JsonFormatWG::initUI()
     m_proxyModel->setRecursiveFilteringEnabled(true);
     m_proxyModel->setFilterRole(Qt::DisplayRole);
 
-    // Configure tree view    
+    // Configure tree view
     ui->treeView->setModel(m_proxyModel);
     ui->treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -41,11 +41,11 @@ void JsonFormatWG::initUI()
     // Initialize search component
     m_searchWG = new SearchWG(this);
     m_searchWG->setWindowTitle(tr("JSON Search"));
-    
+
     // Configure search component display group boxes
     auto requiredBoxes = SearchWG::MatchControl | SearchWG::Operation;
     m_searchWG->setVisibleGroupBoxes(requiredBoxes);
-    
+
     // Add search component to layout
     ui->treeViewLayout->addWidget(m_searchWG);
     m_searchWG->setVisible(false);
@@ -55,6 +55,9 @@ void JsonFormatWG::initUI()
 
     // Enable JSON syntax highlighting for the text view
     ui->textView->setSyntaxMode(ZHighlightMode::Json);
+
+    // Show quotes for string values by default to distinguish from numbers
+    m_model->setShowColon(true);
 
     // Default insert key-value
     m_defaultInsertKey = tr("new_key");

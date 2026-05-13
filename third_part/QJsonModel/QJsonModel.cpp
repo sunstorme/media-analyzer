@@ -269,8 +269,14 @@ QVariant QJsonModel::data(const QModelIndex &index, int role) const {
     if (index.column() == 0)
       return QString("%1").arg(item->key());
 
-    if (index.column() == 1)
+    if (index.column() == 1) {
+      // Show colon for string type only to distinguish from numbers
+      if (m_showColon && item->type() == QJsonValue::String) {
+        QString value = item->value().toString();
+        return QString("\"%1\"").arg(value);
+      }
       return item->value();
+    }
   } else if (Qt::EditRole == role) {
     if (index.column() == 0)
       return item->key();
@@ -391,6 +397,14 @@ void QJsonModel::setEditable(bool editable) {
 
 bool QJsonModel::isEditable() const {
   return m_editable;
+}
+
+void QJsonModel::setShowColon(bool showColon) {
+  m_showColon = showColon;
+}
+
+bool QJsonModel::showColon() const {
+  return m_showColon;
 }
 
 bool QJsonModel::insertItem(const QModelIndex &parent, const QString &key, const QVariant &value,

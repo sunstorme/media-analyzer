@@ -113,6 +113,10 @@ public:
   void setEditable(bool editable);
   bool isEditable() const;
 
+  // Display format control
+  void setShowColon(bool showColon);
+  bool showColon() const;
+
   // Insert/Delete operations
   bool insertItem(const QModelIndex &parent, const QString &key, const QVariant &value,
                   QJsonValue::Type type = QJsonValue::String);
@@ -127,4 +131,5 @@ private:
   //! "contains".
   QStringList mExceptions;
   bool m_editable = false;
+  bool m_showColon = true;
 };
