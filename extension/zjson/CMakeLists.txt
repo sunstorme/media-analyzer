@@ -61,6 +61,30 @@ set(ZJSON_GUI_TRANSLATIONS
     ${CMAKE_CURRENT_SOURCE_DIR}/translations/zjson-gui_en_US.ts
 )
 
+# lupdate target: extract translatable strings from sources
+# This scans both extension sources AND widget dependencies
+if(QT_MAJOR_VERSION EQUAL 5)
+    find_package(Qt5 REQUIRED COMPONENTS LinguistTools)
+    set(LUPDATE_EXECUTABLE "/usr/lib/qt5/bin/lupdate")
+else()
+    set(LUPDATE_EXECUTABLE "/usr/lib/qt6/bin/lupdate")
+endif()
+
+if(EXISTS "${LUPDATE_EXECUTABLE}")
+    # Combine all source files for lupdate scanning
+    set(LUPDATE_SOURCES ${ZJSON_GUI_SOURCES} ${ZJSON_GUI_DEPS})
+
+    add_custom_target(zjson-gui_lupdate
+        COMMAND ${LUPDATE_EXECUTABLE}
+            ${LUPDATE_SOURCES}
+            -ts ${ZJSON_GUI_TRANSLATIONS}
+        COMMENT "Updating zjson-gui translation files"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        VERBATIM
+    )
+    message(STATUS "Added 'zjson-gui_lupdate' target to extract translations")
+endif()
+
 # Generate .qm files
 if(QT_MAJOR_VERSION EQUAL 5)
     find_package(Qt5 REQUIRED COMPONENTS LinguistTools)
