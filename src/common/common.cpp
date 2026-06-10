@@ -297,7 +297,7 @@ const QSet<QString> &Common::getSupportedVideoExtensions()
         "mp4", "avi", "mkv", "mov", "wmv", "mpg", "mpeg",
         "flv", "webm", "m4v", "3gp", "ts", "mts", "m2ts",
         "asf", "mng", "qt", "divx", "xvid", "rm", "rmvb",
-        "vob", "ogv", "mxf", "mjp", "mjpeg"
+        "vob", "ogv", "mxf", "mjp", "mjpeg", "avs2"
     };
 
     return supportedExtensions;
